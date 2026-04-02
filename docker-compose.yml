@@ -1,0 +1,104 @@
+services:
+  keyring-init:
+    image: ${OPENCLAW_IMAGE}
+    user: "0:0"
+    command:
+      [
+        "sh",
+        "-lc",
+        "mkdir -p /home/node/.local/share/keyrings && chown -R 1000:1000 /home/node/.local/share/keyrings && chmod 700 /home/node/.local/share/keyrings",
+      ]
+    volumes:
+      - sog_keyring:/home/node/.local/share/keyrings
+    restart: "no"
+
+  openclaw-gateway:
+    image: ${OPENCLAW_IMAGE}
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - HOME=/home/node
+      - NODE_ENV=production
+      - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE}
+      - TERM=xterm-256color
+      - OPENCLAW_NO_RESPAWN=${OPENCLAW_NO_RESPAWN}
+      - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
+      - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+      - GATEWAY_AUTH_PASSWORD=${GATEWAY_AUTH_PASSWORD}
+      - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
+      - XDG_CONFIG_HOME=${XDG_CONFIG_HOME}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
+      - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
+      - /var/tmp/openclaw-compile-cache:/var/tmp/openclaw-compile-cache
+      - sog_keyring:/home/node/.local/share/keyrings
+    ports:
+      - "${OPENCLAW_GATEWAY_PORT}:18789"
+    networks:
+      default: {}
+      web_traffic:
+        aliases:
+          - openclaw-gateway
+    depends_on:
+      keyring-init:
+        condition: service_completed_successfully
+    command:
+      [
+        "/usr/local/bin/openclaw-entrypoint.sh",
+        "node",
+        "dist/index.js",
+        "gateway",
+        "--bind",
+        "${OPENCLAW_GATEWAY_BIND}",
+        "--port",
+        "${OPENCLAW_GATEWAY_PORT}",
+        "--allow-unconfigured",
+      ]
+
+  openclaw-cli:
+    image: ${OPENCLAW_IMAGE}
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    network_mode: "service:openclaw-gateway"
+    env_file:
+      - .env
+    environment:
+      - HOME=/home/node
+      - NODE_ENV=production
+      - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
+      - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+      - GATEWAY_AUTH_PASSWORD=${GATEWAY_AUTH_PASSWORD}
+      - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
+      - XDG_CONFIG_HOME=${XDG_CONFIG_HOME}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
+      - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
+      - sog_keyring:/home/node/.local/share/keyrings
+    profiles:
+      - cli
+    entrypoint: ["node", "dist/index.js"]
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  web_traffic:
+    external: true
+
+volumes:
+  sog_keyring:

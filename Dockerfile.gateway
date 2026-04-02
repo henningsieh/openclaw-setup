@@ -1,0 +1,27 @@
+FROM ghcr.io/openclaw/openclaw:2026.3.28
+
+USER root
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends jq ripgrep gh ca-certificates curl gnome-keyring dbus-x11 \
+  && rm -rf /usr/local/go \
+  && GO_VERSION="$(curl -fsSL https://go.dev/VERSION?m=text | head -n1 | tr -d '\r')" \
+  && curl -fsSL "https://go.dev/dl/${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz \
+  && tar -C /usr/local -xzf /tmp/go.tgz \
+  && ln -sf /usr/local/go/bin/go /usr/local/bin/go \
+  && ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt \
+  && rm -f /tmp/go.tgz \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN chown -R node:node /usr/local/lib/node_modules /usr/local/bin \
+  && npm install -g @xdevplatform/xurl
+
+COPY docker-entrypoint.keyring.sh /usr/local/bin/openclaw-entrypoint.sh
+RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh
+
+ENV GOPATH=/home/node/go
+ENV PATH=/usr/local/go/bin:/home/node/go/bin:${PATH}
+
+USER node
+
+RUN mkdir -p /home/node/.local/share/keyrings && chmod 700 /home/node/.local/share/keyrings
+RUN go install github.com/visionik/sogcli/cmd/sog@latest
