@@ -1,27 +1,44 @@
 FROM ghcr.io/openclaw/openclaw:2026.3.28
 
 USER root
+
+# 1. Install system deps
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends jq ripgrep gh ca-certificates curl gnome-keyring dbus-x11 \
-  && rm -rf /usr/local/go \
-  && GO_VERSION="$(curl -fsSL https://go.dev/VERSION?m=text | head -n1 | tr -d '\r')" \
-  && curl -fsSL "https://go.dev/dl/${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz \
-  && tar -C /usr/local -xzf /tmp/go.tgz \
-  && ln -sf /usr/local/go/bin/go /usr/local/bin/go \
-  && ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt \
-  && rm -f /tmp/go.tgz \
-  && rm -rf /var/lib/apt/lists/*
+ && apt-get install -y --no-install-recommends \
+    jq ripgrep gh ca-certificates curl gnupg dbus-x11 git gnome-keyring \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN chown -R node:node /usr/local/lib/node_modules /usr/local/bin \
-  && npm install -g @xdevplatform/xurl
+# 2. Install Go (pinned for reproducible builds)
+ARG GO_VERSION=1.24.1
+RUN rm -rf /usr/local/go \
+ && curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz \
+ && tar -C /usr/local -xzf /tmp/go.tgz \
+ && ln -sf /usr/local/go/bin/go /usr/local/bin/go \
+ && ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt \
+ && rm -f /tmp/go.tgz
 
+# 3. Install Node.js tools including clawhub (npm package, NOT a curl script)
+RUN npm install -g @xdevplatform/xurl clawhub
+
+# 4. Setup Entrypoint
 COPY docker-entrypoint.keyring.sh /usr/local/bin/openclaw-entrypoint.sh
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh
 
-ENV GOPATH=/home/node/go
-ENV PATH=/usr/local/go/bin:/home/node/go/bin:${PATH}
-
+# 5. Switch to non-root user
 USER node
 
-RUN mkdir -p /home/node/.local/share/keyrings && chmod 700 /home/node/.local/share/keyrings
-RUN go install github.com/visionik/sogcli/cmd/sog@latest
+# 6. Setup Go environment, GOPATH dir, and keyrings
+ENV GOPATH=/home/node/go
+ENV PATH=/usr/local/go/bin:/home/node/go/bin:${PATH}
+RUN mkdir -p /home/node/go \
+ && mkdir -p /home/node/.local/share/keyrings \
+ && chmod 700 /home/node/.local/share/keyrings
+
+# 7. Install sogcli binary
+RUN go install github.com/visionik/sogcli/cmd/sog@v0.3.0
+
+# 8. Install the sogcli skill from ClawHub into the OpenClaw workspace skills dir
+#    CLAWHUB_WORKDIR tells clawhub where to put the ./skills/ folder
+ENV CLAWHUB_WORKDIR=/home/node/.openclaw
+RUN mkdir -p /home/node/.openclaw/skills \
+ && clawhub install sogcli --no-input --force
