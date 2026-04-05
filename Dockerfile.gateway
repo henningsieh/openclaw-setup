@@ -1,14 +1,21 @@
 FROM ghcr.io/openclaw/openclaw:2026.4.2
 
+# 1. System deps (root required)
 USER root
-
-# 1. Install system deps
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-    jq ripgrep gh ca-certificates curl gnupg dbus-x11 git gnome-keyring \
- && rm -rf /var/lib/apt/lists/*
+    jq ripgrep ca-certificates curl gnupg dbus-x11 git gnome-keyring \
+ && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+      | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+ && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+ && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+      > /etc/apt/sources.list.d/github-cli.list \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends gh \
+ && rm -rf /var/lib/apt/lists/* \
+ && update-ca-certificates
 
-# 2. Install Go (pinned for reproducible builds)
+# 2. Go (root required to place in /usr/local)
 ARG GO_VERSION=1.24.1
 RUN rm -rf /usr/local/go \
  && curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz \
@@ -17,28 +24,47 @@ RUN rm -rf /usr/local/go \
  && ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt \
  && rm -f /tmp/go.tgz
 
-# 3. Install Node.js tools including clawhub (npm package, NOT a curl script)
-RUN npm install -g @xdevplatform/xurl clawhub
-
-# 4. Setup Entrypoint
+# 3. Entrypoint + staged skills dir (root required)
 COPY docker-entrypoint.keyring.sh /usr/local/bin/openclaw-entrypoint.sh
-RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh
+RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
+ && mkdir -p /opt/openclaw-skills-default \
+ && chown node:node /opt/openclaw-skills-default
 
-# 5. Switch to non-root user
+# 4. Switch to non-root user for everything else
 USER node
 
-# 6. Setup Go environment, GOPATH dir, and keyrings
+# This overrides any missing system defaults in the base image
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
+
+# 5. Go env, GOPATH, keyrings
 ENV GOPATH=/home/node/go
 ENV PATH=/usr/local/go/bin:/home/node/go/bin:${PATH}
 RUN mkdir -p /home/node/go \
  && mkdir -p /home/node/.local/share/keyrings \
  && chmod 700 /home/node/.local/share/keyrings
 
-# 7. Install sogcli binary
+# 6. Install sogcli (user-level Go install)
 RUN go install github.com/visionik/sogcli/cmd/sog@v0.3.0
 
-# 8. Install the sogcli skill from ClawHub into the OpenClaw workspace skills dir
-#    CLAWHUB_WORKDIR tells clawhub where to put the ./skills/ folder
-ENV CLAWHUB_WORKDIR=/home/node/.openclaw
-RUN mkdir -p /home/node/.openclaw/skills \
- && clawhub install sogcli --no-input --force
+# 7. Install Node.js tools (user-local prefix, no root)
+# Set npm to install packages in user directory (no root needed)
+ENV npm_config_prefix=/home/node/.local
+
+# Create the directory and install tools
+RUN mkdir -p /home/node/.local \
+ && npm install -g @xdevplatform/xurl clawhub@latest @steipete/summarize \
+ && npm cache clean --force
+
+# Add installed binaries to PATH
+ENV PATH=/home/node/.local/bin:$PATH
+
+# ==========================================
+# 8. Skill Installation (Staged)
+# ==========================================
+# Install into a staging dir outside the bind-mounted /home/node/.openclaw.
+# The entrypoint will copy these into the live workspace on startup.
+ENV CLAWHUB_WORKDIR=/opt/openclaw-skills-default
+RUN clawhub install sogcli --no-input --force
+
+ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
+CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]
