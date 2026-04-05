@@ -25,7 +25,7 @@ RUN rm -rf /usr/local/go \
  && rm -f /tmp/go.tgz
 
 # 3. Entrypoint + staged skills dir (root required)
-COPY docker-entrypoint.keyring.sh /usr/local/bin/openclaw-entrypoint.sh
+COPY openclaw-init.sh /usr/local/bin/openclaw-entrypoint.sh
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
  && mkdir -p /opt/openclaw-skills-default \
  && chown node:node /opt/openclaw-skills-default
