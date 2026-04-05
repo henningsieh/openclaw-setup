@@ -2,9 +2,9 @@
 set -eu
 
 # Merge baked-in default skills into the live mounted workspace.
-# Do not overwrite user-managed skills in the mounted ~/.openclaw/skills.
-STAGED_SKILLS_DIR="/opt/openclaw-skills-default/skills"
-LIVE_SKILLS_DIR="/home/node/.openclaw/skills"
+: "${STAGED_SKILLS_DIR:?STAGED_SKILLS_DIR is not set}"
+: "${LIVE_SKILLS_DIR:?LIVE_SKILLS_DIR is not set}"
+
 if [ -d "$STAGED_SKILLS_DIR" ]; then
   mkdir -p "$LIVE_SKILLS_DIR"
   cp -rn "$STAGED_SKILLS_DIR/." "$LIVE_SKILLS_DIR/"
