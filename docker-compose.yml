@@ -1,6 +1,6 @@
 services:
   keyring-init:
-    image: ${OPENCLAW_IMAGE}
+    image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
     user: "0:0"
     entrypoint: ["sh"]
     command:
@@ -14,10 +14,12 @@ services:
     restart: "no"
 
   openclaw-gateway:
-    image: ${OPENCLAW_IMAGE}
+    image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
     build:
       context: .
       dockerfile: Dockerfile.gateway
+      args:
+        OPENCLAW_VERSION: ${OPENCLAW_VERSION}
     restart: unless-stopped
     env_file:
       - .env
@@ -37,7 +39,9 @@ services:
       - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
       - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
+      - OPENCLAW_DISABLE_BONJOUR=1
     volumes:
+      - openclaw_app:/app
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
       - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
@@ -58,7 +62,6 @@ services:
     # to work without NET_BIND_SERVICE.
     command:
       [
-        "/usr/local/bin/openclaw-entrypoint.sh",
         "node",
         "openclaw.mjs",
         "gateway",
@@ -70,10 +73,12 @@ services:
       ]
 
   openclaw-cli:
-    image: ${OPENCLAW_IMAGE}
+    image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
     build:
       context: .
       dockerfile: Dockerfile.gateway
+      args:
+        OPENCLAW_VERSION: ${OPENCLAW_VERSION}
     network_mode: "service:openclaw-gateway"
     env_file:
       - .env
@@ -85,6 +90,7 @@ services:
       - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
     volumes:
+      - openclaw_app:/app
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
       - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
@@ -107,3 +113,10 @@ networks:
 
 volumes:
   sog_keyring:
+  # Named volume for /app so Node.js reads JS modules from ext4 (fast) instead
+  # of Docker's overlay2 filesystem (slow for thousands of small files).
+  # This is auto-populated from the image on first run.
+  # IMPORTANT: if you upgrade OPENCLAW_VERSION, run:
+  #   docker volume rm openclaw_openclaw_app
+  # before docker compose up so the volume gets repopulated from the new image.
+  openclaw_app:

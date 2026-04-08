@@ -1,4 +1,6 @@
-FROM ghcr.io/openclaw/openclaw:2026.4.5
+# syntax=docker/dockerfile:1.4
+ARG OPENCLAW_VERSION
+FROM ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION}
 
 # 1. System deps (root required)
 USER root
