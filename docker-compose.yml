@@ -10,6 +10,7 @@ services:
       ]
     volumes:
       - sog_keyring:/home/node/.local/share/keyrings
+    network_mode: none
     restart: "no"
 
   openclaw-gateway:
@@ -23,7 +24,7 @@ services:
     environment:
       - HOME=/home/node
       - NODE_ENV=production
-      - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE}
+      - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
       - TERM=xterm-256color
       - OPENCLAW_NO_RESPAWN=${OPENCLAW_NO_RESPAWN}
       - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
@@ -31,14 +32,15 @@ services:
       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
       - GATEWAY_AUTH_PASSWORD=${GATEWAY_AUTH_PASSWORD}
       - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
-      - XDG_CONFIG_HOME=${XDG_CONFIG_HOME}
+      - XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-/home/node/.config}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
       - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
-      - /var/tmp/openclaw-compile-cache:/var/tmp/openclaw-compile-cache
+      - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
       - sog_keyring:/home/node/.local/share/keyrings
     ports:
       - "${OPENCLAW_GATEWAY_PORT}:18789"
@@ -50,11 +52,15 @@ services:
     depends_on:
       keyring-init:
         condition: service_completed_successfully
+    # Security note: cap_drop and no-new-privileges are intentionally omitted
+    # on the gateway (unlike openclaw-cli) because it binds a host port and
+    # runs the long-lived process. Harden further once port binding is confirmed
+    # to work without NET_BIND_SERVICE.
     command:
       [
         "/usr/local/bin/openclaw-entrypoint.sh",
         "node",
-        "dist/index.js",
+        "openclaw.mjs",
         "gateway",
         "--bind",
         "${OPENCLAW_GATEWAY_BIND}",
@@ -74,15 +80,21 @@ services:
     environment:
       - HOME=/home/node
       - NODE_ENV=production
+      - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
       - TERM=xterm-256color
       - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
+      - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
       - sog_keyring:/home/node/.local/share/keyrings
     profiles:
       - cli
-    entrypoint: ["node", "dist/index.js"]
+    depends_on:
+      keyring-init:
+        condition: service_completed_successfully
+    entrypoint: ["node", "openclaw.mjs"]
     cap_drop:
       - NET_RAW
       - NET_ADMIN
