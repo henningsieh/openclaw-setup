@@ -37,7 +37,7 @@ services:
       - XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-/home/node/.config}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
-      - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - PATH=/home/node/.local/bin:/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
       - OPENCLAW_DISABLE_BONJOUR=1
     volumes:
