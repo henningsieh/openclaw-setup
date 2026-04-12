@@ -41,7 +41,6 @@ services:
       - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
       - OPENCLAW_DISABLE_BONJOUR=1
     volumes:
-      - openclaw_app:/app
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
       - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
@@ -90,7 +89,6 @@ services:
       - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
     volumes:
-      - openclaw_app:/app
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
       - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
@@ -113,10 +111,3 @@ networks:
 
 volumes:
   sog_keyring:
-  # Named volume for /app so Node.js reads JS modules from ext4 (fast) instead
-  # of Docker's overlay2 filesystem (slow for thousands of small files).
-  # This is auto-populated from the image on first run.
-  # IMPORTANT: if you upgrade OPENCLAW_VERSION, run:
-  #   docker volume rm openclaw_openclaw_app
-  # before docker compose up so the volume gets repopulated from the new image.
-  openclaw_app:
