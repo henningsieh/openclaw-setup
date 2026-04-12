@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.4
+# 0. Get version from .env and use as build arg for base image
 ARG OPENCLAW_VERSION
 FROM ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION}
 
