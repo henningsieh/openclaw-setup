@@ -20,6 +20,7 @@ services:
       dockerfile: Dockerfile.gateway
       args:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION}
+        OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
     restart: unless-stopped
     env_file:
       - .env
@@ -90,6 +91,7 @@ services:
       dockerfile: Dockerfile.gateway
       args:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION}
+        OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
     network_mode: "service:openclaw-gateway"
     env_file:
       - .env
