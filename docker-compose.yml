@@ -26,7 +26,7 @@ services:
     environment:
       - HOME=/home/node
       - NODE_ENV=production
-      - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
+      - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
       - TERM=xterm-256color
       - OPENCLAW_NO_RESPAWN=${OPENCLAW_NO_RESPAWN}
       - OPENCLAW_GATEWAY_BIND=${OPENCLAW_GATEWAY_BIND}
@@ -43,7 +43,7 @@ services:
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
-      - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
+      - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
       - sog_keyring:/home/node/.local/share/keyrings
     ports:
       - "${OPENCLAW_GATEWAY_PORT}:18789"
@@ -84,14 +84,14 @@ services:
     environment:
       - HOME=/home/node
       - NODE_ENV=production
-      - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
+      - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
       - TERM=xterm-256color
-      - PATH=/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - PATH=/home/node/.local/bin:/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
-      - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}
+      - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
       - sog_keyring:/home/node/.local/share/keyrings
     profiles:
       - cli
