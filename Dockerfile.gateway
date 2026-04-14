@@ -54,7 +54,7 @@ ENV npm_config_prefix=/home/node/.local
 
 # Create the directory and install tools
 RUN mkdir -p /home/node/.local \
- && npm install -g @xdevplatform/xurl clawhub@latest @steipete/summarize \
+ && npm install -g @xdevplatform/xurl clawhub@latest @steipete/summarize @tobilu/qmd \
  && npm cache clean --force
 
 # Add installed binaries to PATH
