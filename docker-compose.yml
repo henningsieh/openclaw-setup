@@ -62,14 +62,26 @@ services:
     command:
       [
         "node",
-        "openclaw.mjs",
+        "dist/index.js",
         "gateway",
         "--bind",
-        "${OPENCLAW_GATEWAY_BIND}",
+        "${OPENCLAW_GATEWAY_BIND:-lan}",
         "--port",
-        "${OPENCLAW_GATEWAY_PORT}",
+        "${OPENCLAW_GATEWAY_PORT:-18789}",
         "--allow-unconfigured",
       ]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:${OPENCLAW_GATEWAY_PORT:-18789}/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   openclaw-cli:
     image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
@@ -98,7 +110,7 @@ services:
     depends_on:
       keyring-init:
         condition: service_completed_successfully
-    entrypoint: ["node", "openclaw.mjs"]
+    entrypoint: ["node", "dist/index.js"]
     cap_drop:
       - NET_RAW
       - NET_ADMIN
