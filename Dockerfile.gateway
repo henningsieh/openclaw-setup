@@ -69,4 +69,4 @@ ENV CLAWHUB_WORKDIR=/opt/openclaw-skills-default
 RUN clawhub install sogcli --no-input --force
 
 ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
-CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured"]
+CMD ["node", "dist/index.js", "gateway", "--allow-unconfigured"]
