@@ -194,6 +194,49 @@ OPENCLAW_BASE_IMAGE=openclaw-patched-pr99999
 
 ---
 
+## Image size breakdown
+
+The gateway image (`openclaw-local`) is noticeably larger than the official
+base image it builds on top of. Here is why, broken down by `Dockerfile.gateway`
+step (measured with `docker history`):
+
+| `Dockerfile.gateway` step | Layer size | What it adds |
+|---|---|---|
+| `npm install -g clawhub xurl @steipete/summarize @tobilu/qmd` | **~1.1 GB** | npm packages + their full dependency trees; `clawhub` alone pulls in a large transitive closure |
+| Go toolchain (`go1.24.1.linux-amd64.tar.gz`) | **~253 MB** | The entire Go standard library, compiler, and tools under `/usr/local/go` |
+| `go install sogcli` | **~136 MB** | Compiled `sog` binary **plus** the Go module download cache left in `$GOPATH/pkg/mod` |
+| `apt-get install` (gh, git, gnome-keyring, dbus-x11, ripgrep, jq, curl, gnupg, ca-certificates) | **~133 MB** | System-level tooling not present in the Node base image |
+| `clawhub install sogcli` (skill staging) | **< 1 MB** | A handful of text/YAML files |
+| **Total added by this repo** | **~1.62 GB** | |
+
+For reference, the current images on this host:
+
+```
+openclaw-local    2026.4.23-beta.5   5.08 GB   (gateway image, built here)
+ghcr.io/openclaw/openclaw  2026.4.23-beta.5   3.45 GB   (official base)
+```
+
+**Why the npm layer is so large** — `npm install -g` runs as a single `RUN`
+statement, so Docker stores the entire post-install filesystem delta as one
+opaque layer. Even `npm cache clean --force` at the end does not shrink the
+layer because Docker captures the layer *after* the cache is cleared; the
+packages themselves (source maps, types, transitive dependencies of
+`clawhub@latest`) account for the bulk.
+
+**Why the Go module cache is not cleaned** — `go install` downloads sources
+into `$GOPATH/pkg/mod` before compiling. Only the resulting binary ends up in
+`$GOPATH/bin/sog`, but the cached sources stay in the layer. Adding
+`&& rm -rf /home/node/go/pkg/mod` to step 6 in `Dockerfile.gateway` would
+recover ~100 MB.
+
+**How to inspect layers yourself**:
+
+```bash
+docker history openclaw-local:<tag> --format "table {{.CreatedBy}}\t{{.Size}}"
+```
+
+---
+
 ## Current image inventory
 
 | Image | Tag | Description |
