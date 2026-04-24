@@ -1,14 +1,9 @@
 # OpenClaw Gateway — Local Source Build Guide
 
 This repository customises the official OpenClaw Docker setup to support
-**locally-built base images**, allowing unmerged upstream PRs to be merged in
-before an official release ships them.
+**locally-built base images**. The goal is to let you run a gateway image based on upstream OpenClaw source changes, such as an unmerged pull equest from the official repository or a fork, before those changes ship in an official container release.
 
-The current branch (`feature/local-source-build-pr65561`) ships with PR
-[openclaw/openclaw#65561](https://github.com/openclaw/openclaw/pull/65561)
-baked in, which fixes
-[issue #65548](https://github.com/openclaw/openclaw/issues/65548):
-`ERR_MODULE_NOT_FOUND` crashes on every Telegram/Discord message in 2026.4.12.
+Use this when you need to validate or temporarily adopt an upstream fix, feature, or runtime change while still keeping your gateway deployment based on the standard OpenClaw image layout.
 
 ---
 
@@ -38,9 +33,9 @@ not pushed to any registry. Run `docker images | grep openclaw` to list them.
 
 ---
 
-## Reproducing a patched build for a future PR
+## Building a customized image from an upstream PR
 
-Follow these steps every time you want to apply a new upstream PR.
+Follow these steps whenever you want to build from an upstream pull request or another source branch derived from the official OpenClaw repository.
 
 ### Step 1 — Clone / update the upstream source
 
@@ -49,23 +44,30 @@ Follow these steps every time you want to apply a new upstream PR.
 git clone https://github.com/openclaw/openclaw.git /root/openclaw-src
 cd /root/openclaw-src
 
-# Add the fork that contains the PR (one-time per fork):
+# Add the remote that contains the PR branch (one-time per fork or mirror):
 git remote add <fork-author> https://github.com/<fork-author>/openclaw.git
 ```
 
-### Step 2 — Check out the PR branch
+### Step 2 — Check out the PR source branch
 
 ```bash
 cd /root/openclaw-src
 
-# Fetch the fork's branches:
+# Fetch the remote's branches:
 git fetch <fork-author>
 
-# Check out the PR branch:
+# Check out the branch that contains the PR changes:
 git checkout <fork-author>/<pr-branch-name>
 ```
 
-For PR #65561 the commands were:
+Alternative, if the PR branch still exists on GitHub and you prefer fetching by PR number:
+
+```bash
+git fetch origin pull/<pr-number>/head:pr-<pr-number>
+git checkout pr-<pr-number>
+```
+
+Example: For PR #65561 the commands were:
 
 ```bash
 git remote add garnetlyx https://github.com/garnetlyx/openclaw.git
@@ -94,22 +96,35 @@ Tag it with the same version string you have in your `.env`:
 cd /root/openclaw-src
 docker build --no-cache \
   --build-arg OPENCLAW_DOCKER_APT_UPGRADE=0 \
-  -t openclaw-patched:2026.4.12 \
+  -t openclaw-patched:${OPENCLAW_VERSION} \
   .
 ```
 
 `OPENCLAW_DOCKER_APT_UPGRADE=0` skips `apt-get upgrade` in the runtime stage
 to save ~5 min of build time (optional but recommended).
 
-Build takes roughly **10 minutes**. Verify the fix is present:
+Build takes roughly **10 minutes**. Validate that the expected change is present by running whatever narrow check matches the PR you are testing. For example, if the change adds or renames runtime bundles, you can inspect the generated files:
 
 ```bash
-docker run --rm openclaw-patched:2026.4.12 \
+docker run --rm openclaw-patched:${OPENCLAW_VERSION} \
   ls /app/dist/ | grep -E "status|commands-status"
 # Expected output includes:
 #   status.runtime.js
 #   commands-status-deps.runtime.js
 #   commands-status.runtime.js
+```
+
+Other useful validation patterns:
+
+```bash
+# Check that a dependency or tool exists:
+docker run --rm openclaw-patched:${OPENCLAW_VERSION} command -v <binary>
+
+# Check that a known file from the PR is present:
+docker run --rm openclaw-patched:${OPENCLAW_VERSION} ls /app/dist/<path>
+
+# Run a focused CLI command inside the built image:
+docker run --rm openclaw-patched:${OPENCLAW_VERSION} node dist/index.js --help
 ```
 
 ### Step 5 — Build the gateway image on top of the patched base
@@ -119,8 +134,7 @@ cd /root/openclaw
 docker compose build --no-cache openclaw-gateway
 ```
 
-This produces `openclaw-local:2026.4.12` (the name comes from `OPENCLAW_IMAGE`
-in `.env`), layered on top of `openclaw-patched:2026.4.12`.
+This produces `openclaw-local:${OPENCLAW_VERSION}` (the name comes from `OPENCLAW_IMAGE` in `.env`), layered on top of `openclaw-patched:${OPENCLAW_VERSION}`.
 
 ### Step 6 — Restart and validate
 
@@ -138,7 +152,7 @@ curl http://localhost:18789/healthz
 
 ```dotenv
 # Which version tag to use everywhere
-OPENCLAW_VERSION=2026.4.12
+OPENCLAW_VERSION=<release-version>
 
 # The name docker compose uses when tagging the built gateway image
 OPENCLAW_IMAGE=openclaw-local
@@ -164,19 +178,19 @@ docker compose up -d openclaw-gateway
 `docker-compose.yml` defaults to `ghcr.io/openclaw/openclaw` when
 `OPENCLAW_BASE_IMAGE` is unset.
 
-### Upgrading to a new official release (e.g. 2026.5.0)
+### Upgrading to a new official release
 
 Once the upstream fix ships in an official release you no longer need the
 patched image. Just update `.env`:
 
 ```dotenv
-OPENCLAW_VERSION=2026.5.0
+OPENCLAW_VERSION=<new-release-version>
 # Remove OPENCLAW_BASE_IMAGE to revert to ghcr.io
 ```
 
 Then rebuild normally.
 
-### Applying a different / newer PR
+### Applying a different or newer PR
 
 Repeat **Steps 1–6** above:
 1. Fetch the new PR branch in `/root/openclaw-src`.
@@ -187,7 +201,7 @@ Repeat **Steps 1–6** above:
 You can keep multiple patched images side-by-side by using different tags:
 
 ```bash
-docker build --no-cache -t openclaw-patched-pr99999:2026.4.12 .
+docker build --no-cache -t openclaw-patched-pr99999:${OPENCLAW_VERSION} .
 # Then in .env:
 OPENCLAW_BASE_IMAGE=openclaw-patched-pr99999
 ```
@@ -209,12 +223,7 @@ step (measured with `docker history`):
 | `clawhub install sogcli` (skill staging) | **< 1 MB** | A handful of text/YAML files |
 | **Total added by this repo** | **~1.62 GB** | |
 
-For reference, the current images on this host:
-
-```
-openclaw-local    2026.4.23-beta.5   5.08 GB   (gateway image, built here)
-ghcr.io/openclaw/openclaw  2026.4.23-beta.5   3.45 GB   (official base)
-```
+For comparison, expect the locally built gateway image to be larger than the official base image with the same tag, because this repository adds extra system packages, a Go toolchain, and globally installed Node.js tools on top of the upstream image.
 
 **Why the npm layer is so large** — `npm install -g` runs as a single `RUN`
 statement, so Docker stores the entire post-install filesystem delta as one
@@ -239,18 +248,18 @@ docker history openclaw-local:<tag> --format "table {{.CreatedBy}}\t{{.Size}}"
 
 ## Current image inventory
 
-| Image | Tag | Description |
+| Image | Role | Description |
 |---|---|---|
-| `openclaw-patched` | `2026.4.12` | Source build with PR #65561 (Telegram/Discord crash fix) |
-| `openclaw-local` | `2026.4.12` | Gateway image built on top of `openclaw-patched` |
+| `openclaw-patched` | patched base image | Locally built OpenClaw base image containing upstream source changes from a PR branch or another custom source branch |
+| `openclaw-local` | gateway image | Gateway image built on top of the patched base image using this repository's Dockerfile and Compose setup |
 
 Images live only in the local Docker store. They are **not** pushed to any
 registry. To save them for transfer or backup:
 
 ```bash
-docker save openclaw-patched:2026.4.12 | gzip > openclaw-patched-2026.4.12.tar.gz
-docker save openclaw-local:2026.4.12   | gzip > openclaw-local-2026.4.12.tar.gz
+docker save openclaw-patched:${OPENCLAW_VERSION} | gzip > openclaw-patched-${OPENCLAW_VERSION}.tar.gz
+docker save openclaw-local:${OPENCLAW_VERSION}   | gzip > openclaw-local-${OPENCLAW_VERSION}.tar.gz
 
 # Restore on another host:
-docker load < openclaw-patched-2026.4.12.tar.gz
+docker load < openclaw-patched-${OPENCLAW_VERSION}.tar.gz
 ```
