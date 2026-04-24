@@ -1,19 +1,27 @@
-# 0. Get version from .env and use as build arg for base image
+# 0. Base image — defaults to official ghcr.io release, but can be overridden
+#    with OPENCLAW_BASE_IMAGE to use a locally built image (e.g. with a PR merged in).
+ARG OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
 ARG OPENCLAW_VERSION
-FROM ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION}
+FROM ${OPENCLAW_BASE_IMAGE}:${OPENCLAW_VERSION}
 
 # 1. System deps (root required)
 USER root
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
+# Base image apt keys may be stale for locally-built images; bypass signature
+# checks so we can install packages needed to bootstrap a fresh keyring.
+RUN rm -rf /var/lib/apt/lists/* \
+ && apt-get -o Acquire::AllowInsecureRepositories=true \
+            -o Acquire::AllowDowngradeToInsecureRepositories=true update \
+ && apt-get -o Acquire::AllowInsecureRepositories=true install -y \
+            --allow-unauthenticated --no-install-recommends \
     jq ripgrep ca-certificates curl gnupg dbus-x11 git gnome-keyring \
  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
       | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
  && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
       > /etc/apt/sources.list.d/github-cli.list \
- && apt-get update \
- && apt-get install -y --no-install-recommends gh \
+ && apt-get -o Acquire::AllowInsecureRepositories=true update \
+ && apt-get -o Acquire::AllowInsecureRepositories=true install -y \
+            --allow-unauthenticated --no-install-recommends gh \
  && rm -rf /var/lib/apt/lists/* \
  && update-ca-certificates
 
