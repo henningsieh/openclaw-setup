@@ -1,7 +1,7 @@
 # 0. Base image — defaults to official ghcr.io release, but can be overridden
 #    with OPENCLAW_BASE_IMAGE to use a locally built image (e.g. with a PR merged in).
 ARG OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
-ARG OPENCLAW_VERSION
+ARG OPENCLAW_VERSION=latest
 FROM ${OPENCLAW_BASE_IMAGE}:${OPENCLAW_VERSION}
 
 # 1. System deps (root required)
