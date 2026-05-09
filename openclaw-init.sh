@@ -1,15 +1,18 @@
 #!/usr/bin/env sh
 set -eu
 
-# Merge baked-in default skills into the live mounted workspace.
+# Seed the live config dir from the image-baked snapshot (no-clobber for skills).
+# Then always merge the clawhub registry so seed skills are properly tracked.
 : "${STAGED_SKILLS_DIR:?STAGED_SKILLS_DIR is not set}"
 : "${LIVE_SKILLS_DIR:?LIVE_SKILLS_DIR is not set}"
 
-if [ -d "$STAGED_SKILLS_DIR" ]; then
-  mkdir -p "$LIVE_SKILLS_DIR"
-  cp -rn "$STAGED_SKILLS_DIR/." "$LIVE_SKILLS_DIR/"
-  chown -R node:node "$LIVE_SKILLS_DIR"
-fi
+mkdir -p "$LIVE_SKILLS_DIR"
+cp -rn "$STAGED_SKILLS_DIR/." "$LIVE_SKILLS_DIR/"
+jq -s '{version:1,skills:(.[0].skills*.[1].skills)}' \
+  "$STAGED_SKILLS_DIR/.clawhub/lock.json" \
+  "$LIVE_SKILLS_DIR/.clawhub/lock.json" \
+  > "$LIVE_SKILLS_DIR/.clawhub/lock.json.tmp" \
+  && mv "$LIVE_SKILLS_DIR/.clawhub/lock.json.tmp" "$LIVE_SKILLS_DIR/.clawhub/lock.json"
 
 if command -v dbus-launch >/dev/null 2>&1 && command -v gnome-keyring-daemon >/dev/null 2>&1; then
   if [ -n "${GOG_KEYRING_PASSWORD:-}" ]; then
