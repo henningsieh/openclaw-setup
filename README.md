@@ -7,6 +7,12 @@ Use this when you need to validate or temporarily adopt an upstream fix, feature
 
 ---
 
+## Agent Instructions
+
+See AGENTS.md for machine-oriented guidelines.
+
+---
+
 ## How it works
 
 The `docker-compose.yml` / `Dockerfile.gateway` accept an `OPENCLAW_BASE_IMAGE`
@@ -157,9 +163,6 @@ OPENCLAW_VERSION=<release-version>
 # Go toolchain version installed inside the gateway image
 GO_VERSION=1.26.3
 
-# sogcli version — must be compatible with GO_VERSION
-SOGCLI_VERSION=v0.3.0
-
 # Name docker compose uses when tagging the locally built gateway image
 OPENCLAW_IMAGE=openclaw-local
 
@@ -223,9 +226,9 @@ step (measured with `docker history`):
 |---|---|---|
 | `npm install -g clawhub xurl @steipete/summarize @tobilu/qmd` | **~1.1 GB** | npm packages + their full dependency trees; `clawhub` alone pulls in a large transitive closure |
 | Go toolchain (`go1.26.3.linux-amd64.tar.gz`) | **~253 MB** | The entire Go standard library, compiler, and tools under `/usr/local/go` |
-| `go install sogcli` | **~136 MB** | Compiled `sog` binary **plus** the Go module download cache left in `$GOPATH/pkg/mod` |
-| `apt-get install` (gh, git, gnome-keyring, dbus-x11, ripgrep, jq, curl, gnupg, ca-certificates) | **~133 MB** | System-level tooling not present in the Node base image |
-| `clawhub install sogcli` (skill staging) | **< 1 MB** | A handful of text/YAML files |
+| `go install qcard@latest` | **~136 MB** | Compiled `qcard` binary plus the Go module download cache left in `$GOPATH/pkg/mod` |
+| `apt-get install` (gh, git, ripgrep, jq, curl, gnupg, ca-certificates, util-linux, iproute2, nmap, htop, dstat, glances, strace, sysstat, iperf3, socat, hping3, arp-scan, iftop, nethogs, lsof, ncdu, lshw, dmidecode, hdparm, xxd, ldap-utils, smbclient, krb5-user, snmp, openssl, gnutls-bin, python3, nano, …) | **~350 MB** | Expanded IT-admin toolkit baked into step 1 |
+| `clawhub install github` (skill seeding) | **< 1 MB** | A handful of text/YAML files baked into `/opt/openclaw-skills-seed/` |
 | **Total added by this repo** | **~1.62 GB** | |
 
 For comparison, expect the locally built gateway image to be larger than the official base image with the same tag, because this repository adds extra system packages, a Go toolchain, and globally installed Node.js tools on top of the upstream image.
@@ -239,7 +242,7 @@ packages themselves (source maps, types, transitive dependencies of
 
 **Why the Go module cache is not cleaned** — `go install` downloads sources
 into `$GOPATH/pkg/mod` before compiling. Only the resulting binary ends up in
-`$GOPATH/bin/sog`, but the cached sources stay in the layer. Adding
+`$GOPATH/bin/qcard`, but the cached sources stay in the layer. Adding
 `&& rm -rf /home/node/go/pkg/mod` to step 6 in `Dockerfile.gateway` would
 recover ~100 MB.
 
