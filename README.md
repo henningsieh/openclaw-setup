@@ -151,17 +151,21 @@ curl http://localhost:18789/healthz
 ## `.env` reference — switching between images
 
 ```dotenv
-# Which version tag to use everywhere
+# Version tag applied to all openclaw images (base + gateway)
 OPENCLAW_VERSION=<release-version>
 
-# The name docker compose uses when tagging the built gateway image
+# Go toolchain version installed inside the gateway image
+GO_VERSION=1.26.3
+
+# sogcli version — must be compatible with GO_VERSION
+SOGCLI_VERSION=v0.3.0
+
+# Name docker compose uses when tagging the locally built gateway image
 OPENCLAW_IMAGE=openclaw-local
 
 # Base image for Dockerfile.gateway:
-#   Official release (default when key is absent):
-#     OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
-#   Locally-built patched image:
-#     OPENCLAW_BASE_IMAGE=openclaw-patched
+#   Official release (default):  OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
+#   Locally-built patched image: OPENCLAW_BASE_IMAGE=openclaw-patched
 OPENCLAW_BASE_IMAGE=openclaw-patched
 ```
 
@@ -185,7 +189,8 @@ patched image. Just update `.env`:
 
 ```dotenv
 OPENCLAW_VERSION=<new-release-version>
-# Remove OPENCLAW_BASE_IMAGE to revert to ghcr.io
+GO_VERSION=<new-go-version>       # update if a newer Go ships with the release
+# Remove or comment out OPENCLAW_BASE_IMAGE to revert to ghcr.io
 ```
 
 Then rebuild normally.
@@ -217,7 +222,7 @@ step (measured with `docker history`):
 | `Dockerfile.gateway` step | Layer size | What it adds |
 |---|---|---|
 | `npm install -g clawhub xurl @steipete/summarize @tobilu/qmd` | **~1.1 GB** | npm packages + their full dependency trees; `clawhub` alone pulls in a large transitive closure |
-| Go toolchain (`go1.24.1.linux-amd64.tar.gz`) | **~253 MB** | The entire Go standard library, compiler, and tools under `/usr/local/go` |
+| Go toolchain (`go1.26.3.linux-amd64.tar.gz`) | **~253 MB** | The entire Go standard library, compiler, and tools under `/usr/local/go` |
 | `go install sogcli` | **~136 MB** | Compiled `sog` binary **plus** the Go module download cache left in `$GOPATH/pkg/mod` |
 | `apt-get install` (gh, git, gnome-keyring, dbus-x11, ripgrep, jq, curl, gnupg, ca-certificates) | **~133 MB** | System-level tooling not present in the Node base image |
 | `clawhub install sogcli` (skill staging) | **< 1 MB** | A handful of text/YAML files |

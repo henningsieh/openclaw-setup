@@ -22,6 +22,7 @@ services:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION}
         OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
         GO_VERSION: ${GO_VERSION}
+        SOGCLI_VERSION: ${SOGCLI_VERSION}
     restart: unless-stopped
     env_file:
       - .env
@@ -94,6 +95,7 @@ services:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION}
         OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
         GO_VERSION: ${GO_VERSION}
+        SOGCLI_VERSION: ${SOGCLI_VERSION}
     network_mode: "service:openclaw-gateway"
     env_file:
       - .env

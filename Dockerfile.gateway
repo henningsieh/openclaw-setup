@@ -54,7 +54,8 @@ RUN mkdir -p /home/node/go \
  && chmod 700 /home/node/.local/share/keyrings
 
 # 6. Install sogcli (user-level Go install)
-RUN go install github.com/visionik/sogcli/cmd/sog@v0.3.0
+ARG SOGCLI_VERSION
+RUN go install github.com/visionik/sogcli/cmd/sog@${SOGCLI_VERSION}
 
 # 7. Install Node.js tools (user-local prefix, no root)
 # Set npm to install packages in user directory (no root needed)
