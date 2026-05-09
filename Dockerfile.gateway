@@ -13,15 +13,27 @@ RUN rm -rf /var/lib/apt/lists/* \
             -o Acquire::AllowDowngradeToInsecureRepositories=true update \
  && apt-get -o Acquire::AllowInsecureRepositories=true install -y \
             --allow-unauthenticated --no-install-recommends \
+    # --- Core utilities ---
     jq ripgrep ca-certificates curl gnupg dbus-x11 git gnome-keyring \
+    # --- IT Admin / Networking ---
+    iputils-ping iproute2 net-tools dnsutils traceroute mtr telnet \
+    netcat-openbsd tcpdump nmap whois \
+    # --- System monitoring ---
+    procps htop iotop sysstat strace \
+    # --- File processing ---
+    file tree less vim-tiny unzip zip p7zip-full \
+    # --- Storage / Hardware ---
+    fdisk util-linux parted smartmontools \
+    # --- Other ---
+    rsync openssh-client wget bc \
  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
-      | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+ | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
  && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
-      > /etc/apt/sources.list.d/github-cli.list \
+ > /etc/apt/sources.list.d/github-cli.list \
  && apt-get -o Acquire::AllowInsecureRepositories=true update \
  && apt-get -o Acquire::AllowInsecureRepositories=true install -y \
-            --allow-unauthenticated --no-install-recommends gh \
+ --allow-unauthenticated --no-install-recommends gh \
  && rm -rf /var/lib/apt/lists/* \
  && update-ca-certificates
 
@@ -34,11 +46,11 @@ RUN rm -rf /usr/local/go \
  && ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt \
  && rm -f /tmp/go.tgz
 
-# 3. Entrypoint + staged skills dir (root required)
+# 3. Entrypoint + skill seed dir (root required)
 COPY openclaw-init.sh /usr/local/bin/openclaw-entrypoint.sh
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
- && mkdir -p /opt/openclaw-skills-default \
- && chown node:node /opt/openclaw-skills-default
+ && mkdir -p /opt/openclaw-skills-seed \
+ && chown node:node /opt/openclaw-skills-seed
 
 # 4. Switch to non-root user for everything else
 USER node
@@ -53,9 +65,8 @@ RUN mkdir -p /home/node/go \
  && mkdir -p /home/node/.local/share/keyrings \
  && chmod 700 /home/node/.local/share/keyrings
 
-# 6. Install sogcli (user-level Go install)
-ARG SOGCLI_VERSION
-RUN go install github.com/visionik/sogcli/cmd/sog@${SOGCLI_VERSION}
+# 6. Install qcard (user-level Go install)
+RUN go install ser1.net/qcard@latest
 
 # 7. Install Node.js tools (user-local prefix, no root)
 # Set npm to install packages in user directory (no root needed)
@@ -70,12 +81,15 @@ RUN mkdir -p /home/node/.local \
 ENV PATH=/home/node/.local/bin:$PATH
 
 # ==========================================
-# 8. Skill Installation (Staged)
+# 8. Skill Installation (Seed)
 # ==========================================
-# Install into a staging dir outside the bind-mounted /home/node/.openclaw.
-# The entrypoint will copy these into the live workspace on startup.
-ENV CLAWHUB_WORKDIR=/opt/openclaw-skills-default
-RUN clawhub install sogcli --no-input --force
+# Bake skills into /opt/openclaw-skills-seed at build time.
+# The entrypoint copies them into ~/.openclaw/skills/ on first container start.
+# After that, ~/.openclaw/skills/ is the single source of truth.
+RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-input --force
+
+# Point interactive clawhub to the live skills dir (single source of truth)
+ENV CLAWHUB_WORKDIR=/home/node/.openclaw
 
 ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
 CMD ["node", "dist/index.js", "gateway", "--allow-unconfigured"]
