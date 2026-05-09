@@ -1,18 +1,4 @@
 services:
-  keyring-init:
-    image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
-    user: "0:0"
-    entrypoint: ["sh"]
-    command:
-      [
-        "-lc",
-        "mkdir -p /home/node/.local/share/keyrings && chown -R 1000:1000 /home/node/.local/share/keyrings && chmod 700 /home/node/.local/share/keyrings",
-      ]
-    volumes:
-      - sog_keyring:/home/node/.local/share/keyrings
-    network_mode: none
-    restart: "no"
-
   openclaw-gateway:
     image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
     build:
@@ -22,7 +8,6 @@ services:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION}
         OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
         GO_VERSION: ${GO_VERSION}
-        SOGCLI_VERSION: ${SOGCLI_VERSION}
     restart: unless-stopped
     env_file:
       - .env
@@ -36,7 +21,6 @@ services:
       - OPENCLAW_GATEWAY_PORT=${OPENCLAW_GATEWAY_PORT}
       - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
       - GATEWAY_AUTH_PASSWORD=${GATEWAY_AUTH_PASSWORD}
-      - GOG_KEYRING_PASSWORD=${GOG_KEYRING_PASSWORD}
       - XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-/home/node/.config}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
@@ -47,7 +31,6 @@ services:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
       - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
-      - sog_keyring:/home/node/.local/share/keyrings
     ports:
       - "${OPENCLAW_GATEWAY_PORT}:18789"
     networks:
@@ -55,9 +38,6 @@ services:
       web_traffic:
         aliases:
           - openclaw-gateway
-    depends_on:
-      keyring-init:
-        condition: service_completed_successfully
     # Security note: cap_drop and no-new-privileges are intentionally omitted
     # on the gateway (unlike openclaw-cli) because it binds a host port and
     # runs the long-lived process. Harden further once port binding is confirmed
@@ -95,7 +75,6 @@ services:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION}
         OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
         GO_VERSION: ${GO_VERSION}
-        SOGCLI_VERSION: ${SOGCLI_VERSION}
     network_mode: "service:openclaw-gateway"
     env_file:
       - .env
@@ -110,12 +89,8 @@ services:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
       - ${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}:${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
-      - sog_keyring:/home/node/.local/share/keyrings
     profiles:
       - cli
-    depends_on:
-      keyring-init:
-        condition: service_completed_successfully
     entrypoint: ["node", "dist/index.js"]
     cap_drop:
       - NET_RAW
@@ -126,6 +101,3 @@ services:
 networks:
   web_traffic:
     external: true
-
-volumes:
-  sog_keyring:
