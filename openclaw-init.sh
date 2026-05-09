@@ -14,6 +14,9 @@ fi
 if command -v dbus-launch >/dev/null 2>&1 && command -v gnome-keyring-daemon >/dev/null 2>&1; then
   if [ -n "${GOG_KEYRING_PASSWORD:-}" ]; then
     eval "$(dbus-launch --sh-syntax)"
+    # Persist D-Bus session address so `docker exec` shells can source it
+    printf 'export DBUS_SESSION_BUS_ADDRESS="%s"\n' "$DBUS_SESSION_BUS_ADDRESS" \
+      > /tmp/dbus-session.env
     printf '%s\n' "$GOG_KEYRING_PASSWORD" | gnome-keyring-daemon --unlock --components=secrets >/dev/null
   fi
 fi
