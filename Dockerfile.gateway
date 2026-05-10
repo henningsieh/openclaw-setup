@@ -101,8 +101,8 @@ ENV PATH=/home/node/.local/bin:$PATH
 # The entrypoint copies them into ~/.openclaw/skills/ on first container start.
 # After that, ~/.openclaw/skills/ is the single source of truth.
 RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-input --force \
- && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install browser-use --no-input --force \
- && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install agent-browser-clawdbot --no-input --force
+ && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install browser-use --version 2.0.1 --no-input --force \
+ && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install agent-browser-clawdbot --version 0.1.0 --no-input --force
 
 # Point interactive clawhub to the live skills dir (single source of truth)
 ENV CLAWHUB_WORKDIR=/home/node/.openclaw
