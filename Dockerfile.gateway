@@ -4,6 +4,12 @@ ARG OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
 ARG OPENCLAW_VERSION=latest
 FROM ${OPENCLAW_BASE_IMAGE}:${OPENCLAW_VERSION}
 
+ARG GO_VERSION
+ARG QCARD_VERSION
+ARG CLAWHUB_CLI_VERSION
+ARG BROWSER_USE_VERSION
+ARG AGENT_BROWSER_CLAWDBOT_VERSION
+
 # 1. System deps (root required)
 USER root
 # Base image apt keys may be stale for locally-built images; bypass signature
@@ -50,7 +56,6 @@ RUN rm -rf /var/lib/apt/lists/* \
  && update-ca-certificates
 
 # 2. Go (root required to place in /usr/local)
-ARG GO_VERSION
 RUN rm -rf /usr/local/go \
  && curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz \
  && tar -C /usr/local -xzf /tmp/go.tgz \
@@ -76,7 +81,7 @@ ENV PATH=/usr/local/go/bin:/home/node/go/bin:${PATH}
 RUN mkdir -p /home/node/go
 
 # 6. Install qcard (user-level Go install)
-RUN go install ser1.net/qcard@latest
+RUN go install ser1.net/qcard@${QCARD_VERSION}
 
 # 7. Install Node.js tools (user-local prefix, no root)
 # Set npm to install packages in user directory (no root needed)
@@ -84,7 +89,7 @@ ENV npm_config_prefix=/home/node/.local
 
 # Create the directory and install tools
 RUN mkdir -p /home/node/.local \
- && npm install -g @xdevplatform/xurl clawhub@latest @steipete/summarize @tobilu/qmd \
+ && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd \
  && npm cache clean --force
 
 # Add installed binaries to PATH
@@ -97,8 +102,8 @@ ENV PATH=/home/node/.local/bin:$PATH
 # The entrypoint copies them into ~/.openclaw/skills/ on first container start.
 # After that, ~/.openclaw/skills/ is the single source of truth.
 RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-input --force \
- && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install browser-use --version 2.0.1 --no-input --force \
- && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install agent-browser-clawdbot --version 0.1.0 --no-input --force
+ && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install browser-use --version ${BROWSER_USE_VERSION} --no-input --force \
+ && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install agent-browser-clawdbot --version ${AGENT_BROWSER_CLAWDBOT_VERSION} --no-input --force
 
 # Point interactive clawhub to the live skills dir (single source of truth)
 ENV CLAWHUB_WORKDIR=/home/node/.openclaw

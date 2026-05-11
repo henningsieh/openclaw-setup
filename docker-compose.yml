@@ -8,6 +8,10 @@ services:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION}
         OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
         GO_VERSION: ${GO_VERSION}
+        QCARD_VERSION: ${QCARD_VERSION}
+        CLAWHUB_CLI_VERSION: ${CLAWHUB_CLI_VERSION}
+        BROWSER_USE_VERSION: ${BROWSER_USE_VERSION}
+        AGENT_BROWSER_CLAWDBOT_VERSION: ${AGENT_BROWSER_CLAWDBOT_VERSION}
     restart: unless-stopped
     env_file:
       - .env
@@ -75,6 +79,10 @@ services:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION}
         OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
         GO_VERSION: ${GO_VERSION}
+        QCARD_VERSION: ${QCARD_VERSION}
+        CLAWHUB_CLI_VERSION: ${CLAWHUB_CLI_VERSION}
+        BROWSER_USE_VERSION: ${BROWSER_USE_VERSION}
+        AGENT_BROWSER_CLAWDBOT_VERSION: ${AGENT_BROWSER_CLAWDBOT_VERSION}
     network_mode: "service:openclaw-gateway"
     env_file:
       - .env
