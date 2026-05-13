@@ -26,4 +26,9 @@ elif ! jq -e '.browser' "$OPENCLAW_JSON" > /dev/null 2>&1; then
     && mv "$OPENCLAW_JSON.tmp" "$OPENCLAW_JSON"
 fi
 
+# Authenticate gh CLI with a classic GitHub token from the .env file.
+if [ -n "${GITHUB_TOKEN}" ]; then
+    printf '%s' "$GITHUB_TOKEN" | gh auth login --with-token >/dev/null 2>&1 || true
+fi
+
 exec docker-entrypoint.sh "$@"
