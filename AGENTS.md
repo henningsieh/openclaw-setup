@@ -98,7 +98,7 @@ This writes into the image layer:
 
 Two operations run on every container start before the gateway process:
 
-1. **`cp -rn $STAGED_SKILLS_DIR/. $LIVE_SKILLS_DIR/`**
+1. **`cp -rn $STAGED_SKILLS_DIR/. $OPENCLAW_DIR/`**
    Copies the entire seed dir (skills + `.clawhub/`) into the live host volume.
    `-n` = no-clobber: skills the user has installed or modified are never
    overwritten.
@@ -152,7 +152,7 @@ All variables are defined in `.env` (never committed) and documented in
 | Variable | Default | Purpose |
 |---|---|---|
 | `STAGED_SKILLS_DIR` | `/opt/openclaw-skills-seed` | Image-baked seed dir (read-only at runtime) |
-| `LIVE_SKILLS_DIR` | `/home/node/.openclaw` | Host-mounted live config dir |
+| `OPENCLAW_DIR` | `/home/node/.openclaw` | Host-mounted live config dir |
 | `CLAWHUB_WORKDIR` | `/home/node/.openclaw` | Where clawhub reads/writes skills interactively |
 | `OPENCLAW_CONFIG_DIR` | `/root/.openclaw` | Host path mounted to `/home/node/.openclaw` |
 | `OPENCLAW_WORKSPACE_DIR` | `/root/.openclaw/workspace` | Host path for workspace |
