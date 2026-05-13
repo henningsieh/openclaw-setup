@@ -28,6 +28,7 @@ services:
       - XDG_CONFIG_HOME=${XDG_CONFIG_HOME}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - COPILOT_GITHUB_TOKEN=${COPILOT_GITHUB_TOKEN}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
       - PATH=/home/node/.local/bin:/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
       - OPENCLAW_DISABLE_BONJOUR=1
@@ -92,6 +93,7 @@ services:
       - NODE_ENV=production
       - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
       - TERM=xterm-256color
+      - GITHUB_TOKEN=${GITHUB_PERSONAL_TOKEN}
       - PATH=/home/node/.local/bin:/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - OPENCLAW_BUNDLED_PLUGINS_DIR=/app/dist/extensions
     volumes:
