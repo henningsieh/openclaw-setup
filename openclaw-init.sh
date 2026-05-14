@@ -26,9 +26,17 @@ elif ! jq -e '.browser' "$OPENCLAW_JSON" > /dev/null 2>&1; then
     && mv "$OPENCLAW_JSON.tmp" "$OPENCLAW_JSON"
 fi
 
-# Authenticate gh CLI with a classic GitHub token from the .env file.
-# if [ -n "${GITHUB_TOKEN}" ]; then
-#     printf '%s' "$GITHUB_TOKEN" | gh auth login --with-token >/dev/null 2>&1 || true
-# fi
+# Persist gh auth to disk for agent sessions.
+# OpenClaw strips GITHUB_TOKEN from exec env, but file-based auth survives.
+# No gh CLI call = no network validation = no failure at startup.
+if [ -n "${GITHUB_TOKEN}" ]; then
+    mkdir -p /home/node/.config/gh
+    cat > /home/node/.config/gh/hosts.yml <<EOF
+github.com:
+    oauth_token: ${GITHUB_TOKEN}
+    git_protocol: https
+EOF
+    chmod 600 /home/node/.config/gh/hosts.yml
+fi
 
 exec docker-entrypoint.sh "$@"
