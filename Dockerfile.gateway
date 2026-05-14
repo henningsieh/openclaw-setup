@@ -10,15 +10,21 @@ ARG CLAWHUB_CLI_VERSION
 ARG BROWSER_USE_VERSION
 ARG AGENT_BROWSER_CLAWDBOT_VERSION
 
+# Guard at build time — fail fast rather than produce a silent no-op
+RUN test -n "${GO_VERSION}"                     || (echo "GO_VERSION is required" && exit 1)
+RUN test -n "${QCARD_VERSION}"                  || (echo "QCARD_VERSION is required" && exit 1)
+RUN test -n "${CLAWHUB_CLI_VERSION}"            || (echo "CLAWHUB_CLI_VERSION is required" && exit 1)
+RUN test -n "${BROWSER_USE_VERSION}"            || (echo "BROWSER_USE_VERSION is required" && exit 1)
+RUN test -n "${AGENT_BROWSER_CLAWDBOT_VERSION}" || (echo "AGENT_BROWSER_CLAWDBOT_VERSION is required" && exit 1)
+
 # 1. System deps (root required)
 USER root
-# Base image apt keys may be stale for locally-built images; bypass signature
-# checks so we can install packages needed to bootstrap a fresh keyring.
-RUN rm -rf /var/lib/apt/lists/* \
- && apt-get -o Acquire::AllowInsecureRepositories=true \
-            -o Acquire::AllowDowngradeToInsecureRepositories=true update \
- && apt-get -o Acquire::AllowInsecureRepositories=true install -y \
-            --allow-unauthenticated --no-install-recommends \
+# Pass 1: install base packages from the distro repos (fully signed, no workarounds needed).
+#          curl and gnupg must be present before we can import third-party signing keys.
+# Pass 2: add signing keys + source entries for gh CLI and Google Chrome,
+#          then install both in a single apt-get update + install pass.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
     # --- Core utilities ---
     jq ripgrep ca-certificates curl gnupg git \
     # --- IT Admin / Networking ---
@@ -45,19 +51,17 @@ RUN rm -rf /var/lib/apt/lists/* \
     # --- Scripting ---
     python3 python3-pip nano \
  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
- | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
  && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
- > /etc/apt/sources.list.d/github-cli.list \
- && apt-get -o Acquire::AllowInsecureRepositories=true update \
- && apt-get -o Acquire::AllowInsecureRepositories=true install -y \
- --allow-unauthenticated --no-install-recommends gh \
+    > /etc/apt/sources.list.d/github-cli.list \
  && curl -fsSL https://dl.google.com/linux/linux_signing_key.pub \
- | gpg --dearmor -o /usr/share/keyrings/google-linux-signing-keyring.gpg \
+    | gpg --dearmor -o /usr/share/keyrings/google-linux-signing-keyring.gpg \
  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] https://dl.google.com/linux/chrome/deb/ stable main" \
- > /etc/apt/sources.list.d/google-chrome.list \
- && apt-get -o Acquire::AllowInsecureRepositories=true update \
+    > /etc/apt/sources.list.d/google-chrome.list \
+ && apt-get update \
  && apt-get install -y --no-install-recommends \
+    gh \
     google-chrome-stable \
     fonts-liberation libnss3 libatk-bridge2.0-0 libxss1 \
     libgtk-3-0 libgbm1 libasound2 \
@@ -66,10 +70,8 @@ RUN rm -rf /var/lib/apt/lists/* \
 
 # 2. Go (root required to place in /usr/local)
 RUN rm -rf /usr/local/go \
- && curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz \
+ && curl -fsSL ... -o /tmp/go.tgz \
  && tar -C /usr/local -xzf /tmp/go.tgz \
- && ln -sf /usr/local/go/bin/go /usr/local/bin/go \
- && ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt \
  && rm -f /tmp/go.tgz
 
 # 3. Entrypoint + skill seed dir (root required)
@@ -94,7 +96,7 @@ RUN go install ser1.net/qcard@${QCARD_VERSION}
 
 # 7. Install Node.js tools (user-local prefix, no root)
 # Set npm to install packages in user directory (no root needed)
-ENV npm_config_prefix=/home/node/.local
+RUN echo "prefix=/home/node/.local" >> /home/node/.npmrc
 
 # Create the directory and install tools
 RUN mkdir -p /home/node/.local \
