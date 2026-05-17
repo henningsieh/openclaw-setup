@@ -4,6 +4,9 @@ ARG OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
 ARG OPENCLAW_VERSION=latest
 FROM ${OPENCLAW_BASE_IMAGE}:${OPENCLAW_VERSION}
 
+LABEL org.opencontainers.image.title="openclaw-gateway" \
+      org.opencontainers.image.version="${OPENCLAW_VERSION}"
+
 ARG GO_VERSION
 ARG QCARD_VERSION
 ARG CLAWHUB_CLI_VERSION
@@ -49,7 +52,7 @@ RUN apt-get update \
     # --- TLS / PKI ---
     openssl gnutls-bin \
     # --- Scripting ---
-    python3 python3-pip nano \
+    python3 nano \
  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
  && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
@@ -118,6 +121,9 @@ RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-input 
 
 # Point interactive clawhub to the live skills dir (single source of truth)
 ENV CLAWHUB_WORKDIR=/home/node/.openclaw
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
+  CMD node -e "fetch('http://127.0.0.1:18789/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
 CMD ["node", "dist/index.js", "gateway", "--allow-unconfigured"]
