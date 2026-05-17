@@ -1,24 +1,17 @@
 # AGENTS.md — Machine-Oriented Guide for openclaw-setup
 
-This file documents the architecture, conventions, and operating procedures
-for agents (AI or automated) working with this repository.
+This file documents the architecture, conventions, and operating procedures for agents (AI or automated) working with this repository.
 
 ---
 
 ## Repository purpose
 
 This repository extends the official OpenClaw Docker image with:
+- Extra system packages, a Go toolchain, and CLI tools baked in at image build time (reproducible, no manual `apt`/`npm` inside the running container)
+- A seed skill (`github`) baked into the image and automatically installed on first container start via `openclaw-init.sh`
+- Support for swapping the base image between the official release and a locally-built patched image (e.g. testing an upstream PR)
 
-- Extra system packages, a Go toolchain, and CLI tools baked in at image build
-  time (reproducible, no manual `apt`/`npm` inside the running container)
-- A seed skill (`github`) baked into the image and automatically installed on
-  first container start via `openclaw-init.sh`
-- Support for swapping the base image between the official release and a
-  locally-built patched image (e.g. testing an upstream PR)
-
-**Golden rule**: everything that should be present in every deployment is
-configured at Docker build time. Running `clawhub install` or `npm install -g`
-inside the running container is an anti-pattern here.
+**Golden rule**: everything that should be present in every deployment is configured at Docker build time. Running `clawhub install`, `npm install -g`, or even `python -m pip install` inside the running container is an anti-pattern here.
 
 ---
 
@@ -30,7 +23,7 @@ inside the running container is an anti-pattern here.
 | `openclaw-init.sh` | Container entrypoint. Seeds skills, merges clawhub registry, execs gateway. |
 | `docker-compose.yml` | Orchestrates `openclaw-gateway` (long-lived) + `openclaw-cli` (cli profile) services. |
 | `.env` | Local secrets and path overrides — **gitignored, never commit**. |
-| `example.env` | Template with all keys documented. Commit-safe (no real secrets). |
+| `.env.example` | Template with all keys documented. Commit-safe (no real secrets). |
 | `README.md` | Human-oriented guide for PR-based local builds and image management. |
 
 ---
@@ -62,17 +55,13 @@ Step 8  CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-in
         ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
 ```
 
-**Key invariant**: `CLAWHUB_WORKDIR` is overridden inline for step 8 only. At
-runtime it points to `/home/node/.openclaw` so interactive `clawhub` commands
-operate on the live volume.
+**Key invariant**: `CLAWHUB_WORKDIR` is overridden inline for step 8 only. At runtime it points to `/home/node/.openclaw` so interactive `clawhub` commands operate on the live volume.
 
 ### Why tools are installed at build time
 
 - Reproducible: every container start from the same image has identical tooling
 - No internet required at runtime
-- `go install`, `npm install -g`, and `clawhub install` are all cache-friendly
-  Docker layers — only the changed step and all subsequent steps re-run on
-  rebuild
+- `go install`, `npm install -g`, and `clawhub install` are all cache-friendly Docker layers — only the changed step and all subsequent steps re-run on rebuild
 
 ---
 
@@ -98,22 +87,13 @@ This writes into the image layer:
 
 Two operations run on every container start before the gateway process:
 
-1. **`cp -rn $STAGED_SKILLS_DIR/. $OPENCLAW_DIR/`**
-   Copies the entire seed dir (skills + `.clawhub/`) into the live host volume.
-   `-n` = no-clobber: skills the user has installed or modified are never
-   overwritten.
-
-2. **`jq -s '{version:1,skills:(.[0].skills*.[1].skills)}'`**
-   Merges the seed lock into the live lock. The seed is `.[0]` (baseline); the
-   live lock is `.[1]` (user wins on key collision). This ensures seed skills
-   are tracked by `clawhub list` exactly as if the user had run
-   `clawhub install github` themselves.
+1. **`cp -rn $STAGED_SKILLS_DIR/. $OPENCLAW_DIR/`** Copies the entire seed dir (skills + `.clawhub/`) into the live host volume. `-n` = no-clobber: skills the user has installed or modified are never overwritten.
+2. **`jq -s '{version:1,skills:(.[0].skills*.[1].skills)}'`** Merges the seed lock into the live lock. The seed is `.[0]` (baseline); the live lock is `.[1]` (user wins on key collision). This ensures seed skills are tracked by `clawhub list` exactly as if the user had run `clawhub install github` themselves.
 
 ### Result
 
 - `clawhub list` → `github  1.0.0` (tracked, not "Manually installed")
-- `clawhub uninstall github --yes` → removes from live dir only; seed in
-  `/opt/openclaw-skills-seed/` is untouched (image layer)
+- `clawhub uninstall github --yes` → removes from live dir only; seed in `/opt/openclaw-skills-seed/` is untouched (image layer)
 - On next container restart, the skill is automatically re-seeded
 
 ### Adding more seed skills
@@ -136,8 +116,7 @@ docker compose up -d openclaw-gateway
 
 ## Environment variables
 
-All variables are defined in `.env` (never committed) and documented in
-`example.env`. Key variables:
+All variables are defined in `.env` (never committed) and documented in `example.env`. Key variables:
 
 ### Build args (Dockerfile.gateway)
 
@@ -163,8 +142,7 @@ All variables are defined in `.env` (never committed) and documented in
 
 ### API keys passed through to the gateway
 
-`COPILOT_GITHUB_TOKEN`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`,
-`NVIDIA_API_KEY`, `OPENCODE_API_KEY`, `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`
+`COPILOT_GITHUB_TOKEN`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `OPENCODE_API_KEY`, `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`
 
 ---
 
@@ -177,8 +155,7 @@ Host path                          → Container path
 /var/tmp/openclaw-compile-cache/…  → /var/tmp/openclaw-compile-cache/…
 ```
 
-`/home/node/.openclaw` is the single live source of truth. The seed dir
-`/opt/openclaw-skills-seed` lives only in the image layer and is never mounted.
+`/home/node/.openclaw` is the single live source of truth. The seed dir `/opt/openclaw-skills-seed` lives only in the image layer and is never mounted.
 
 ---
 
@@ -207,7 +184,6 @@ docker compose up -d openclaw-gateway
 curl -sf http://localhost:18789/healthz
 # → {"ok":true,"status":"live"}
 ```
-
 Or via the compose healthcheck (waits for healthy state):
 
 ```bash
@@ -232,20 +208,15 @@ docker exec openclaw-openclaw-gateway-1 clawhub list
 ```bash
 docker exec openclaw-openclaw-gateway-1 clawhub install <slug>
 ```
+This writes to `/home/node/.openclaw/skills/` (the host volume). The skill persists across container restarts but is **not** part of the image — it will be lost if the volume is wiped.
 
-This writes to `/home/node/.openclaw/skills/` (the host volume). The skill
-persists across container restarts but is **not** part of the image — it will
-be lost if the volume is wiped.
-
-To make a skill permanent (reproducible), add it to step 8 of
-`Dockerfile.gateway` and rebuild.
+To make a skill permanent (reproducible), add it to step 8 of `Dockerfile.gateway` and rebuild.
 
 ### Uninstall a skill
 
 ```bash
 docker exec openclaw-openclaw-gateway-1 clawhub uninstall <slug> --yes
 ```
-
 Removes from the live volume only. Seed skills re-appear on next restart.
 
 ---
@@ -266,12 +237,7 @@ Removes from the live volume only. Seed skills re-appear on next restart.
 ## Services in docker-compose.yml
 
 ### `openclaw-gateway` (long-lived)
-
-Runs as user `node` (UID 1000). Entrypoint is `openclaw-entrypoint.sh` which
-seeds skills, merges the clawhub registry, then execs
-`docker-entrypoint.sh` → `node dist/index.js gateway …`.
+Runs as user `node` (UID 1000). Entrypoint is `openclaw-entrypoint.sh` which seeds skills, merges the clawhub registry, then execs `docker-entrypoint.sh` → `node dist/index.js gateway …`.
 
 ### `openclaw-cli` (profile: `cli`)
-
-Same image as the gateway, network-mode attached to the gateway service, used
-for one-shot CLI commands. Only starts when `--profile cli` is passed.
+Same image as the gateway, network-mode attached to the gateway service, used for one-shot CLI commands. Only starts when `--profile cli` is passed.

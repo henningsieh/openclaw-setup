@@ -8,7 +8,7 @@ set -eu
 
 mkdir -p "$OPENCLAW_DIR"
 cp -rn "$STAGED_SKILLS_DIR/." "$OPENCLAW_DIR/"
-jq -s '{version:1,skills:(.[0].skills*.[1].skills)}' \
+jq -s '{version:1,skills:((.[0].skills//{})*((.[1].skills)//{})) }' \
   "$STAGED_SKILLS_DIR/.clawhub/lock.json" \
   "$OPENCLAW_DIR/.clawhub/lock.json" \
   > "$OPENCLAW_DIR/.clawhub/lock.json.tmp" \
@@ -39,4 +39,6 @@ EOF
     chmod 600 /home/node/.config/gh/hosts.yml
 fi
 
+command -v docker-entrypoint.sh >/dev/null 2>&1 \
+  || { echo "ERROR: docker-entrypoint.sh not found in PATH — base image mismatch?" >&2; exit 1; }
 exec docker-entrypoint.sh "$@"

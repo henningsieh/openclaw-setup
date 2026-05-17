@@ -1,26 +1,38 @@
+# Shared build configuration for both gateway and CLI services.
+# This avoids duplicating the same Dockerfile context and ARG list twice.
+# The `x-common-build` extension field is not a service; it is only referenced
+# below via `build: *common-build`.
+x-common-build: &common-build
+  context: .
+  dockerfile: Dockerfile.gateway
+  args:
+    OPENCLAW_VERSION: ${OPENCLAW_VERSION}
+    OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
+    GO_VERSION: ${GO_VERSION}
+    QCARD_VERSION: ${QCARD_VERSION}
+    CLAWHUB_CLI_VERSION: ${CLAWHUB_CLI_VERSION}
+    BROWSER_USE_VERSION: ${BROWSER_USE_VERSION}
+    AGENT_BROWSER_CLAWDBOT_VERSION: ${AGENT_BROWSER_CLAWDBOT_VERSION}
+
 services:
   openclaw-gateway:
     image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
-    build:
-      context: .
-      dockerfile: Dockerfile.gateway
-      args:
-        OPENCLAW_VERSION: ${OPENCLAW_VERSION}
-        OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
-        GO_VERSION: ${GO_VERSION}
-        QCARD_VERSION: ${QCARD_VERSION}
-        CLAWHUB_CLI_VERSION: ${CLAWHUB_CLI_VERSION}
-        BROWSER_USE_VERSION: ${BROWSER_USE_VERSION}
-        AGENT_BROWSER_CLAWDBOT_VERSION: ${AGENT_BROWSER_CLAWDBOT_VERSION}
+    build: *common-build
     restart: unless-stopped
-    env_file:
+    # Load overrides from .env, ...
+    env_file: 
       - .env
-    environment:
+    # ... but declare critical runtime defaults here,
+    environment: 
+      # so the gateway service is self-documenting and can start on a fresh clone.
+      - STAGED_SKILLS_DIR=${STAGED_SKILLS_DIR:-/opt/openclaw-skills-seed}
+      - OPENCLAW_DIR=${OPENCLAW_DIR:-/home/node/.openclaw}
+      # Other gateway runtime environment variables
       - HOME=/home/node
       - NODE_ENV=production
       - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE}/${OPENCLAW_VERSION}
       - TERM=xterm-256color
-      - PATH=/home/node/.local/bin:/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - PATH=/home/node/.local/bin:/home/node/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
@@ -63,17 +75,7 @@ services:
 
   openclaw-cli:
     image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
-    build:
-      context: .
-      dockerfile: Dockerfile.gateway
-      args:
-        OPENCLAW_VERSION: ${OPENCLAW_VERSION}
-        OPENCLAW_BASE_IMAGE: ${OPENCLAW_BASE_IMAGE:-ghcr.io/openclaw/openclaw}
-        GO_VERSION: ${GO_VERSION}
-        QCARD_VERSION: ${QCARD_VERSION}
-        CLAWHUB_CLI_VERSION: ${CLAWHUB_CLI_VERSION}
-        BROWSER_USE_VERSION: ${BROWSER_USE_VERSION}
-        AGENT_BROWSER_CLAWDBOT_VERSION: ${AGENT_BROWSER_CLAWDBOT_VERSION}
+    build: *common-build
     network_mode: "service:openclaw-gateway"
     env_file:
       - .env
@@ -82,7 +84,7 @@ services:
       - NODE_ENV=production
       - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
       - TERM=xterm-256color
-      - PATH=/home/node/.local/bin:/home/node/go/bin:/home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      - PATH=/home/node/.local/bin:/home/node/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
