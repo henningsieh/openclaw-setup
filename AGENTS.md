@@ -24,7 +24,7 @@ This repository extends the official OpenClaw Docker image with:
 | `docker-compose.yml` | Orchestrates `openclaw-gateway` (long-lived) + `openclaw-cli` (cli profile) services. |
 | `.env` | Local secrets and path overrides — **gitignored, never commit**. |
 | `.env.example` | Template with all keys documented. Commit-safe (no real secrets). |
-| `README.md` | Human-oriented guide for PR-based local builds and image management. |
+| `README.md` | Human-oriented guide for Docker setup, upgrading, PR-based local builds and image management. |
 
 ---
 
@@ -122,7 +122,7 @@ All variables are defined in `.env` (never committed) and documented in `example
 
 | Variable | Example | Purpose |
 |---|---|---|
-| `OPENCLAW_VERSION` | `2026.5.12` | Image tag for base and output images |
+| `OPENCLAW_VERSION` | `2026.5.18` | Image tag for base and output images |
 | `OPENCLAW_BASE_IMAGE` | `ghcr.io/openclaw/openclaw` | Which base image to extend |
 | `GO_VERSION` | `1.26.3` | Go toolchain version to install |
 

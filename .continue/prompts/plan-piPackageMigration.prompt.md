@@ -1,1 +1,0 @@
-../../../.github/prompts/plan-piPackageMigration.prompt.md
