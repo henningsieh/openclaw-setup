@@ -12,6 +12,7 @@ ARG QCARD_VERSION
 ARG CLAWHUB_CLI_VERSION
 ARG BROWSER_USE_VERSION
 ARG AGENT_BROWSER_CLAWDBOT_VERSION
+ARG GITHUB_SKILL_VERSION
 
 # Guard at build time — fail fast rather than produce a silent no-op
 RUN test -n "${GO_VERSION}"                     || (echo "GO_VERSION is required" && exit 1)
@@ -19,6 +20,7 @@ RUN test -n "${QCARD_VERSION}"                  || (echo "QCARD_VERSION is requi
 RUN test -n "${CLAWHUB_CLI_VERSION}"            || (echo "CLAWHUB_CLI_VERSION is required" && exit 1)
 RUN test -n "${BROWSER_USE_VERSION}"            || (echo "BROWSER_USE_VERSION is required" && exit 1)
 RUN test -n "${AGENT_BROWSER_CLAWDBOT_VERSION}" || (echo "AGENT_BROWSER_CLAWDBOT_VERSION is required" && exit 1)
+RUN test -n "${GITHUB_SKILL_VERSION}"           || (echo "GITHUB_SKILL_VERSION is required" && exit 1)
 
 # 1. System deps (root required)
 USER root
@@ -95,6 +97,10 @@ ENV PATH=/usr/local/go/bin:/home/node/go/bin:${PATH}
 RUN mkdir -p /home/node/go
 
 # 6. Install qcard (user-level Go install)
+# qcard is a CLI address book application for CardDAV servers.
+# It allows searching, viewing, and managing contacts from CardDAV servers.
+# Installed as a standalone binary at /home/node/go/bin/qcard
+# Reference: https://pkg.go.dev/ser1.net/qcard
 RUN go install ser1.net/qcard@${QCARD_VERSION}
 
 # 7. Install Node.js tools (user-local prefix, no root)
@@ -115,7 +121,7 @@ ENV PATH=/home/node/.local/bin:$PATH
 # Bake skills into /opt/openclaw-skills-seed at build time.
 # The entrypoint copies them into ~/.openclaw/skills/ on first container start.
 # After that, ~/.openclaw/skills/ is the single source of truth.
-RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-input --force \
+RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --version ${GITHUB_SKILL_VERSION} --no-input --force \
  && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install browser-use --version ${BROWSER_USE_VERSION} --no-input --force \
  && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install agent-browser-clawdbot --version ${AGENT_BROWSER_CLAWDBOT_VERSION} --no-input --force
 
