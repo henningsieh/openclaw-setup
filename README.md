@@ -21,6 +21,8 @@ This repository gives you a Dockerized gateway setup with extras baked in at ima
 | System packages (step 1) | Full IT-admin toolkit: networking (`nmap`, `iperf3`, `socat`, …), monitoring (`htop`, `glances`, `sysstat`, …), storage, TLS/PKI tools, `gh` CLI, Google Chrome |
 | Go toolchain (step 2) | Go compiler at `/usr/local/go` + `go install` support |
 | `openclaw-init.sh` (step 3) | Container entrypoint that seeds skills and merges the clawhub registry before starting the gateway |
+| User switch (step 4) | Switch from `root` to `node` user (uid 1000) for all subsequent build steps — improving security |
+| Go environment (step 5) | Set `GOPATH`, `PATH`, and other Go-related env vars for the `node` user |
 | Go tools (step 6) | `qcard` — a CardDAV CLI address book application; useful for contact management and email client integration (see [qcard docs](https://pkg.go.dev/ser1.net/qcard)) |
 | Node.js tools (step 7) | `clawhub`, `xurl`, `summarize`, `qmd` installed under `/home/node/.local` |
 | Seed skills (step 8) | `github`, `browser-use`, `agent-browser-clawdbot` baked into the image and auto-installed on first start |
