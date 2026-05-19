@@ -122,7 +122,7 @@ All variables are defined in `.env` (never committed) and documented in `example
 
 | Variable | Example | Purpose |
 |---|---|---|
-| `OPENCLAW_VERSION` | `2026.5.7` | Image tag for base and output images |
+| `OPENCLAW_VERSION` | `2026.5.12` | Image tag for base and output images |
 | `OPENCLAW_BASE_IMAGE` | `ghcr.io/openclaw/openclaw` | Which base image to extend |
 | `GO_VERSION` | `1.26.3` | Go toolchain version to install |
 

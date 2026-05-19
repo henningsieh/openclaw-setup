@@ -4,7 +4,7 @@ Phase 1 — Clone the official OpenClaw source
    - `git clone https://github.com/openclaw/openclaw.git /root/openclaw-src`
    - `cd /root/openclaw-src`
    - `git fetch --tags`
-   - `git checkout 2026.5.7`
+   - `git checkout 2026.5.12`
 2. Confirm the pinned commit and current package state.
    - `git rev-parse HEAD`
    - `grep '"@mariozechner/pi' package.json`
@@ -44,9 +44,9 @@ Phase 3 — Apply the migration changes
 Phase 4 — Build the patched OpenClaw base image
 1. Build a local base image from the patched source.
    - `cd /root/openclaw-src`
-   - `docker build --no-cache -t openclaw-patched:2026.5.7 .`
+   - `docker build --no-cache -t openclaw-patched:2026.5.12 .`
 2. Verify the image build succeeds and contains the updated packages.
-   - Use `docker history openclaw-patched:2026.5.7` if needed.
+   - Use `docker history openclaw-patched:2026.5.12` if needed.
 
 Phase 5 — Rebuild the local gateway image
 1. Set `OPENCLAW_BASE_IMAGE=openclaw-patched` in `/root/openclaw/.env`.

@@ -193,7 +193,7 @@ Copy `.env.example` to `.env` and fill in your values. The file is gitignored an
 
 | Variable | Example | Purpose |
 |---|---|---|
-| `OPENCLAW_VERSION` | `2026.5.7` | Image tag for base + gateway images |
+| `OPENCLAW_VERSION` | `2026.5.12` | Image tag for base + gateway images |
 | `GO_VERSION` | `1.26.3` | Go toolchain version installed in the image |
 | `OPENCLAW_IMAGE` | `openclaw-local` | Local tag for the built gateway image |
 | `OPENCLAW_BASE_IMAGE` | `ghcr.io/openclaw/openclaw` | Base image to extend (see [Base image](#base-image)) |
