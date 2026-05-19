@@ -57,6 +57,8 @@ Step 8  CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-in
 
 **Key invariant**: `CLAWHUB_WORKDIR` is overridden inline for step 8 only. At runtime it points to `/home/node/.openclaw` so interactive `clawhub` commands operate on the live volume.
 
+**Skill version note**: ClawHub skill pins like `browser-use` are authoritative from the ClawHub skill registry/page for the owner/slug (for example `https://clawhub.ai/shawnpana/browser-use`). These skill versions are not the same as npm package versions or GitHub repo package metadata, so verify them against the published ClawHub skill listing when checking or updating skill arguments.
+
 ### Why tools are installed at build time
 
 - Reproducible: every container start from the same image has identical tooling
