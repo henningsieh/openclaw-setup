@@ -14,6 +14,11 @@ jq -s '{version:1,skills:((.[0].skills//{})*((.[1].skills)//{})) }' \
   > "$OPENCLAW_DIR/.clawhub/lock.json.tmp" \
   && mv "$OPENCLAW_DIR/.clawhub/lock.json.tmp" "$OPENCLAW_DIR/.clawhub/lock.json"
 
+# Clean up stale Chrome singleton locks from unclean shutdowns
+rm -f "$OPENCLAW_DIR/browser/openclaw/user-data/SingletonLock" \
+      "$OPENCLAW_DIR/browser/openclaw/user-data/SingletonSocket" \
+      "$OPENCLAW_DIR/browser/openclaw/user-data/SingletonCookie" 2>/dev/null || true
+
 # Bootstrap browser defaults for Docker on first start (no-clobber: only if
 # openclaw.json has no "browser" key yet, so user edits are never overwritten).
 OPENCLAW_JSON="$OPENCLAW_DIR/openclaw.json"
