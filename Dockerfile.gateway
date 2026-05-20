@@ -54,7 +54,7 @@ RUN apt-get update \
     # --- TLS / PKI ---
     openssl gnutls-bin \
     # --- Scripting ---
-    python3 nano \
+    python3 python-is-python3 nano \
  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
  && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
