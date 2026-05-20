@@ -2,7 +2,12 @@
 
 This repository is a **production-ready personal setup** for running [OpenClaw](https://openclaw.ai/) as a self-hosted AI gateway inside Docker. It extends the official OpenClaw image with extra IT-admin tools, a Go toolchain, pre-seeded skills, and a clean Compose workflow — so your gateway is reproducible, self-documenting, and ready to use out of the box.
 
-> **New to OpenClaw?** → [OpenClaw docs](https://docs.openclaw.ai/) · [Getting started](https://docs.openclaw.ai/start/getting-started) · [Docker guide](https://docs.openclaw.ai/install/docker) · [GitHub repo](https://github.com/openclaw/openclaw)
+> **New to OpenClaw?**
+> - **Start**: [Docs](https://docs.openclaw.ai/index.md) · [Getting started](https://docs.openclaw.ai/start/getting-started.md) · [Setup](https://docs.openclaw.ai/start/setup.md) · [Personal assistant setup](https://docs.openclaw.ai/start/openclaw.md)
+> - **Install**: [Docker](https://docs.openclaw.ai/install/docker.md) · [Environment variables](https://docs.openclaw.ai/help/environment.md) · [Updating](https://docs.openclaw.ai/install/updating.md)
+> - **Configure**: [Gateway runbook](https://docs.openclaw.ai/gateway/index.md) · [Configuration reference](https://docs.openclaw.ai/gateway/configuration-reference.md) · [Authentication](https://docs.openclaw.ai/gateway/authentication.md) · [Secrets](https://docs.openclaw.ai/gateway/secrets.md) · [Model providers](https://docs.openclaw.ai/providers/models.md)
+> - **Extend**: [Skills](https://docs.openclaw.ai/tools/skills.md) · [ClawHub](https://docs.openclaw.ai/clawhub/index.md) · [Creating skills](https://docs.openclaw.ai/tools/creating-skills.md)
+> - **Help**: [FAQ (first run)](https://docs.openclaw.ai/help/faq-first-run.md) · [Troubleshooting](https://docs.openclaw.ai/gateway/troubleshooting.md) · [GitHub repo](https://github.com/openclaw/openclaw)
 
 ---
 
