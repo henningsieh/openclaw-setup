@@ -206,8 +206,8 @@ Copy `.env.example` to `.env` and fill in your values. The file is gitignored an
 | `OPENCLAW_BASE_IMAGE` | `ghcr.io/openclaw/openclaw` | Base image to extend (see [Base image](#base-image)) |
 | `QCARD_VERSION` | `v0.0.0-…` | `qcard` Go tool version |
 | `CLAWHUB_CLI_VERSION` | `latest` | `clawhub` npm package version |
-| `BROWSER_USE_VERSION` | `2.0.1` | `browser-use` skill version |
-| `AGENT_BROWSER_CLAWDBOT_VERSION` | `0.1.0` | `agent-browser-clawdbot` skill version |
+| `CLAWHUB_BROWSER_USE_SKILL_VERSION` | `2.0.1` | `browser-use` skill version |
+| `CLAWHUB_AGENT_BROWSER_SKILL_VERSION` | `0.1.0` | `agent-browser-clawdbot` skill version |
 
 ### Runtime flags
 
