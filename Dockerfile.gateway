@@ -85,6 +85,13 @@ RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
  && mkdir -p /opt/openclaw-skills-seed \
  && chown node:node /opt/openclaw-skills-seed
 
+# 3b. Fix /home/node/.config ownership.
+# The 2026.5.22+ base image pre-creates /home/node/.config owned by root.
+# Our init script (and npm/clawhub during build) need to write there as the
+# node user — this ensures the directory is always node-owned before USER switch.
+RUN mkdir -p /home/node/.config \
+ && chown -R node:node /home/node/.config
+
 # 4. Switch to non-root user for everything else
 USER node
 
