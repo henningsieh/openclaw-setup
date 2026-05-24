@@ -44,6 +44,11 @@ EOF
     chmod 600 /home/node/.config/gh/hosts.yml
 fi
 
+# Refresh persisted plugin registry on every start so the policy hash stays
+# current after upgrades. Without this, the CLI falls back to an expensive
+# "derived" plugin scan on every invocation (~8s extra per command).
+openclaw plugins registry --refresh >/dev/null 2>&1 || true
+
 command -v docker-entrypoint.sh >/dev/null 2>&1 \
   || { echo "ERROR: docker-entrypoint.sh not found in PATH — base image mismatch?" >&2; exit 1; }
 exec docker-entrypoint.sh "$@"

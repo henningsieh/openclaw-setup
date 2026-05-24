@@ -92,6 +92,24 @@ RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
 RUN mkdir -p /home/node/.config \
  && chown -R node:node /home/node/.config
 
+# 3c. Patch v2026.5.22 CLI performance bugs.
+#
+# Bug 1 (model-selection-cli-DS-HhXIv.js):
+#   resolveBundledSetupCliBackends() only caches its result when cacheable=true,
+#   but in CLI context getCurrentPluginMetadataSnapshot() always returns null so
+#   cacheable is always false. Result: per-row call to the expensive
+#   loadPluginMetadataSnapshot() on every session row. Fix: always cache when
+#   configFingerprint is available (safe — configFingerprint changes on config change).
+#
+# Bug 2 (plugin-metadata-snapshot-C-_V3F5M.js):
+#   resolvePersistedRegistryMemoStateForLookup() calls hashWatchedFiles() on every
+#   invocation to verify file freshness even when the memo state is already cached.
+#   With 92 installed plugins this produces ~460 realpathSync calls per call.
+#   Fix: add a 2-second TTL to skip the expensive hashWatchedFiles re-check on
+#   rapid successive calls within the same process (CLI burst reads, gateway burst).
+COPY patches/model-selection-cli-DS-HhXIv.js /app/dist/model-selection-cli-DS-HhXIv.js
+COPY patches/plugin-metadata-snapshot-C-_V3F5M.js /app/dist/plugin-metadata-snapshot-C-_V3F5M.js
+
 # 4. Switch to non-root user for everything else
 USER node
 
