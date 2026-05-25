@@ -43,11 +43,12 @@ Step 1  apt-get: system packages — two passes:
           Pass B (optional): snmp-mibs-downloader (non-free; silently skipped if unavailable)
 Step 2  Go toolchain: installed at /usr/local/go (version from GO_VERSION arg)
 Step 3  COPY openclaw-init.sh → /usr/local/bin/openclaw-entrypoint.sh
+        COPY openclaw-bw-resolver.mjs → /usr/local/bin/openclaw-bw-resolver (chmod +x)
         mkdir /opt/openclaw-skills-seed (owned by node)
 Step 4  Switch USER node
 Step 5  GOPATH=/home/node/go
 Step 6  go install ser1.net/qcard@latest
-Step 7  npm install -g @xdevplatform/xurl clawhub@latest @steipete/summarize @tobilu/qmd
+Step 7  npm install -g @xdevplatform/xurl clawhub@latest @steipete/summarize @tobilu/qmd @bitwarden/cli
         (prefix: /home/node/.local — no root required)
 Step 8  CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-input --force
         (bakes skill files + .clawhub/lock.json into the seed dir)
@@ -145,6 +146,17 @@ All variables are defined in `.env` (never committed) and documented in `example
 ### API keys passed through to the gateway
 
 `COPILOT_GITHUB_TOKEN`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `OPENCODE_API_KEY`, `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`
+
+### Vaultwarden bootstrap credentials (secrets provider)
+
+| Variable | Purpose |
+|---|---|
+| `BW_SERVER_URL` | Vaultwarden base URL (e.g. `https://vault.example.com`) |
+| `BW_CLIENTID` | API client_id from Vaultwarden → Account Settings → Security → API Key |
+| `BW_CLIENTSECRET` | API client_secret (same source) |
+| `BW_PASSWORD` | Master password used to unlock the vault |
+
+These are injected via `.env` → `env_file` in `docker-compose.yml` and passed to the resolver subprocess via `passEnv`. They are **never** stored in `openclaw.json`. Leave them empty to disable the Vaultwarden provider.
 
 ---
 
