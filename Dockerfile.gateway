@@ -79,9 +79,11 @@ RUN rm -rf /usr/local/go \
  && tar -C /usr/local -xzf /tmp/go.tgz \
  && rm -f /tmp/go.tgz
 
-# 3. Entrypoint + skill seed dir (root required)
+# 3. Entrypoint + skill seed dir + Vaultwarden resolver (root required)
 COPY openclaw-init.sh /usr/local/bin/openclaw-entrypoint.sh
+COPY openclaw-bw-resolver.mjs /usr/local/bin/openclaw-bw-resolver
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
+             /usr/local/bin/openclaw-bw-resolver \
  && mkdir -p /opt/openclaw-skills-seed \
  && chown node:node /opt/openclaw-skills-seed
 
@@ -134,7 +136,7 @@ RUN echo "prefix=/home/node/.local" >> /home/node/.npmrc
 
 # Create the directory and install tools
 RUN mkdir -p /home/node/.local \
- && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd \
+ && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd @bitwarden/cli \
  && npm cache clean --force
 
 # Add installed binaries to PATH

@@ -31,6 +31,15 @@ elif ! jq -e '.browser' "$OPENCLAW_JSON" > /dev/null 2>&1; then
     && mv "$OPENCLAW_JSON.tmp" "$OPENCLAW_JSON"
 fi
 
+# Configure Vaultwarden server URL for bw CLI — only when not yet authenticated,
+# because bw rejects server changes while a login session is active.
+if [ -n "${BW_SERVER_URL:-}" ]; then
+  BW_STATUS=$(bw status 2>/dev/null | jq -r '.status' 2>/dev/null || echo "unauthenticated")
+  if [ "$BW_STATUS" = "unauthenticated" ]; then
+    bw config server "$BW_SERVER_URL" >/dev/null 2>&1 || true
+  fi
+fi
+
 # Persist gh auth to disk for agent sessions.
 # OpenClaw strips GITHUB_TOKEN from exec env, but file-based auth survives.
 # No gh CLI call = no network validation = no failure at startup.
