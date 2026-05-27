@@ -111,8 +111,7 @@ RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed \
 Then rebuild:
 
 ```bash
-docker compose build openclaw-gateway
-docker compose up -d openclaw-gateway
+docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
 
 ---
@@ -175,22 +174,14 @@ Host path                          → Container path
 
 ## Rebuilding
 
-### Quick rebuild (init script or skill changes only)
+### Rebuild
 
-Only steps 4+ re-run (everything before the COPY is cached):
-
-```bash
-cd /root/openclaw
-docker compose build openclaw-gateway
-docker compose up -d openclaw-gateway
-```
-
-### Full rebuild (system package or Go/npm version change)
+Use the same canonical command for all rebuilds:
 
 ```bash
-docker compose build --no-cache openclaw-gateway
-docker compose up -d openclaw-gateway
+docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
+
 
 ### Health check
 
