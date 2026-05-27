@@ -115,7 +115,34 @@ RUN mkdir -p /home/node/.local \
  && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd @bitwarden/cli \
  && npm cache clean --force
 
-# Add installed binaries to PATH
+# Move bw CLI to a private path so it is NOT on the agent's exec PATH.
+# The openclaw-bw-resolver calls it via an explicit compiled-in path;
+# removing it from PATH prevents accidental or deliberate credential
+# exfiltration via exec("bw unlock ...") from within agent sessions.
+RUN mv /home/node/.local/bin/bw /home/node/.local/lib/bw-private \
+ && chmod 700 /home/node/.local/lib/bw-private
+
+# Patch the OpenClaw host-env-security policy to strip BW_* Bitwarden
+# credentials from the exec tool environment. Without this patch,
+# BW_PASSWORD / BW_CLIENTSECRET are inherited by every shell command the
+# agent runs, making exec("node /path/to/bw-private ...") a viable
+# credential-exfiltration path even after bw is removed from PATH.
+#
+# Implementation: inject BW_PASSWORD, BW_CLIENTID, BW_CLIENTSECRET into
+# blockedOverrideOnlyKeys (stripped from inherited exec env) and add the
+# BW_ prefix to blockedOverridePrefixes (blocks injection attempts too).
+# BW_SERVER_URL is intentionally left unblocked — it is not a credential.
+#
+# This is a targeted sed patch against the bundled dist file. The file
+# name contains a content-hash; update it after base image upgrades by
+# running: grep -r 'host-env-security-policy' /app/dist/
+RUN HOST_ENV_SEC=$(find /app/dist -name 'host-env-security-*.js' | head -1) \
+ && [ -f "$HOST_ENV_SEC" ] \
+ && sed -i 's/"GITHUB_TOKEN",/"GITHUB_TOKEN",\n\t\t"BW_PASSWORD",\n\t\t"BW_CLIENTID",\n\t\t"BW_CLIENTSECRET",/' "$HOST_ENV_SEC" \
+ && sed -i 's/"GIT_CONFIG_",/"GIT_CONFIG_",\n\t\t"BW_",/' "$HOST_ENV_SEC" \
+ && echo "BW_* credentials patched into exec env security policy: $HOST_ENV_SEC"
+
+# Add installed binaries to PATH (bw is no longer in this directory)
 ENV PATH=/home/node/.local/bin:$PATH
 
 # ==========================================
