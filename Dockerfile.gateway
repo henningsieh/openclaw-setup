@@ -115,7 +115,14 @@ RUN mkdir -p /home/node/.local \
  && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd @bitwarden/cli \
  && npm cache clean --force
 
-# Add installed binaries to PATH
+# Move bw CLI to a private path so it is NOT on the agent's exec PATH.
+# The openclaw-bw-resolver calls it via an explicit compiled-in path;
+# removing it from PATH prevents accidental or deliberate credential
+# exfiltration via exec("bw unlock ...") from within agent sessions.
+RUN mv /home/node/.local/bin/bw /home/node/.local/lib/bw-private \
+ && chmod 700 /home/node/.local/lib/bw-private
+
+# Add installed binaries to PATH (bw is no longer in this directory)
 ENV PATH=/home/node/.local/bin:$PATH
 
 # ==========================================
