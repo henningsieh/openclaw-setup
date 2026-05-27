@@ -169,8 +169,7 @@ RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed \
 Then rebuild:
 
 ```bash
-docker compose build openclaw-gateway
-docker compose up -d openclaw-gateway
+docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
 
 ### Installing skills at runtime (non-permanent)
@@ -281,15 +280,13 @@ docker compose run --rm openclaw-cli config get gateway.bind
 Steps 4+ re-run; everything before the `COPY` is cached:
 
 ```bash
-docker compose build openclaw-gateway
-docker compose up -d openclaw-gateway
+docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
 
 ### Full rebuild (system package or tool version change)
 
 ```bash
-docker compose build --no-cache openclaw-gateway
-docker compose up -d openclaw-gateway
+docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
 
 ### Updating to a new OpenClaw release
@@ -298,8 +295,7 @@ docker compose up -d openclaw-gateway
 2. Rebuild:
 
 ```bash
-docker compose build --no-cache openclaw-gateway
-docker compose up -d openclaw-gateway
+docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
 
 ---
@@ -392,7 +388,7 @@ Then build:
 
 ```bash
 cd /root/openclaw
-docker compose build --no-cache openclaw-gateway
+docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
 
 ### Step 6 — Restart and validate
@@ -410,8 +406,7 @@ curl http://localhost:18789/healthz
 Remove or comment out `OPENCLAW_BASE_IMAGE` in `.env`, then rebuild:
 
 ```bash
-docker compose build --no-cache openclaw-gateway
-docker compose up -d openclaw-gateway
+docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
 
 ### Applying a different or newer PR
