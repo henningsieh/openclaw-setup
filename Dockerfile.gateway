@@ -3,6 +3,7 @@
 ARG OPENCLAW_BASE_IMAGE=ghcr.io/openclaw/openclaw
 ARG OPENCLAW_VERSION=latest
 FROM ${OPENCLAW_BASE_IMAGE}:${OPENCLAW_VERSION}
+ARG OPENCLAW_VERSION
 
 LABEL org.opencontainers.image.title="openclaw-gateway" \
       org.opencontainers.image.version="${OPENCLAW_VERSION}"
