@@ -27,7 +27,7 @@
 
 import { spawnSync } from "node:child_process";
 
-const BW_BIN = process.env.BW_BIN || "/home/node/.local/bin/bw";
+const BW_BIN = process.env.BW_BIN || "/home/node/.local/lib/bw-private";
 
 /** Run bw with the given args. Returns trimmed stdout or throws on non-zero exit. */
 function bwRun(args, extraEnv = {}) {
