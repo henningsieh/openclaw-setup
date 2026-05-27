@@ -33,10 +33,12 @@ fi
 
 # Configure Vaultwarden server URL for bw CLI — only when not yet authenticated,
 # because bw rejects server changes while a login session is active.
+# Uses the private bw path (not on agent exec PATH — see Dockerfile step 7).
+BW_BIN=/home/node/.local/lib/bw-private
 if [ -n "${BW_SERVER_URL:-}" ]; then
-  BW_STATUS=$(bw status 2>/dev/null | jq -r '.status' 2>/dev/null || echo "unauthenticated")
+  BW_STATUS=$("$BW_BIN" status 2>/dev/null | jq -r '.status' 2>/dev/null || echo "unauthenticated")
   if [ "$BW_STATUS" = "unauthenticated" ]; then
-    bw config server "$BW_SERVER_URL" >/dev/null 2>&1 || true
+    "$BW_BIN" config server "$BW_SERVER_URL" >/dev/null 2>&1 || true
   fi
 fi
 
@@ -51,6 +53,32 @@ github.com:
     git_protocol: https
 EOF
     chmod 600 /home/node/.config/gh/hosts.yml
+fi
+
+# Persist qcard CardDAV credentials to disk for agent sessions.
+# ~/.config is on the container layer and gets wiped on Docker rebuilds.
+# The password is fetched from Vaultwarden at container startup via the
+# bw-resolver — never stored as an env var.
+QCARD_SERVER_URL="https://mail.sieh.org/SOGo/dav/henning@sieh.org/Contacts/personal/"
+QCARD_USERNAME="henning@sieh.org"
+QCARD_RESOLVER_ID="openclaw/qcard/henning@sieh.org"
+
+if [ -n "${BW_SERVER_URL:-}" ] && [ -n "${BW_CLIENTID:-}" ] && [ -n "${BW_CLIENTSECRET:-}" ] && [ -n "${BW_PASSWORD:-}" ]; then
+    RESOLVER_INPUT=$(printf '{"protocolVersion":1,"provider":"vaultwarden","ids":["%s"]}' "$QCARD_RESOLVER_ID")
+    QCARD_PASSWORD=$(echo "$RESOLVER_INPUT" | node /usr/local/bin/openclaw-bw-resolver | jq -r ".values[\"$QCARD_RESOLVER_ID\"]")
+
+    if [ -n "$QCARD_PASSWORD" ] && [ "$QCARD_PASSWORD" != "null" ]; then
+        mkdir -p /home/node/.config/qcard
+        jq -n \
+            --arg url "$QCARD_SERVER_URL" \
+            --arg user "$QCARD_USERNAME" \
+            --arg pass "$QCARD_PASSWORD" \
+            '{Addressbooks: [{Url: $url, Username: $user, Password: $pass}], DetailThreshold: 3, SortByLastname: false}' \
+            > /home/node/.config/qcard/config.json
+        chmod 600 /home/node/.config/qcard/config.json
+    else
+        echo "WARNING: qcard credential lookup failed (id: $QCARD_RESOLVER_ID)" >&2
+    fi
 fi
 
 # Refresh persisted plugin registry on every start so the policy hash stays
