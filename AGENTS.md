@@ -135,8 +135,8 @@ All variables are defined in `.env` (never committed) and documented in `example
 | `STAGED_SKILLS_DIR` | `/opt/openclaw-skills-seed` | Image-baked seed dir (read-only at runtime) |
 | `OPENCLAW_DIR` | `/home/node/.openclaw` | Host-mounted live config dir |
 | `CLAWHUB_WORKDIR` | `/home/node/.openclaw` | Where clawhub reads/writes skills interactively |
-| `OPENCLAW_CONFIG_DIR` | `/root/.openclaw` | Host path mounted to `/home/node/.openclaw` |
-| `OPENCLAW_WORKSPACE_DIR` | `/root/.openclaw/workspace` | Host path for workspace |
+| `OPENCLAW_CONFIG_DIR` | `/home/shelldon/.openclaw` | Host path mounted to `/home/node/.openclaw` — see note below |
+| `OPENCLAW_WORKSPACE_DIR` | `/home/shelldon/.openclaw/workspace` | Host path for workspace — see note below |
 | `NODE_COMPILE_CACHE` | `/var/tmp/openclaw-compile-cache` | V8 compile cache (version-stamped) |
 | `XDG_CONFIG_HOME` | `/home/node/.openclaw` | XDG config override inside container |
 | `OPENCLAW_GATEWAY_TOKEN` | *(secret)* | Bearer token for gateway API auth |
@@ -162,13 +162,15 @@ These are injected via `.env` → `env_file` in `docker-compose.yml` and passed 
 ## Volume layout
 
 ```
-Host path                          → Container path
-/root/.openclaw                    → /home/node/.openclaw   (config + skills)
-/root/.openclaw/workspace          → /home/node/.openclaw/workspace
-/var/tmp/openclaw-compile-cache/…  → /var/tmp/openclaw-compile-cache/…
+Host path                              → Container path
+/home/shelldon/.openclaw               → /home/node/.openclaw   (config + skills)
+/home/shelldon/.openclaw/workspace     → /home/node/.openclaw/workspace
+/var/tmp/openclaw-compile-cache/…      → /var/tmp/openclaw-compile-cache/…
 ```
 
-`/home/node/.openclaw` is the single live source of truth. The seed dir `/opt/openclaw-skills-seed` lives only in the image layer and is never mounted.
+**Non-default host path**: the config tree lives under `/home/shelldon/` rather than `/root/`. System user `shelldon` holds uid/gid `1000:1000`, matching the container's `node` user. Files written by the container are therefore owned by `shelldon` (not `root`), which means you can SSH in as `shelldon` and work in the config dir without permission conflicts. On a root-only server use `/root/.openclaw[/workspace]` instead.
+
+`/home/node/.openclaw` is the single live source of truth inside the container. The seed dir `/opt/openclaw-skills-seed` lives only in the image layer and is never mounted.
 
 ---
 

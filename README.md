@@ -71,7 +71,7 @@ curl http://localhost:18789/healthz
 open http://localhost:18789
 ```
 
-The gateway runs as user `node` (uid 1000). All persistent state lives on the host at `OPENCLAW_CONFIG_DIR` (default: `/root/.openclaw`) and survives container rebuilds.
+The gateway runs as user `node` (uid 1000). All persistent state lives on the host at `OPENCLAW_CONFIG_DIR` and survives container rebuilds. This deployment uses `/home/shelldon/.openclaw` (owned by system user `shelldon` at uid/gid 1000:1000) so that direct SSH access to the config tree is permission-free. The default for a root-only setup would be `/root/.openclaw`.
 
 ---
 
@@ -178,7 +178,7 @@ docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 docker exec openclaw-openclaw-gateway-1 clawhub install <slug>
 ```
 
-This writes to the host volume (`/root/.openclaw/skills/`). The skill persists across restarts but is **not** part of the image — it will be lost if the volume is wiped. To make it permanent, add it to step 8 and rebuild.
+This writes to the host volume (`/home/shelldon/.openclaw/skills/`). The skill persists across restarts but is **not** part of the image — it will be lost if the volume is wiped. To make it permanent, add it to step 8 and rebuild.
 
 ### Verify installed skills
 
@@ -221,10 +221,12 @@ Copy `.env.example` to `.env` and fill in your values. The file is gitignored an
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `OPENCLAW_CONFIG_DIR` | `/root/.openclaw` | Host path → `/home/node/.openclaw` |
-| `OPENCLAW_WORKSPACE_DIR` | `/root/.openclaw/workspace` | Host path → `/home/node/.openclaw/workspace` |
+| `OPENCLAW_CONFIG_DIR` | `/home/shelldon/.openclaw` ¹ | Host path → `/home/node/.openclaw` |
+| `OPENCLAW_WORKSPACE_DIR` | `/home/shelldon/.openclaw/workspace` ¹ | Host path → `/home/node/.openclaw/workspace` |
 | `NODE_COMPILE_CACHE` | `/var/tmp/openclaw-compile-cache` | V8 compile cache (version-stamped) |
 | `STAGED_SKILLS_DIR` | `/opt/openclaw-skills-seed` | Image-baked seed dir (read-only at runtime) |
+
+> ¹ **Non-default path.** This deployment places the config tree under `/home/shelldon/` rather than `/root/`. The system user `shelldon` has uid/gid `1000:1000`, matching the container's `node` user. This means all files in the config dir are owned by `shelldon`, not root — so you can SSH in as `shelldon` and browse or edit the config without permission issues. If you run on a root-only server, change both paths back to `/root/.openclaw[/workspace]`.
 
 ### Container-internal paths
 
