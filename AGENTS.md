@@ -157,6 +157,8 @@ All variables are defined in `.env` (never committed) and documented in `example
 
 These are injected via `.env` → `env_file` in `docker-compose.yml` and passed to the resolver subprocess via `passEnv`. They are **never** stored in `openclaw.json`. Leave them empty to disable the Vaultwarden provider.
 
+⚠️ Runtime boundary note: this is a convenience/runtime integration, not a hard isolation boundary. If Vaultwarden auth material is available to the long-lived gateway/container process, treat it as potentially recoverable by code running in that same environment.
+
 ---
 
 ## Volume layout
