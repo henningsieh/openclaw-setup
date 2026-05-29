@@ -245,6 +245,20 @@ Copy `.env.example` to `.env` and fill in your values. The file is gitignored an
 
 `GITHUB_TOKEN`, `COPILOT_GITHUB_TOKEN`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `OPENCODE_API_KEY`, `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`
 
+### Vaultwarden runtime boundary
+
+This setup keeps the original runtime Vaultwarden model:
+
+- `BW_SERVER_URL`, `BW_CLIENTID`, `BW_CLIENTSECRET`, and `BW_PASSWORD` are provided to the running container
+- `openclaw-bw-resolver` uses them to log in with `bw --apikey` and unlock the vault at runtime
+- OpenClaw SecretRefs still resolve into the gateway's in-memory snapshot after activation/reload
+
+Important warning:
+
+- this is a convenience/runtime integration, **not** a hard process-isolation boundary
+- if a plaintext secret is available to the long-lived gateway/container process, treat it as potentially recoverable by code running in that same environment
+- keep the host and container private; do not treat this setup as protection against a fully capable local agent with same-process or same-user access
+
 ---
 
 ## Day-to-day operations
