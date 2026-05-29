@@ -80,7 +80,14 @@ RUN rm -rf /usr/local/go \
  && tar -C /usr/local -xzf /tmp/go.tgz \
  && rm -f /tmp/go.tgz
 
-# 3. Entrypoint + skill seed dir + Vaultwarden resolver (root required)
+# 3. Install hcloud CLI (Hetzner Cloud CLI) — used for managing Hetzner server instances
+# Binary is at the tarball root, so tar -xz extracts it directly.
+RUN curl -fsSL "https://github.com/hetznercloud/cli/releases/latest/download/hcloud-linux-amd64.tar.gz" \
+  | tar -xz \
+  && mv hcloud /usr/local/bin/hcloud \
+  && chmod +x /usr/local/bin/hcloud
+
+# 4. Entrypoint + skill seed dir + Vaultwarden resolver (root required)
 COPY openclaw-init.sh /usr/local/bin/openclaw-entrypoint.sh
 COPY openclaw-bw-resolver.mjs /usr/local/bin/openclaw-bw-resolver
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \

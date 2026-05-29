@@ -28,6 +28,7 @@ services:
     environment: 
       # so the gateway service is self-documenting and can start on a fresh clone.
       - STAGED_SKILLS_DIR=${STAGED_SKILLS_DIR:-/opt/openclaw-skills-seed}
+      - HCLOUD_TOKEN=${HCLOUD_TOKEN}
       - OPENCLAW_DIR=${OPENCLAW_DIR:-/home/node/.openclaw}
       # Other gateway runtime environment variables
       - HOME=/home/node
@@ -86,6 +87,7 @@ services:
     environment:
       - HOME=/home/node
       - NODE_ENV=production
+      - HCLOUD_TOKEN=${HCLOUD_TOKEN}
       - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE:-/var/tmp/openclaw-compile-cache}/${OPENCLAW_VERSION}
       - TERM=xterm-256color
       - PATH=/home/node/.local/bin:/home/node/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
