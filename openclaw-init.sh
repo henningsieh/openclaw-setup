@@ -83,13 +83,14 @@ fi
 
 # ── Persist CalDAV credentials ────────────────────────────────
 if [ -n "$QCARD_PASSWORD" ] && [ "$QCARD_PASSWORD" != "null" ]; then
-    # Password file
-    mkdir -p /home/node/.config/vdirsyncer
+    # Password file + vdirsyncer + khal config dirs
+    mkdir -p /home/node/.config/vdirsyncer /home/node/.config/khal /home/node/.local/share/vdirsyncer/status /home/node/.local/share/vdirsyncer/calendars/personal
+    chmod 700 /home/node/.config/vdirsyncer /home/node/.config/khal
+
     printf '%s' "$QCARD_PASSWORD" > /home/node/.config/vdirsyncer/caldav_password
     chmod 600 /home/node/.config/vdirsyncer/caldav_password
 
     # vdirsyncer config
-    mkdir -p /home/node/.local/share/vdirsyncer/status /home/node/.local/share/vdirsyncer/calendars/personal
     cat > /home/node/.config/vdirsyncer/config <<'VDIRSYNCER'
 [general]
 status_path = "~/.local/share/vdirsyncer/status/"
@@ -127,6 +128,7 @@ dateformat = %d.%m.%Y
 local_timezone = Europe/Berlin
 default_timezone = Europe/Berlin
 KHAL
+    chmod 600 /home/node/.config/khal/config
 fi
 
 # Refresh persisted plugin registry on every start so the policy hash stays
