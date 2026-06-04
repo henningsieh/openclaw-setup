@@ -14,14 +14,16 @@ ARG CLAWHUB_CLI_VERSION
 ARG CLAWHUB_BROWSER_USE_SKILL_VERSION
 ARG CLAWHUB_AGENT_BROWSER_SKILL_VERSION
 ARG CLAWHUB_GITHUB_SKILL_VERSION
+ARG CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION
 
 # Guard at build time — fail fast rather than produce a silent no-op
-RUN test -n "${GO_VERSION}"                     || (echo "GO_VERSION is required" && exit 1)
-RUN test -n "${QCARD_VERSION}"                  || (echo "QCARD_VERSION is required" && exit 1)
-RUN test -n "${CLAWHUB_CLI_VERSION}"            || (echo "CLAWHUB_CLI_VERSION is required" && exit 1)
+RUN test -n "${GO_VERSION}"                              || (echo "GO_VERSION is required" && exit 1)
+RUN test -n "${QCARD_VERSION}"                           || (echo "QCARD_VERSION is required" && exit 1)
+RUN test -n "${CLAWHUB_CLI_VERSION}"                     || (echo "CLAWHUB_CLI_VERSION is required" && exit 1)
 RUN test -n "${CLAWHUB_BROWSER_USE_SKILL_VERSION}"            || (echo "CLAWHUB_BROWSER_USE_SKILL_VERSION is required" && exit 1)
-RUN test -n "${CLAWHUB_AGENT_BROWSER_SKILL_VERSION}" || (echo "CLAWHUB_AGENT_BROWSER_SKILL_VERSION is required" && exit 1)
-RUN test -n "${CLAWHUB_GITHUB_SKILL_VERSION}"           || (echo "CLAWHUB_GITHUB_SKILL_VERSION is required" && exit 1)
+RUN test -n "${CLAWHUB_AGENT_BROWSER_SKILL_VERSION}"     || (echo "CLAWHUB_AGENT_BROWSER_SKILL_VERSION is required" && exit 1)
+RUN test -n "${CLAWHUB_GITHUB_SKILL_VERSION}"            || (echo "CLAWHUB_GITHUB_SKILL_VERSION is required" && exit 1)
+RUN test -n "${CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION}"   || (echo "CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION is required" && exit 1)
 
 # 1. System deps (root required)
 USER root
@@ -160,7 +162,8 @@ ENV PATH=/home/node/.local/bin:$PATH
 # After that, ~/.openclaw/skills/ is the single source of truth.
 RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --version ${CLAWHUB_GITHUB_SKILL_VERSION} --no-input --force \
  && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install browser-use --version ${CLAWHUB_BROWSER_USE_SKILL_VERSION} --no-input --force \
- && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install agent-browser-clawdbot --version ${CLAWHUB_AGENT_BROWSER_SKILL_VERSION} --no-input --force
+ && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install agent-browser-clawdbot --version ${CLAWHUB_AGENT_BROWSER_SKILL_VERSION} --no-input --force \
+ && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install caldav-calendar --version ${CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION} --no-input --force
 
 # Point interactive clawhub to the live skills dir (single source of truth)
 ENV CLAWHUB_WORKDIR=/home/node/.openclaw
