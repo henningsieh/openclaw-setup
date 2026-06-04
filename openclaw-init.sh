@@ -129,6 +129,11 @@ local_timezone = Europe/Berlin
 default_timezone = Europe/Berlin
 KHAL
     chmod 600 /home/node/.config/khal/config
+
+    # Initial discovery + sync so the calendar is queryable right away.
+    # Without this, the first khal query after a rebuild would see an empty cache.
+    echo y | vdirsyncer discover personal >/dev/null 2>&1 || true
+    vdirsyncer sync >/dev/null 2>&1 || true
 fi
 
 # Refresh persisted plugin registry on every start so the policy hash stays
