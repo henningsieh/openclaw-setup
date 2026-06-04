@@ -58,6 +58,8 @@ RUN apt-get update \
     openssl gnutls-bin \
     # --- Scripting ---
     python3 python-is-python3 nano \
+    # --- CalDAV calendar support ---
+    vdirsyncer khal \
  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
  && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
