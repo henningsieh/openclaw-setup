@@ -81,6 +81,54 @@ if [ -n "${BW_SERVER_URL:-}" ] && [ -n "${BW_CLIENTID:-}" ] && [ -n "${BW_CLIENT
     fi
 fi
 
+# ── Persist CalDAV credentials ────────────────────────────────
+if [ -n "$QCARD_PASSWORD" ] && [ "$QCARD_PASSWORD" != "null" ]; then
+    # Password file
+    mkdir -p /home/node/.config/vdirsyncer
+    printf '%s' "$QCARD_PASSWORD" > /home/node/.config/vdirsyncer/caldav_password
+    chmod 600 /home/node/.config/vdirsyncer/caldav_password
+
+    # vdirsyncer config
+    mkdir -p /home/node/.local/share/vdirsyncer/status /home/node/.local/share/vdirsyncer/calendars/personal
+    cat > /home/node/.config/vdirsyncer/config <<'VDIRSYNCER'
+[general]
+status_path = "~/.local/share/vdirsyncer/status/"
+
+[pair personal]
+a = "personal_remote"
+b = "personal_local"
+collections = null
+conflict_resolution = "a wins"
+
+[storage personal_remote]
+type = "caldav"
+url = "https://mail.sieh.org/SOGo/dav/henning@sieh.org/Calendar/personal/"
+username = "henning@sieh.org"
+password.fetch = ["command", "cat", "~/.config/vdirsyncer/caldav_password"]
+
+[storage personal_local]
+type = "filesystem"
+path = "~/.local/share/vdirsyncer/calendars/personal/"
+fileext = ".ics"
+VDIRSYNCER
+
+    # khal config
+    cat > /home/node/.config/khal/config <<'KHAL'
+[calendars]
+[[personal]]
+path = ~/.local/share/vdirsyncer/calendars/personal/
+
+[default]
+highlight_event_days = True
+
+[locale]
+timeformat = %H:%M
+dateformat = %d.%m.%Y
+local_timezone = Europe/Berlin
+default_timezone = Europe/Berlin
+KHAL
+fi
+
 # Refresh persisted plugin registry on every start so the policy hash stays
 # current after upgrades. Without this, the CLI falls back to an expensive
 # "derived" plugin scan on every invocation (~8s extra per command).
