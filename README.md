@@ -29,7 +29,7 @@ This repository gives you a Dockerized gateway setup with extras baked in at ima
 | User switch (step 4) | Switch from `root` to `node` user (uid 1000) for all subsequent build steps — improving security |
 | Go environment (step 5) | Set `GOPATH`, `PATH`, and other Go-related env vars for the `node` user |
 | Go tools (step 6) | `qcard` — a CardDAV CLI address book application; useful for contact management and email client integration (see [qcard docs](https://pkg.go.dev/ser1.net/qcard)) |
-| Node.js tools (step 7) | `clawhub`, `xurl`, `summarize`, `qmd` installed under `/home/node/.local` |
+| Node.js tools (step 7) | `clawhub`, `xurl`, `summarize`, `qmd`, `browser-use` installed under `/home/node/.local` |
 | Seed skills (step 8) | `github`, `browser-use`, `agent-browser-clawdbot` baked into the image and auto-installed on first start |
 | HEALTHCHECK | Built-in Docker healthcheck polling `/healthz` |
 | OCI labels | `org.opencontainers.image.title` + `version` for `docker inspect` and image scanners |
@@ -213,6 +213,7 @@ Copy `.env.example` to `.env` and fill in your values. The file is gitignored an
 | `OPENCLAW_BASE_IMAGE` | `ghcr.io/openclaw/openclaw` | Base image to extend (see [Base image](#base-image)) |
 | `QCARD_VERSION` | `v0.0.0-…` | `qcard` Go tool version |
 | `CLAWHUB_CLI_VERSION` | `latest` | `clawhub` npm package version |
+| `BROWSER_USE_CLI_VERSION` | `0.7.1` | `browser-use` CLI package version |
 | `CLAWHUB_BROWSER_USE_SKILL_VERSION` | `2.0.1` | `browser-use` skill version |
 | `CLAWHUB_AGENT_BROWSER_SKILL_VERSION` | `0.1.0` | `agent-browser-clawdbot` skill version |
 
