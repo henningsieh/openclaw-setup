@@ -91,11 +91,13 @@ RUN curl -fsSL "https://github.com/hetznercloud/cli/releases/latest/download/hcl
   && mv hcloud /usr/local/bin/hcloud \
   && chmod +x /usr/local/bin/hcloud
 
-# 4. Entrypoint + skill seed dir + Vaultwarden resolver (root required)
+# 4. Entrypoint + skill seed dir + Vaultwarden resolver + vault-pass (root required)
 COPY openclaw-init.sh /usr/local/bin/openclaw-entrypoint.sh
 COPY openclaw-bw-resolver.mjs /usr/local/bin/openclaw-bw-resolver
+COPY vault-pass /usr/local/bin/vault-pass
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
              /usr/local/bin/openclaw-bw-resolver \
+             /usr/local/bin/vault-pass \
  && mkdir -p /opt/openclaw-skills-seed \
  && chown node:node /opt/openclaw-skills-seed
 
