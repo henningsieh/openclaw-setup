@@ -94,11 +94,10 @@ RUN curl -fsSL "https://github.com/hetznercloud/cli/releases/latest/download/hcl
 # 4. Entrypoint + skill seed dir + Vaultwarden resolver + vault-fetch (root required)
 COPY scripts/openclaw-init.sh /usr/local/bin/openclaw-entrypoint.sh
 COPY scripts/vaultwarden/openclaw-bw-resolver.mjs /usr/local/bin/openclaw-bw-resolver
-COPY scripts/vaultwarden/openclaw-vault-fetch /usr/local/bin/openclaw-vault-fetch
+COPY scripts/vaultwarden/openclaw-vault-fetch /usr/local/bin/vault-fetch
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
              /usr/local/bin/openclaw-bw-resolver \
-             /usr/local/bin/openclaw-vault-fetch \
- && ln -sf /usr/local/bin/openclaw-vault-fetch /usr/local/bin/vault-fetch \
+             /usr/local/bin/vault-fetch \
  && mkdir -p /opt/openclaw-skills-seed \
  && chown node:node /opt/openclaw-skills-seed
 

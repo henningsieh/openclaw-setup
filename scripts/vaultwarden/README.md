@@ -42,9 +42,9 @@ stdout:
   2. Calls the resolver with those credentials loaded
   3. Returns plaintext credential to agent session
 
-**Implementation detail:** The actual executable stored in the image is `openclaw-vault-fetch`, but agents should invoke it through the alias `vault-fetch`.
+**Implementation detail:** The source file in the repository is `openclaw-vault-fetch`, but the helper is installed in the image as `vault-fetch` for agents to invoke.
 
-**Naming note:** `openclaw-vault-fetch` deliberately has no `.sh` extension so it behaves like a normal CLI helper command when installed in `/usr/local/bin`.
+**Naming note:** `openclaw-vault-fetch` deliberately has no `.sh` extension so it behaves like a normal CLI helper command in the repo and can be installed as `vault-fetch` in `/usr/local/bin`.
 
 ## Why Two Files?
 

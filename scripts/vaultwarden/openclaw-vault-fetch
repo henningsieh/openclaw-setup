@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # openclaw-vault-fetch — Credential fetch from Vaultwarden for agent sessions
-# Usage: openclaw-vault-fetch "item-name"
+# Agent-facing command: vault-fetch "item-name"
 # Note: this file intentionally has no .sh extension so it can be installed as a normal CLI command.
 
 # Export BW vars from gateway process
