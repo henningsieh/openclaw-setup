@@ -87,7 +87,7 @@
     <tspan x="358" dy="17">Chrome, and seed skills</tspan>
   </text>
   <text x="358" y="190" class="muted" fill="rgb(175, 169, 236)">
-    <tspan x="358" dy="0">COPY openclaw-init.sh -&gt;</tspan>
+    <tspan x="358" dy="0">COPY scripts/openclaw-init.sh -&gt;</tspan>
     <tspan x="358" dy="17">/usr/local/bin/openclaw-entrypoint.sh</tspan>
     <tspan x="358" dy="17">ENTRYPOINT points at that script</tspan>
   </text>
