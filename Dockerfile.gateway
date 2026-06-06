@@ -11,6 +11,7 @@ LABEL org.opencontainers.image.title="openclaw-gateway" \
 ARG GO_VERSION
 ARG QCARD_VERSION
 ARG CLAWHUB_CLI_VERSION
+ARG BROWSER_USE_CLI_VERSION
 ARG CLAWHUB_BROWSER_USE_SKILL_VERSION
 ARG CLAWHUB_AGENT_BROWSER_SKILL_VERSION
 ARG CLAWHUB_GITHUB_SKILL_VERSION
@@ -20,6 +21,7 @@ ARG CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION
 RUN test -n "${GO_VERSION}"                              || (echo "GO_VERSION is required" && exit 1)
 RUN test -n "${QCARD_VERSION}"                           || (echo "QCARD_VERSION is required" && exit 1)
 RUN test -n "${CLAWHUB_CLI_VERSION}"                     || (echo "CLAWHUB_CLI_VERSION is required" && exit 1)
+RUN test -n "${BROWSER_USE_CLI_VERSION}"                  || (echo "BROWSER_USE_CLI_VERSION is required" && exit 1)
 RUN test -n "${CLAWHUB_BROWSER_USE_SKILL_VERSION}"            || (echo "CLAWHUB_BROWSER_USE_SKILL_VERSION is required" && exit 1)
 RUN test -n "${CLAWHUB_AGENT_BROWSER_SKILL_VERSION}"     || (echo "CLAWHUB_AGENT_BROWSER_SKILL_VERSION is required" && exit 1)
 RUN test -n "${CLAWHUB_GITHUB_SKILL_VERSION}"            || (echo "CLAWHUB_GITHUB_SKILL_VERSION is required" && exit 1)
@@ -123,9 +125,9 @@ RUN go install ser1.net/qcard@${QCARD_VERSION}
 # Set npm to install packages in user directory (no root needed)
 RUN echo "prefix=/home/node/.local" >> /home/node/.npmrc
 
-# Create the directory and install tools
+# Create the directory and install tools, including browser-use CLI for browser automation
 RUN mkdir -p /home/node/.local \
- && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd @bitwarden/cli \
+ && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION} \
  && npm cache clean --force
 
 # Move bw CLI to a private path so it is NOT on the agent's exec PATH.
