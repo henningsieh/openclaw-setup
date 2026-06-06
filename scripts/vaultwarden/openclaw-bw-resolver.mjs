@@ -15,7 +15,7 @@
  *                     even when authenticating via API key)
  *
  * Optional env var:
- *   BW_BIN          — Absolute path to the bw binary (default: /home/node/.local/bin/bw)
+ *   BW_BIN          — Absolute path to the bw binary (default: /home/node/.local/lib/bw-private)
  *
  * Item naming convention:
  *   Create Login items in Vaultwarden whose "Name" field exactly matches the

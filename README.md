@@ -78,17 +78,24 @@ The gateway runs as user `node` (uid 1000). All persistent state lives on the ho
 ## Repository layout
 
 ```
-/root/openclaw/          ← this repository
-  Dockerfile.gateway     ← extends the official image with extra tools + skills
-  docker-compose.yml     ← gateway + CLI services
-  openclaw-init.sh       ← container entrypoint: seeds skills, then starts gateway
-  .env.example           ← template — copy to .env and fill in secrets
-  .env                   ← your local secrets (gitignored, never commit)
-  AGENTS.md              ← machine-oriented guide for AI agents
-  CLAUDE.md              ← same as AGENTS.md (Claude-specific symlink)
-  GEMINI.md              ← same as AGENTS.md (Gemini-specific symlink)
+/root/openclaw/                  ← this repository
+  Dockerfile.gateway             ← extends the official image with extra tools + skills
+  docker-compose.yml             ← gateway + CLI services
+  .env.example                   ← template — copy to .env and fill in secrets
+  .env                           ← your local secrets (gitignored, never commit)
+  AGENTS.md                      ← machine-oriented guide for AI agents
+  README.md                      ← this file
+  scripts/
+    openclaw-init.sh             ← container entrypoint: seeds skills, starts gateway
+    vaultwarden/
+      openclaw-bw-resolver.mjs   ← Vaultwarden secrets protocol handler
+      openclaw-vault-fetch       ← Exec bridge for credential access (aliased as `vault-fetch`)
+      README.md                  ← Vaultwarden integration architecture
+  assets/
+    openclaw_build_flow.svg      ← build flow diagram
+    openclaw_skills_loading.svg  ← skill loading flow diagram
 
-/root/openclaw-src/      ← upstream source clone (only needed for PR builds)
+/root/openclaw-src/              ← upstream source clone (only needed for PR builds)
 ```
 
 Images live only in the **local Docker image store** — they are never pushed to a registry. Run `docker images | grep openclaw` to list them.
@@ -100,8 +107,9 @@ Images live only in the **local Docker image store** — they are never pushed t
 | File | Role |
 |---|---|
 | `Dockerfile.gateway` | Eight-step build: system packages → Go → entrypoint → tools → skills |
-| `openclaw-init.sh` | Entrypoint: seeds skills into host volume, merges clawhub registry, starts gateway |
 | `docker-compose.yml` | Two services: `openclaw-gateway` (long-lived) + `openclaw-cli` (profile: `cli`) |
+| `scripts/openclaw-init.sh` | Container entrypoint: seeds skills, merges registry, starts gateway |
+| `scripts/vaultwarden/` | Vaultwarden credential integration docs and helper scripts — see [README](scripts/vaultwarden/README.md). This is repo/container documentation, not an OpenClaw skill manifest. |
 | `.env` | Your secrets and path overrides — **gitignored, never commit** |
 | `.env.example` | Template with all keys documented — commit-safe |
 | `AGENTS.md` | Machine-oriented guide for AI agents working in this repo |
@@ -117,7 +125,7 @@ The build and runtime flow is controlled by three files working as a chain:
 - `openclaw-init.sh` is the first code that runs when the container starts. It seeds and merges the live `~/.openclaw` directory, bootstraps browser defaults, persists `gh` auth, and only then hands off to the upstream OpenClaw startup path.
 
 <!-- Build flow diagram: compose -> Dockerfile -> entrypoint -> runtime -->
-![OpenClaw build flow — docker-compose.yml, Dockerfile.gateway, openclaw-init.sh](openclaw_build_flow.svg)
+![OpenClaw build flow — docker-compose.yml, Dockerfile.gateway, openclaw-init.sh](assets/openclaw_build_flow.svg)
 
 This is the control flow in one sentence: `docker compose` reads `.env`, builds `Dockerfile.gateway`, that image bakes in `openclaw-init.sh`, and the running container uses that entrypoint to prepare the mounted host state before starting the gateway.
 
@@ -130,7 +138,7 @@ OpenClaw skills are prompt/tool bundles installed under `~/.openclaw/skills/`. T
 ### How the skill seed works
 
 <!-- Skills flow diagram: build time vs runtime vs host volume -->
-![OpenClaw skill seed — build time vs runtime vs host volume](openclaw_skills_loading.svg)
+![OpenClaw skill seed — build time vs runtime vs host volume](assets/openclaw_skills_loading.svg)
 
 **Build time** (Dockerfile step 8):
 

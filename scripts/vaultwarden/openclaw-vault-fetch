@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# vault-pass - Fetch credentials from Vaultwarden
-# Usage: vault-pass "item-name"
+# openclaw-vault-fetch — Credential fetch from Vaultwarden for agent sessions
+# Usage: openclaw-vault-fetch "item-name"
+# Note: this file intentionally has no .sh extension so it can be installed as a normal CLI command.
 
 # Export BW vars from gateway process
 while IFS='=' read -r key value; do
