@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# vault-pass - Fetch credentials from Vaultwarden
+# Usage: vault-pass "item-name"
+
+# Export BW vars from gateway process
+while IFS='=' read -r key value; do
+  [[ "$key" == BW_* ]] && export "$key=$value"
+done < <(tr '\0' '\n' < /proc/1/environ)
+
+# Build JSON request and call resolver
+echo "{\"protocolVersion\": 1, \"provider\": \"vaultwarden\", \"ids\": [\"$1\"]}" | \
+  node /usr/local/bin/openclaw-bw-resolver | \
+  jq -r ".values[\"$1\"] // empty"
