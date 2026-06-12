@@ -1,16 +1,42 @@
 #!/usr/bin/env bash
 # openclaw-vault-fetch — Credential fetch from Vaultwarden for agent sessions
-# Agent-facing command: vault-fetch "item-name" [#selector]
-# Supports fuzzy search fallback when exact name lookup fails.
+# Agent-facing command:
+#   vault-fetch "item-name"          → password string (with fuzzy fallback)
+#   vault-fetch --json "item-name"   → full item JSON (username, password, notes, fields, ...)
 # Note: this file intentionally has no .sh extension so it can be installed as a normal CLI command.
+
+MODE="password"
+if [ "$1" = "--json" ]; then
+  MODE="json"
+  shift
+fi
+
+FULL_ID="$1"
+BW_CLI="${BW_BIN:-/home/node/.local/lib/bw-private}"
 
 # Export BW vars from gateway process
 while IFS='=' read -r key value; do
   [[ "$key" == BW_* ]] && export "$key=$value"
 done < <(tr '\0' '\n' < /proc/1/environ)
 
-FULL_ID="$1"
-BW_CLI="${BW_BIN:-/home/node/.local/lib/bw-private}"
+# -------------------------------------------------------
+# JSON mode — return the entire vaultwarden item object
+# -------------------------------------------------------
+if [ "$MODE" = "json" ]; then
+  if [ ! -x "$BW_CLI" ] || [ -z "${BW_PASSWORD:-}" ]; then
+    exit 1
+  fi
+  SESSION=$("$BW_CLI" unlock --passwordenv BW_PASSWORD --raw 2>/dev/null) || exit 1
+  # Search for first matching item and return its full JSON
+  "$BW_CLI" list items --search "$FULL_ID" --session "$SESSION" 2>/dev/null | \
+    jq -r 'first // empty'
+  "$BW_CLI" lock --session "$SESSION" >/dev/null 2>&1
+  exit
+fi
+
+# -------------------------------------------------------
+# Password mode — return the login.password value
+# -------------------------------------------------------
 
 # 1. Try exact match via resolver
 RESULT=$(echo "{\"protocolVersion\": 1, \"provider\": \"vaultwarden\", \"ids\": [\"$FULL_ID\"]}" | \
@@ -22,8 +48,7 @@ if [ -n "$RESULT" ]; then
   exit 0
 fi
 
-# 2. Fallback: fuzzy search via bw list --search
-# The resolver locked the vault; we need a fresh unlock.
+# 2. Fallback: fuzzy search via bw list --search (password field)
 if [ -x "$BW_CLI" ] && [ -n "${BW_PASSWORD:-}" ]; then
   SESSION=$("$BW_CLI" unlock --passwordenv BW_PASSWORD --raw 2>/dev/null) || exit 1
   "$BW_CLI" list items --search "$FULL_ID" --session "$SESSION" 2>/dev/null | \
