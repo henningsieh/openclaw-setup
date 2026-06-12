@@ -59,7 +59,7 @@ RUN apt-get update \
     # --- TLS / PKI ---
     openssl gnutls-bin \
     # --- Scripting ---
-    python3 python-is-python3 nano \
+    python3 python-is-python3 python3-pip nano \
     # --- CalDAV calendar support ---
     vdirsyncer khal \
  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
@@ -128,7 +128,8 @@ RUN echo "prefix=/home/node/.local" >> /home/node/.npmrc
 # Create the directory and install tools, including browser-use CLI for browser automation
 RUN mkdir -p /home/node/.local \
  && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION} \
- && npm cache clean --force
+ && npm cache clean --force \
+ && pip3 install uptime-kuma-api --no-cache-dir
 
 # Move bw CLI to a private path so it is NOT on the agent's exec PATH.
 # The openclaw-bw-resolver calls it via an explicit compiled-in path;
