@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # openclaw-vault-fetch — Credential fetch from Vaultwarden for agent sessions
-# Agent-facing command: vault-fetch "item-name"
+# Agent-facing command: vault-fetch "item-name" [#selector]
+# Supports fuzzy search fallback when exact name lookup fails.
 # Note: this file intentionally has no .sh extension so it can be installed as a normal CLI command.
 
 # Export BW vars from gateway process
@@ -8,7 +9,24 @@ while IFS='=' read -r key value; do
   [[ "$key" == BW_* ]] && export "$key=$value"
 done < <(tr '\0' '\n' < /proc/1/environ)
 
-# Build JSON request and call resolver
-echo "{\"protocolVersion\": 1, \"provider\": \"vaultwarden\", \"ids\": [\"$1\"]}" | \
+FULL_ID="$1"
+BW_CLI="${BW_BIN:-/home/node/.local/lib/bw-private}"
+
+# 1. Try exact match via resolver
+RESULT=$(echo "{\"protocolVersion\": 1, \"provider\": \"vaultwarden\", \"ids\": [\"$FULL_ID\"]}" | \
   node /usr/local/bin/openclaw-bw-resolver | \
-  jq -r ".values[\"$1\"] // empty"
+  jq -r ".values[\"$FULL_ID\"] // empty")
+
+if [ -n "$RESULT" ]; then
+  echo "$RESULT"
+  exit 0
+fi
+
+# 2. Fallback: fuzzy search via bw list --search
+# The resolver locked the vault; we need a fresh unlock.
+if [ -x "$BW_CLI" ] && [ -n "${BW_PASSWORD:-}" ]; then
+  SESSION=$("$BW_CLI" unlock --passwordenv BW_PASSWORD --raw 2>/dev/null) || exit 1
+  "$BW_CLI" list items --search "$FULL_ID" --session "$SESSION" 2>/dev/null | \
+    jq -r 'first | .login.password // empty'
+  "$BW_CLI" lock --session "$SESSION" >/dev/null 2>&1
+fi
