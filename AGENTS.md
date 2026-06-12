@@ -111,6 +111,12 @@ RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed \
 Then rebuild:
 
 ```bash
+docker compose build openclaw-gateway
+```
+
+Or rebuild and restart:
+
+```bash
 docker compose up -d --build --force-recreate --no-deps openclaw-gateway
 ```
 
