@@ -80,7 +80,10 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/* \
  && update-ca-certificates
 
-# 2. Go (root required to place in /usr/local)
+# 2. Python tools (root required — externally managed environment)
+RUN pip3 install uptime-kuma-api --no-cache-dir --break-system-packages
+
+# 3. Go (root required to place in /usr/local)
 RUN rm -rf /usr/local/go \
  && curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" -o /tmp/go.tgz \
  && tar -C /usr/local -xzf /tmp/go.tgz \
@@ -128,8 +131,7 @@ RUN echo "prefix=/home/node/.local" >> /home/node/.npmrc
 # Create the directory and install tools, including browser-use CLI for browser automation
 RUN mkdir -p /home/node/.local \
  && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION} \
- && npm cache clean --force \
- && pip3 install uptime-kuma-api --no-cache-dir
+ && npm cache clean --force
 
 # Move bw CLI to a private path so it is NOT on the agent's exec PATH.
 # The openclaw-bw-resolver calls it via an explicit compiled-in path;
