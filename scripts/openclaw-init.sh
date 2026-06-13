@@ -42,6 +42,21 @@ if [ -n "${BW_SERVER_URL:-}" ]; then
   fi
 fi
 
+# Pre-warm bw CLI cache: login (if needed), sync from server, then lock.
+# Without this, vault-fetch queries after a container recreate would return
+# stale data because bw list items relies on the local cache.
+# The sync credentials are inherited from container env (BW_CLIENTID etc.).
+if [ -n "${BW_CLIENTID:-}" ] && [ -n "${BW_CLIENTSECRET:-}" ] && [ -n "${BW_PASSWORD:-}" ]; then
+  # Login with API key — idempotent, no-op if already logged in
+  "$BW_BIN" login --apikey >/dev/null 2>&1 || true
+  # Unlock, sync, lock — forces a full item refresh from the server
+  SYNC_SESSION=$("$BW_BIN" unlock --passwordenv BW_PASSWORD --raw 2>/dev/null) || true
+  if [ -n "$SYNC_SESSION" ]; then
+    "$BW_BIN" sync --session "$SYNC_SESSION" >/dev/null 2>&1 || true
+    "$BW_BIN" lock --session "$SYNC_SESSION" >/dev/null 2>&1
+  fi
+fi
+
 # Persist gh auth to disk for agent sessions.
 # OpenClaw strips GITHUB_TOKEN from exec env, but file-based auth survives.
 # No gh CLI call = no network validation = no failure at startup.
