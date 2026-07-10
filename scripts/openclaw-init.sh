@@ -1,18 +1,10 @@
 #!/usr/bin/env sh
 set -eu
 
-# Seed the live config dir from the image-baked snapshot (no-clobber for skills).
-# Then always merge the clawhub registry so seed skills are properly tracked.
-: "${STAGED_SKILLS_DIR:?STAGED_SKILLS_DIR is not set}"
+# Ensure the live config dir exists. Skills are installed at runtime by
+# scripts/install-skills.sh; there is no image-baked seed to copy.
 : "${OPENCLAW_DIR:?OPENCLAW_DIR is not set}"
-
 mkdir -p "$OPENCLAW_DIR"
-cp -rn "$STAGED_SKILLS_DIR/." "$OPENCLAW_DIR/"
-jq -s '{version:1,skills:((.[0].skills//{})*((.[1].skills)//{})) }' \
-  "$STAGED_SKILLS_DIR/.clawhub/lock.json" \
-  "$OPENCLAW_DIR/.clawhub/lock.json" \
-  > "$OPENCLAW_DIR/.clawhub/lock.json.tmp" \
-  && mv "$OPENCLAW_DIR/.clawhub/lock.json.tmp" "$OPENCLAW_DIR/.clawhub/lock.json"
 
 # Clean up stale Chrome singleton locks from unclean shutdowns
 rm -f "$OPENCLAW_DIR/browser/openclaw/user-data/SingletonLock" \
