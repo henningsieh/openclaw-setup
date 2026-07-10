@@ -8,10 +8,10 @@ This file documents the architecture, conventions, and operating procedures for 
 
 This repository extends the official OpenClaw Docker image with:
 - Extra system packages, a Go toolchain, and CLI tools baked in at image build time (reproducible, no manual `apt`/`npm` inside the running container)
-- A seed skill (`github`) baked into the image and automatically installed on first container start via `openclaw-init.sh`
 - Support for swapping the base image between the official release and a locally-built patched image (e.g. testing an upstream PR)
+- An idempotent `scripts/install-skills.sh` that installs pinned ClawHub skills into the live, host-mounted `~/.openclaw` volume after the gateway container starts
 
-**Golden rule**: everything that should be present in every deployment is configured at Docker build time. Running `clawhub install`, `npm install -g`, or even `python -m pip install` inside the running container is an anti-pattern here.
+**Golden rule**: *system dependencies* — anything that must be present in every deployment regardless of user configuration — are baked into the image at Docker build time. This includes system packages, the Go toolchain, global npm CLIs, and the `clawhub` CLI itself. *User/deployment configuration* — ClawHub skills, channel tokens, Claude CLI login state, and Vaultwarden credentials — lives on the persisted host volume and is applied at runtime. Running `npm install -g` or `apt-get install` inside a running container is an anti-pattern; running the provided skill installer (or the equivalent `node dist/index.js skills install --global`) against the live volume is the intended pattern.
 
 ---
 
@@ -19,8 +19,9 @@ This repository extends the official OpenClaw Docker image with:
 
 | File | Role |
 |---|---|
-| `Dockerfile.gateway` | Defines the gateway image. Eight numbered build steps — see below. |
-| `openclaw-init.sh` | Container entrypoint. Seeds skills, merges clawhub registry, execs gateway. |
+| `Dockerfile.gateway` | Defines the gateway image. Seven numbered build steps — see below. |
+| `scripts/openclaw-init.sh` | Container entrypoint. Prepares the live config dir, persists credentials, execs the gateway. |
+| `scripts/install-skills.sh` | Idempotent post-start skill installer; run once after `docker compose up -d openclaw-gateway`, and again when skill versions change. |
 | `docker-compose.yml` | Orchestrates `openclaw-gateway` (long-lived) + `openclaw-cli` (cli profile) services. |
 | `.env` | Local secrets and path overrides — **gitignored, never commit**. |
 | `.env.example` | Template with all keys documented. Commit-safe (no real secrets). |
@@ -42,83 +43,63 @@ Step 1  apt-get: system packages — two passes:
                   snmp, openssl, gnutls-bin, python3, python3-pip, nano, …
           Pass B (optional): snmp-mibs-downloader (non-free; silently skipped if unavailable)
 Step 2  Go toolchain: installed at /usr/local/go (version from GO_VERSION arg)
-Step 3  COPY openclaw-init.sh → /usr/local/bin/openclaw-entrypoint.sh
-        COPY openclaw-bw-resolver.mjs → /usr/local/bin/openclaw-bw-resolver (chmod +x)
-        mkdir /opt/openclaw-skills-seed (owned by node)
+Step 3  COPY scripts/openclaw-init.sh → /usr/local/bin/openclaw-entrypoint.sh
+        COPY scripts/vaultwarden/openclaw-bw-resolver.mjs → /usr/local/bin/openclaw-bw-resolver (chmod +x)
+        COPY scripts/vaultwarden/openclaw-vault-fetch → /usr/local/bin/vault-fetch (chmod +x)
 Step 4  Switch USER node
 Step 5  GOPATH=/home/node/go
-Step 6  go install ser1.net/qcard@latest
-Step 7  npm install -g @xdevplatform/xurl clawhub@latest @steipete/summarize @tobilu/qmd @bitwarden/cli
+Step 6  go install ser1.net/qcard@${QCARD_VERSION}
+Step 7  npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize
+              @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION}
         (prefix: /home/node/.local — no root required)
-Step 8  CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --no-input --force
-        (bakes skill files + .clawhub/lock.json into the seed dir)
-        ENV CLAWHUB_WORKDIR=/home/node/.openclaw   ← runtime default for interactive use
         ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
 ```
-
-**Key invariant**: `CLAWHUB_WORKDIR` is overridden inline for step 8 only. At runtime it points to `/home/node/.openclaw` so interactive `clawhub` commands operate on the live volume.
 
 **Skill version note**: ClawHub skill pins like `browser-use` are authoritative from the ClawHub skill registry/page for the owner/slug (for example `https://clawhub.ai/shawnpana/browser-use`). These skill versions are not the same as npm package versions or GitHub repo package metadata, so verify them against the published ClawHub skill listing when checking or updating skill arguments.
 
 ### Why tools are installed at build time
 
 - Reproducible: every container start from the same image has identical tooling
-- No internet required at runtime
-- `go install`, `npm install -g`, and `clawhub install` are all cache-friendly Docker layers — only the changed step and all subsequent steps re-run on rebuild
+- No internet required at runtime for system tooling
+- `go install` and `npm install -g` are cache-friendly Docker layers — only the changed step and all subsequent steps re-run on rebuild
 
 ---
 
-## Skill seeding — how it works
+## Skill installation (runtime)
 
-### Build time
+Skills are installed into the live, host-mounted `~/.openclaw` volume by `scripts/install-skills.sh` *after* the gateway container is healthy. There is no image-baked seed directory, no copy step on container start, and no lock-file merge, because the installed skills live in only one place: the persisted host volume.
 
-```dockerfile
-RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed \
-    clawhub install github --no-input --force
-```
+### `scripts/install-skills.sh`
 
-This writes into the image layer:
-```
-/opt/openclaw-skills-seed/
-  skills/
-    github/       ← skill files
-  .clawhub/
-    lock.json     ← clawhub registry entry for github
-```
+- Waits for `openclaw-gateway` to report healthy at `http://localhost:${OPENCLAW_GATEWAY_PORT:-18789}/healthz`.
+- For each pinned skill in the `SKILLS` array, runs:
+  ```bash
+  docker compose run --rm --no-deps --entrypoint node openclaw-gateway \
+    dist/index.js skills install @owner/slug --version <version> --global --no-input --force
+  ```
+- `--global` installs into the shared managed skills directory (`/home/node/.openclaw/skills` inside the container, i.e. `OPENCLAW_CONFIG_DIR/skills` on the host).
+- `--no-input --force` makes the install non-interactive and idempotent.
+- Version pins come from `CLAWHUB_*_SKILL_VERSION` variables in `.env`.
 
-### Container start (`openclaw-init.sh`)
+### When to run it
 
-Two operations run on every container start before the gateway process:
+- Once after the very first `docker compose up -d openclaw-gateway`.
+- Again after any `CLAWHUB_*_SKILL_VERSION` value changes in `.env`.
+- It is safe to re-run at any time; installing the same pinned version twice is effectively a no-op.
 
-1. **`cp -rn $STAGED_SKILLS_DIR/. $OPENCLAW_DIR/`** Copies the entire seed dir (skills + `.clawhub/`) into the live host volume. `-n` = no-clobber: skills the user has installed or modified are never overwritten.
-2. **`jq -s '{version:1,skills:(.[0].skills*.[1].skills)}'`** Merges the seed lock into the live lock. The seed is `.[0]` (baseline); the live lock is `.[1]` (user wins on key collision). This ensures seed skills are tracked by `clawhub list` exactly as if the user had run `clawhub install github` themselves.
+### Adding or removing skills
 
-### Result
-
-- `clawhub list` → `github  1.0.0` (tracked, not "Manually installed")
-- `clawhub uninstall github --yes` → removes from live dir only; seed in `/opt/openclaw-skills-seed/` is untouched (image layer)
-- On next container restart, the skill is automatically re-seeded
-
-### Adding more seed skills
-
-Edit `Dockerfile.gateway` step 8:
-
-```dockerfile
-RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed \
-    clawhub install github another-skill --no-input --force
-```
-
-Then rebuild:
+Edit the `SKILLS` array in `scripts/install-skills.sh`:
 
 ```bash
-docker compose build openclaw-gateway
+SKILLS=(
+  "@steipete/github:CLAWHUB_GITHUB_SKILL_VERSION"
+  "@shawnpana/browser-use:CLAWHUB_BROWSER_USE_SKILL_VERSION"
+  # add new "@owner/slug:VAR_NAME" lines here
+)
 ```
 
-Or rebuild and restart:
-
-```bash
-docker compose up -d --build --force-recreate --no-deps openclaw-gateway
-```
+No Dockerfile change and no image rebuild are required. Run `scripts/install-skills.sh` again to apply the change.
 
 ---
 
@@ -133,14 +114,26 @@ All variables are defined in `.env` (never committed) and documented in `example
 | `OPENCLAW_VERSION` | `2026.5.18` | Image tag for base and output images |
 | `OPENCLAW_BASE_IMAGE` | `ghcr.io/openclaw/openclaw` | Which base image to extend |
 | `GO_VERSION` | `1.26.3` | Go toolchain version to install |
+| `QCARD_VERSION` | *(version pin)* | `go install ser1.net/qcard@…` version |
+| `CLAWHUB_CLI_VERSION` | `latest` | `clawhub` CLI version installed globally |
+| `BROWSER_USE_CLI_VERSION` | `0.7.1` | `browser-use` CLI version installed globally |
+
+### Skill install script (`scripts/install-skills.sh`)
+
+These variables are no longer build args. They are read at runtime by `scripts/install-skills.sh` and passed as `--version` arguments to `node dist/index.js skills install`.
+
+| Variable | Example | Purpose |
+|---|---|---|
+| `CLAWHUB_GITHUB_SKILL_VERSION` | `1.0.0` | Pin for `@steipete/github` |
+| `CLAWHUB_BROWSER_USE_SKILL_VERSION` | `2.0.1` | Pin for `@shawnpana/browser-use` |
+| `CLAWHUB_AGENT_BROWSER_SKILL_VERSION` | `0.1.0` | Pin for `@matrixy/agent-browser-clawdbot` |
+| `CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION` | `1.0.1` | Pin for `@asleep123/caldav-calendar` |
 
 ### Runtime env (docker-compose → container)
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `STAGED_SKILLS_DIR` | `/opt/openclaw-skills-seed` | Image-baked seed dir (read-only at runtime) |
 | `OPENCLAW_DIR` | `/home/node/.openclaw` | Host-mounted live config dir |
-| `CLAWHUB_WORKDIR` | `/home/node/.openclaw` | Where clawhub reads/writes skills interactively |
 | `OPENCLAW_CONFIG_DIR` | `/home/shelldon/.openclaw` | Host path mounted to `/home/node/.openclaw` — see note below |
 | `OPENCLAW_WORKSPACE_DIR` | `/home/shelldon/.openclaw/workspace` | Host path for workspace — see note below |
 | `NODE_COMPILE_CACHE` | `/var/tmp/openclaw-compile-cache` | V8 compile cache (version-stamped) |
@@ -178,7 +171,7 @@ Host path                              → Container path
 
 **Non-default host path**: the config tree lives under `/home/shelldon/` rather than `/root/`. System user `shelldon` holds uid/gid `1000:1000`, matching the container's `node` user. Files written by the container are therefore owned by `shelldon` (not `root`), which means you can SSH in as `shelldon` and work in the config dir without permission conflicts. On a root-only server use `/root/.openclaw[/workspace]` instead.
 
-`/home/node/.openclaw` is the single live source of truth inside the container. The seed dir `/opt/openclaw-skills-seed` lives only in the image layer and is never mounted.
+`/home/node/.openclaw` is the single live source of truth inside the container. Skills live in `/home/node/.openclaw/skills` (i.e. `OPENCLAW_CONFIG_DIR/skills` on the host) and are installed at runtime; nothing skill-related is baked into the image.
 
 ---
 
@@ -212,27 +205,36 @@ docker compose ps openclaw-gateway
 ### Verify installed skills
 
 ```bash
-docker exec openclaw-openclaw-gateway-1 clawhub list
+docker exec openclaw-openclaw-gateway-1 node dist/index.js skills list
 # github  1.0.0
-# Manually installed (not tracked by clawhub):
-#   <any skills installed outside the seed>
+# browser-use  2.0.1
+# agent-browser-clawdbot  0.1.0
+# caldav-calendar  1.0.1
 ```
 
-### Install additional skills at runtime
+### Install skills (canonical way)
 
 ```bash
-docker exec openclaw-openclaw-gateway-1 clawhub install <slug>
+./scripts/install-skills.sh
 ```
-This writes to `/home/node/.openclaw/skills/` (the host volume). The skill persists across container restarts but is **not** part of the image — it will be lost if the volume is wiped.
 
-To make a skill permanent (reproducible), add it to step 8 of `Dockerfile.gateway` and rebuild.
+This installs every skill defined in the script's `SKILLS` array into the host-mounted `~/.openclaw/skills` directory via `--global`. It is the correct and permanent way to add skills: because the skills live on the persisted volume, they survive container restarts and image rebuilds automatically.
+
+### Install a single skill manually
+
+```bash
+docker exec openclaw-openclaw-gateway-1 node dist/index.js skills install @owner/slug --global --no-input --force
+```
+
+This writes to `/home/node/.openclaw/skills/` (the host volume) and persists across restarts.
 
 ### Uninstall a skill
 
 ```bash
-docker exec openclaw-openclaw-gateway-1 clawhub uninstall <slug> --yes
+docker exec openclaw-openclaw-gateway-1 node dist/index.js skills uninstall @owner/slug --yes
 ```
-Removes from the live volume only. Seed skills re-appear on next restart.
+
+Removes from the live volume. To make the uninstall stick after a future `scripts/install-skills.sh` run, remove the corresponding entry from the script's `SKILLS` array as well.
 
 ---
 
@@ -241,18 +243,16 @@ Removes from the live volume only. Seed skills re-appear on next restart.
 | Mistake | Correct approach |
 |---|---|
 | Running `npm install -g` inside a running container | Add to `Dockerfile.gateway` step 7 and rebuild |
-| Running `clawhub install` inside a running container to "permanently" add a skill | Add to `Dockerfile.gateway` step 8 (`CLAWHUB_WORKDIR=/opt/openclaw-skills-seed`) and rebuild |
-| Using `CLAWHUB_WORKDIR=/opt/openclaw-skills-seed` in the `ENV` directive | Use it only as an inline override in the `RUN` step; the `ENV` must stay as `/home/node/.openclaw` |
 | Installing system packages with `apt-get` inside the container | Add to `Dockerfile.gateway` step 1 and rebuild |
-| Pointing `STAGED_SKILLS_DIR` at the `skills/` subdir | Point at the parent dir (`/opt/openclaw-skills-seed`) so `cp -rn` also copies `.clawhub/lock.json` |
-| Expecting `clawhub uninstall` to permanently remove a seed skill | Seed skills re-seed on restart; to truly remove one, delete it from step 8 and rebuild |
+| Adding a skill by editing `Dockerfile.gateway` | Add the skill to `scripts/install-skills.sh` and run it; skills are runtime configuration, not image layers |
+| Expecting skills to survive a wiped `~/.openclaw` volume | Skills are persisted only on the host-mounted volume; back up `OPENCLAW_CONFIG_DIR` |
 
 ---
 
 ## Services in docker-compose.yml
 
 ### `openclaw-gateway` (long-lived)
-Runs as user `node` (UID 1000). Entrypoint is `openclaw-entrypoint.sh` which seeds skills, merges the clawhub registry, then execs `docker-entrypoint.sh` → `node dist/index.js gateway …`.
+Runs as user `node` (UID 1000). Entrypoint is `openclaw-entrypoint.sh` (copied from `scripts/openclaw-init.sh`), which prepares the live config dir, persists credentials, then execs `docker-entrypoint.sh` → `node dist/index.js gateway …`.
 
 ### `openclaw-cli` (profile: `cli`)
 Same image as the gateway, network-mode attached to the gateway service, used for one-shot CLI commands. Only starts when `--profile cli` is passed.

@@ -12,20 +12,12 @@ ARG GO_VERSION
 ARG QCARD_VERSION
 ARG CLAWHUB_CLI_VERSION
 ARG BROWSER_USE_CLI_VERSION
-ARG CLAWHUB_BROWSER_USE_SKILL_VERSION
-ARG CLAWHUB_AGENT_BROWSER_SKILL_VERSION
-ARG CLAWHUB_GITHUB_SKILL_VERSION
-ARG CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION
 
 # Guard at build time — fail fast rather than produce a silent no-op
 RUN test -n "${GO_VERSION}"                              || (echo "GO_VERSION is required" && exit 1)
 RUN test -n "${QCARD_VERSION}"                           || (echo "QCARD_VERSION is required" && exit 1)
 RUN test -n "${CLAWHUB_CLI_VERSION}"                     || (echo "CLAWHUB_CLI_VERSION is required" && exit 1)
 RUN test -n "${BROWSER_USE_CLI_VERSION}"                  || (echo "BROWSER_USE_CLI_VERSION is required" && exit 1)
-RUN test -n "${CLAWHUB_BROWSER_USE_SKILL_VERSION}"            || (echo "CLAWHUB_BROWSER_USE_SKILL_VERSION is required" && exit 1)
-RUN test -n "${CLAWHUB_AGENT_BROWSER_SKILL_VERSION}"     || (echo "CLAWHUB_AGENT_BROWSER_SKILL_VERSION is required" && exit 1)
-RUN test -n "${CLAWHUB_GITHUB_SKILL_VERSION}"            || (echo "CLAWHUB_GITHUB_SKILL_VERSION is required" && exit 1)
-RUN test -n "${CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION}"   || (echo "CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION is required" && exit 1)
 
 # 1. System deps (root required)
 USER root
@@ -96,15 +88,13 @@ RUN curl -fsSL "https://github.com/hetznercloud/cli/releases/latest/download/hcl
   && mv hcloud /usr/local/bin/hcloud \
   && chmod +x /usr/local/bin/hcloud
 
-# 4. Entrypoint + skill seed dir + Vaultwarden resolver + vault-fetch (root required)
+# 4. Entrypoint + Vaultwarden resolver + vault-fetch (root required)
 COPY scripts/openclaw-init.sh /usr/local/bin/openclaw-entrypoint.sh
 COPY scripts/vaultwarden/openclaw-bw-resolver.mjs /usr/local/bin/openclaw-bw-resolver
 COPY scripts/vaultwarden/openclaw-vault-fetch /usr/local/bin/vault-fetch
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
              /usr/local/bin/openclaw-bw-resolver \
-             /usr/local/bin/vault-fetch \
- && mkdir -p /opt/openclaw-skills-seed \
- && chown node:node /opt/openclaw-skills-seed
+             /usr/local/bin/vault-fetch
 
 # 4. Switch to non-root user for everything else
 USER node
@@ -162,20 +152,6 @@ RUN HOST_ENV_SEC=$(find /app/dist -name 'host-env-security-*.js' | head -1) \
 
 # Add installed binaries to PATH (bw is no longer in this directory)
 ENV PATH=/home/node/.local/bin:$PATH
-
-# ==========================================
-# 8. Skill Installation (Seed)
-# ==========================================
-# Bake skills into /opt/openclaw-skills-seed at build time.
-# The entrypoint copies them into ~/.openclaw/skills/ on first container start.
-# After that, ~/.openclaw/skills/ is the single source of truth.
-RUN CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install github --version ${CLAWHUB_GITHUB_SKILL_VERSION} --no-input --force \
- && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install browser-use --version ${CLAWHUB_BROWSER_USE_SKILL_VERSION} --no-input --force \
- && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install agent-browser-clawdbot --version ${CLAWHUB_AGENT_BROWSER_SKILL_VERSION} --no-input --force \
- && CLAWHUB_WORKDIR=/opt/openclaw-skills-seed clawhub install caldav-calendar --version ${CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION} --no-input --force
-
-# Point interactive clawhub to the live skills dir (single source of truth)
-ENV CLAWHUB_WORKDIR=/home/node/.openclaw
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=5 \
   CMD node -e "fetch('http://127.0.0.1:18789/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
