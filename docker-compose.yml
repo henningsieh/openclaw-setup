@@ -19,6 +19,7 @@ services:
     image: ${OPENCLAW_IMAGE}:${OPENCLAW_VERSION}
     build: *common-build
     restart: unless-stopped
+    init: true
     # Load overrides from .env, ...
     env_file: 
       - .env
@@ -97,6 +98,7 @@ services:
       - ${OPENCLAW_BACKUP_DIR}:/mnt/nextcloud/Backups
     profiles:
       - cli
+    init: true
     entrypoint: ["node", "dist/index.js"]
     cap_drop:
       - NET_RAW
