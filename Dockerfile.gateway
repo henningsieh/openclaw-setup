@@ -90,13 +90,13 @@ RUN curl -fsSL "https://github.com/hetznercloud/cli/releases/latest/download/hcl
   && mv hcloud /usr/local/bin/hcloud \
   && chmod +x /usr/local/bin/hcloud
 
-# 4. Entrypoint + Vaultwarden resolver + vault-fetch (root required)
+# 4. Entrypoint + Vaultwarden resolver (root required)
+# The legacy vault-fetch shell bridge has been removed; agent credential
+# access is now the native vault_fetch tool plugin (built in step 8).
 COPY scripts/openclaw-init.sh /usr/local/bin/openclaw-entrypoint.sh
 COPY scripts/vaultwarden/openclaw-bw-resolver.mjs /usr/local/bin/openclaw-bw-resolver
-COPY scripts/vaultwarden/openclaw-vault-fetch /usr/local/bin/vault-fetch
 RUN chmod +x /usr/local/bin/openclaw-entrypoint.sh \
-             /usr/local/bin/openclaw-bw-resolver \
-             /usr/local/bin/vault-fetch
+             /usr/local/bin/openclaw-bw-resolver
 
 # 4. Switch to non-root user for everything else
 USER node

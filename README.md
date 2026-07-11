@@ -88,9 +88,10 @@ The gateway runs as user `node` (uid 1000). All persistent state lives on the ho
   scripts/
     openclaw-init.sh             ← container entrypoint: seeds skills, starts gateway
     vaultwarden/
-      openclaw-bw-resolver.mjs   ← Vaultwarden secrets protocol handler
-      openclaw-vault-fetch       ← Exec bridge for credential access (aliased as `vault-fetch`)
+      openclaw-bw-resolver.mjs   ← Vaultwarden exec SecretRef protocol handler (low-level)
       README.md                  ← Vaultwarden integration architecture
+  plugins/
+    vault-fetch/                 ← OpenClaw tool plugin exposing the vault_fetch agent tool
   assets/
     openclaw_build_flow.svg      ← build flow diagram
     openclaw_skills_loading.svg  ← skill loading flow diagram
