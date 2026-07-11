@@ -8,7 +8,7 @@ and long-term maintainability.
 
 ---
 
-## A — Migrate the `vault-fetch` shell bridge into a native OpenClaw tool plugin  ★★★
+## A — Migrate the `vault-fetch` shell bridge into a native OpenClaw tool plugin  ★★★  ✅
 
 **Problem:** The existing `vault-fetch` integration was "vibe coded": a shell
 script (`scripts/vaultwarden/openclaw-vault-fetch`) that reads `BW_*` from
@@ -43,22 +43,27 @@ fixed-field SecretRef use.
 - [x] A4. Prove the full circle: agent calls `vault_fetch` tool for
       `openclaw/qcard/henning@sieh.org` → returns `15,%,aniFtSMu` → agent replies
       `GOT:15,%`. `toolSummary: {calls:1, tools:["vault_fetch"], failures:0}`.
-- [ ] A5. Rewrite the `vaultwarden` skill (`SKILL.md`) to teach the `vault_fetch`
+- [x] A5. Rewrite the `vaultwarden` skill (`SKILL.md`) to teach the `vault_fetch`
       **tool** (not the `vault-fetch` shell command) as the only fetch path.
-- [ ] A6. Remove the old `vault-fetch` shell bridge: delete
+- [x] A6. Remove the old `vault-fetch` shell bridge: delete
       `scripts/vaultwarden/openclaw-vault-fetch`, its `COPY` in `Dockerfile.gateway`,
       and the `/usr/local/bin/vault-fetch` install. Keep the resolver
       (`openclaw-bw-resolver.mjs`) — it powers `openclaw.json` SecretRefs and the
       entrypoint PIM bootstrap.
-- [ ] A7. Update `scripts/vaultwarden/README.md` and `AGENTS.md` to document the
+- [x] A7. Update `scripts/vaultwarden/README.md` and `AGENTS.md` to document the
       tool plugin as the primary agent credential path (the `vaultwarden` skill
       teaches `vault_fetch`); document the resolver as a lower-level component.
-- [ ] A8. Revisit §C (the `sed` exec-env patch) — check whether `BW_*` stripping is
-      still needed now that nothing in exec context reads them. The gateway
-      process env still carries `BW_*`, and exec subprocesses still inherit them
-      unless stripped, so the patch likely stays — but verify and make it
-      fail-closed regardless (§C2).
-- [ ] A9. Commit the working state on `feature/professionalization-plan`.
+- [x] A8. Revisit §C (the `sed` exec-env patch) — verified it is STILL needed
+      (gateway process env carries `BW_*`; exec subprocesses inherit them; the
+      patch is the only thing preventing exec("env") from leaking the master
+      password). Kept as-is; making it fail-closed is tracked separately as §C2.
+- [x] A9. Commit the working state on `feature/professionalization-plan`.
+
+**Verification:** end-to-end proven twice — agent reads the updated skill, calls
+the `vault_fetch` tool unprompted, and returns real Vaultwarden credentials
+(`kuma` → `KvmO...`) with 0 failures. Old `/usr/local/bin/vault-fetch` is gone
+from the running container; the resolver + entrypoint PIM bootstrap are
+unaffected.
 
 ---
 
