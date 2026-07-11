@@ -8,32 +8,57 @@ and long-term maintainability.
 
 ---
 
-## A — Complete the native SecretRef migration  ★★★
+## A — Migrate the `vault-fetch` shell bridge into a native OpenClaw tool plugin  ★★★
 
-**Problem:** `secrets.providers.vaultwarden` exec provider exists in the live
-config but is unused — provider API keys and channel tokens are still plaintext
-in `.env` and `auth-profiles.json`. The parallel `vault-fetch` bridge is a
-bespoke workaround that duplicates what the native system already supports.
+**Problem:** The existing `vault-fetch` integration was "vibe coded": a shell
+script (`scripts/vaultwarden/openclaw-vault-fetch`) that reads `BW_*` from
+`/proc/1/environ` and shells out to the resolver. This is fragile, depends on a
+`sed`-patched exec-env security policy, and is not the OpenClaw-native way to
+expose agent-callable capability.
+
+**Decision:** App environment variables (`OPENCLAW_GATEWAY_TOKEN`, channel
+tokens, provider API keys) stay in `.env` — they already use native `${ENV}`
+SecretRef shorthand and will **not** be moved to Vaultwarden. Vaultwarden is
+reserved for *personal* credentials the agent fetches on demand. The fix is to
+replace the shell bridge with an OpenClaw **tool plugin** (`vault_fetch`) that
+runs in-process inside the gateway, reads `process.env.BW_*` directly, and
+exposes a typed tool the agent calls natively.
+
+**Architecture decision record:** app env vars use `${ENV}` SecretRefs (already
+done); Vaultwarden serves personal creds via the tool plugin (in progress); the
+`secrets.providers.vaultwarden` block stays registered for optional future
+fixed-field SecretRef use.
 
 **Checklist:**
 
-- [ ] A1. Set `secrets.defaults.exec: "vaultwarden"` so every new SecretRef
-      resolves via Vaultwarden by default.
-- [ ] A2. Migrate each provider API key in `auth-profiles.json` / `openclaw.json`
-      to `{source:"exec", provider:"vaultwarden", id:"openclaw/providers/<name>/apiKey"}`.
-      Providers: `google`, `openrouter`, `nvidia`, `opencode`, `opencode-go`.
-- [ ] A3. Migrate channel tokens (`telegram.botToken`, `discord.token`) to
-      `{source:"exec", provider:"vaultwarden", id:"channels/telegram/botToken"}` etc.
-- [ ] A4. Migrate `gateway.auth.password` and other supported credential
-      surfaces (MCP server env vars via `plugins.entries.acpx.config.mcpServers`).
-- [ ] A5. Run the migration gate: `openclaw secrets audit --check` →
-      `openclaw secrets configure --apply` → re-audit. Treat "no plaintext residue"
-      as the done-state.
-- [ ] A6. Remove migrated secrets from `.env` (provider keys, channel tokens).
-- [ ] A7. Demote `vault-fetch` from "core secrets architecture" to "ad-hoc
-      convenience for agent shell usage".
-- [ ] A8. Update `scripts/vaultwarden/README.md` and `AGENTS.md` to reflect the
-      native SecretRef path, not the bridge, as the primary integration.
+- [x] A1. Build the `vault-fetch` tool plugin package (`plugins/vault-fetch/`) —
+      `defineToolPlugin` with one `vault_fetch({ name, mode? })` tool reusing the
+      proven `bw` resolver logic. `tsc` clean, `openclaw plugins validate` →
+      `Plugin vault-fetch is valid.`
+- [x] A2. Bake the build into `Dockerfile.gateway` — compiles TS, generates
+      manifest, validates, prunes to runtime deps, symlinks `openclaw → /app`.
+      Image builds green.
+- [x] A3. Register the plugin in `openclaw.json` (`plugins.load.paths` +
+      `plugins.entries["vault-fetch"].enabled`). Gateway loads it.
+- [x] A4. Prove the full circle: agent calls `vault_fetch` tool for
+      `openclaw/qcard/henning@sieh.org` → returns `15,%,aniFtSMu` → agent replies
+      `GOT:15,%`. `toolSummary: {calls:1, tools:["vault_fetch"], failures:0}`.
+- [ ] A5. Rewrite the `vaultwarden` skill (`SKILL.md`) to teach the `vault_fetch`
+      **tool** (not the `vault-fetch` shell command) as the only fetch path.
+- [ ] A6. Remove the old `vault-fetch` shell bridge: delete
+      `scripts/vaultwarden/openclaw-vault-fetch`, its `COPY` in `Dockerfile.gateway`,
+      and the `/usr/local/bin/vault-fetch` install. Keep the resolver
+      (`openclaw-bw-resolver.mjs`) — it powers `openclaw.json` SecretRefs and the
+      entrypoint PIM bootstrap.
+- [ ] A7. Update `scripts/vaultwarden/README.md` and `AGENTS.md` to document the
+      tool plugin as the primary agent credential path (the `vaultwarden` skill
+      teaches `vault_fetch`); document the resolver as a lower-level component.
+- [ ] A8. Revisit §C (the `sed` exec-env patch) — check whether `BW_*` stripping is
+      still needed now that nothing in exec context reads them. The gateway
+      process env still carries `BW_*`, and exec subprocesses still inherit them
+      unless stripped, so the patch likely stays — but verify and make it
+      fail-closed regardless (§C2).
+- [ ] A9. Commit the working state on `feature/professionalization-plan`.
 
 ---
 

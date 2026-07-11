@@ -1,0 +1,19 @@
+{
+  "id": "vault-fetch",
+  "name": "Vault Fetch",
+  "description": "Fetch credentials from the self-hosted Vaultwarden vault. Use for logins, API keys, and other secrets needed during agent tasks. Item ids match the Vault item 'Name' field and may use a '#notes' or '#<custom-field>' selector suffix.",
+  "version": "1.0.0",
+  "configSchema": {
+    "type": "object",
+    "properties": {},
+    "additionalProperties": false
+  },
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "tools": [
+      "vault_fetch"
+    ]
+  }
+}

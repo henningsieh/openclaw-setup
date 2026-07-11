@@ -152,6 +152,33 @@ RUN HOST_ENV_SEC=$(find /app/dist -name 'host-env-security-*.js' | head -1) \
  && sed -i 's/"GIT_CONFIG_",/"GIT_CONFIG_",\n\t\t"BW_",/' "$HOST_ENV_SEC" \
  && echo "BW_* credentials patched into exec env security policy: $HOST_ENV_SEC"
 
+# 8. Build the vault-fetch tool plugin
+# The plugin runs in-process inside the gateway, so it reads BW_* from the
+# gateway environment directly (no /proc/1/environ and no reliance on the
+# exec env-stripping patch). Build sequence:
+#   1. npm install (dev) — fetches typebox + openclaw (with .d.ts types) + tsc
+#      NODE_ENV=development is required: the runtime image sets production,
+#      which would skip devDependencies (typescript + @types/node).
+#   2. tsc — compiles src/ to dist/ using the npm openclaw .d.ts types.
+#      (Runtime image /app has NO .d.ts — types are stripped for size.)
+#   3. plugins build — generates openclaw.plugin.json manifest.
+#   4. plugins validate — confirms the plugin is well-formed.
+#   5. npm prune --production — keeps only the runtime dep (typebox);
+#      removes typescript, @types/node, and the npm openclaw copy.
+#   6. Symlink node_modules/openclaw -> /app so the built dist/index.js can
+#      resolve 'openclaw/plugin-sdk/tool-plugin' at runtime from the bundled
+#      gateway package (deduplication — no second openclaw copy shipped).
+COPY --chown=node:node plugins/vault-fetch /home/node/.openclaw-plugin-vault-fetch
+WORKDIR /home/node/.openclaw-plugin-vault-fetch
+RUN NODE_ENV=development npm install --ignore-scripts --no-audit --no-fund --no-package-lock \
+ && node_modules/.bin/tsc -p tsconfig.json \
+ && node /app/dist/index.js plugins build --entry ./dist/index.js \
+ && node /app/dist/index.js plugins validate --entry ./dist/index.js \
+ && npm prune --production \
+ && ln -sfn /app node_modules/openclaw \
+ && rm -rf node_modules/.cache
+WORKDIR /app
+
 # Add installed binaries to PATH (bw is no longer in this directory)
 ENV PATH=/home/node/.local/bin:$PATH
 
