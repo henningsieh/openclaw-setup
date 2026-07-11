@@ -19,7 +19,7 @@ This repository extends the official OpenClaw Docker image with:
 
 | File | Role |
 |---|---|
-| `Dockerfile.gateway` | Defines the gateway image. Seven numbered build steps — see below. |
+| `Dockerfile.gateway` | Defines the gateway image. Numbered build steps — see below. |
 | `scripts/openclaw-init.sh` | Container entrypoint. Prepares the live config dir, persists credentials, execs the gateway. |
 | `scripts/install-skills.sh` | Idempotent post-start skill installer; run once after `docker compose up -d openclaw-gateway`, and again when skill versions change. |
 | `docker-compose.yml` | Orchestrates `openclaw-gateway` (long-lived) + `openclaw-cli` (cli profile) services. |
@@ -48,7 +48,7 @@ Step 2  Go toolchain: installed at /usr/local/go (version from GO_VERSION arg)
 Step 3  COPY scripts/openclaw-init.sh → /usr/local/bin/openclaw-entrypoint.sh
         COPY scripts/vaultwarden/openclaw-bw-resolver.mjs → /usr/local/bin/openclaw-bw-resolver (chmod +x)
         (the legacy openclaw-vault-fetch shell bridge has been removed; agent
-         credential access is now the native vault_fetch tool plugin — step 8)
+         credential access is now the native vault_fetch tool plugin — step 9)
 Step 4  Switch USER node
 Step 5  GOPATH=/home/node/go
 Step 6  go install ser1.net/qcard@${QCARD_VERSION}
@@ -56,7 +56,17 @@ Step 7  npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipe
               @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION}
         (prefix: /home/node/.local — no root required)
         ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
-Step 8  Build the vault-fetch tool plugin (plugins/vault-fetch/ → tsc →
+Step 8  Inject BW_* into the host-env-security policy (between steps 7 and 9).
+        The gateway bundles a hardcoded env-stripping policy that blocks
+        dangerous env vars (NODE_OPTIONS, GITHUB_TOKEN, etc.) from leaking
+        into exec subprocesses. This patch adds BW_PASSWORD, BW_CLIENTID,
+        BW_CLIENTSECRET, and the BW_ prefix to that blocklist. Without it,
+        any exec("env") called by the agent would inherit the Bitwarden
+        master password. Implemented as two sed commands followed by grep -q
+        assertions that fail the build if the file hash changed (fail-closed).
+        To update on base-image upgrade: locate the new file via
+        grep -r host-env-security-policy /app/dist/ and adjust sed patterns.
+Step 9  Build the vault-fetch tool plugin (plugins/vault-fetch/ → tsc →
         openclaw plugins build/validate → npm prune → symlink openclaw→/app)
         at /home/node/.openclaw-plugin-vault-fetch, registered in openclaw.json
         via plugins.load.paths + plugins.entries["vault-fetch"].enabled.

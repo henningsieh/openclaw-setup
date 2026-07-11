@@ -144,13 +144,22 @@ RUN mv /home/node/.local/bin/bw /home/node/.local/lib/bw-private \
 # BW_SERVER_URL is intentionally left unblocked — it is not a credential.
 #
 # This is a targeted sed patch against the bundled dist file. The file
-# name contains a content-hash; update it after base image upgrades by
-# running: grep -r 'host-env-security-policy' /app/dist/
+# name contains a content-hash and MUST exist for the build to succeed.
+# If the hash/name changes on a base-image upgrade, the grep assertions
+# below will fail the build (fail-closed) instead of silently skipping.
+# To update: run 'grep -r host-env-security-policy /app/dist/' to locate
+# the new file, then adjust the sed patterns if the surrounding context
+# (e.g. "GITHUB_TOKEN") has also moved.
 RUN HOST_ENV_SEC=$(find /app/dist -name 'host-env-security-*.js' | head -1) \
  && [ -f "$HOST_ENV_SEC" ] \
  && sed -i 's/"GITHUB_TOKEN",/"GITHUB_TOKEN",\n\t\t"BW_PASSWORD",\n\t\t"BW_CLIENTID",\n\t\t"BW_CLIENTSECRET",/' "$HOST_ENV_SEC" \
  && sed -i 's/"GIT_CONFIG_",/"GIT_CONFIG_",\n\t\t"BW_",/' "$HOST_ENV_SEC" \
+ && grep -q '"BW_PASSWORD"' "$HOST_ENV_SEC" \
+ && grep -q '"BW_",' "$HOST_ENV_SEC" \
  && echo "BW_* credentials patched into exec env security policy: $HOST_ENV_SEC"
+# Fail-closed guards: if the file is missing or the grep assertions above
+# fail, the RUN command exits 1 and stops the build. Turn silent skips
+# into build breakage so the patch cannot silently disappear.
 
 # 8. Build the vault-fetch tool plugin
 # The plugin runs in-process inside the gateway, so it reads BW_* from the

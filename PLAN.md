@@ -100,16 +100,23 @@ breaks silently on every base-image upgrade because the filename contains a
 content hash. After §A, the *need* for the patch may be smaller, but it must
 not silently vanish.
 
-- [ ] C1. Investigate whether OpenClaw has a config-native exec-env blocklist
-      (`agents.defaults.exec.denyEnv` or similar). Search the schema via
-      `openclaw config schema | jq '.. | objects | select(has("exec"))'`.
-      If yes, delete the `sed` patch and use config.
-- [ ] C2. If no native knob: make the patch fail-closed by adding `grep -q`
-      assertions after `sed` that verify both inserted markers exist,
-      exiting 1 if the patch wasn't applied. This turns a silent skip into a
-      build error.
-- [ ] C3. After §A is complete, verify whether `BW_*` are still inherited by
-      agent exec and whether the patch is still needed.
+- [x] C1. Investigated: no native config knob exists. The host-env-security
+      policy is hardcoded as a static JSON object in a bundled `.js` file.
+      The `sed` patch is the only available mechanism.
+- [x] C2. Added `grep -q` assertions after both `sed` commands in
+      `Dockerfile.gateway` that verify the injected markers (`BW_PASSWORD`
+      key + `BW_` prefix) are present. If either is missing, `grep` exits 1
+      and the Docker build fails. Updated comments to document the
+      fail-closed approach and the update procedure.
+- [x] C3. Already confirmed in §A8: the patch is still needed. The gateway
+      process env carries BW_*; exec subprocesses inherit them; the patch
+      is the only thing preventing exec("env") from leaking the master
+      password.
+
+**Result:** The sed patch is now fail-closed. A base-image upgrade that
+renames the host-env-security file will cause the build to break at the
+first missing grep assertion, alerting the maintainer immediately rather
+than silently leaking credentials.
 
 ---
 
