@@ -19,13 +19,15 @@ This repository extends the official OpenClaw Docker image with:
 
 | File | Role |
 |---|---|
-| `Dockerfile.gateway` | Defines the gateway image. Seven numbered build steps — see below. |
+| `Dockerfile.gateway` | Defines the gateway image. Numbered build steps — see below. |
 | `scripts/openclaw-init.sh` | Container entrypoint. Prepares the live config dir, persists credentials, execs the gateway. |
 | `scripts/install-skills.sh` | Idempotent post-start skill installer; run once after `docker compose up -d openclaw-gateway`, and again when skill versions change. |
 | `docker-compose.yml` | Orchestrates `openclaw-gateway` (long-lived) + `openclaw-cli` (cli profile) services. |
 | `.env` | Local secrets and path overrides — **gitignored, never commit**. |
 | `.env.example` | Template with all keys documented. Commit-safe (no real secrets). |
 | `README.md` | Human-oriented guide for Docker setup, upgrading, PR-based local builds and image management. |
+| `plugins/vault-fetch/` | OpenClaw tool plugin that exposes the `vault_fetch` agent tool for Vaultwarden credentials. The shared `bw` auth/unlock/fetch/lock logic lives in `src/bw-client.ts` and is also imported (as compiled `dist/bw-client.js`) by the resolver. |
+| `scripts/vaultwarden/` | Vaultwarden exec SecretRef protocol handler (`openclaw-bw-resolver.mjs`) and integration docs. |
 
 ---
 
@@ -45,7 +47,8 @@ Step 1  apt-get: system packages — two passes:
 Step 2  Go toolchain: installed at /usr/local/go (version from GO_VERSION arg)
 Step 3  COPY scripts/openclaw-init.sh → /usr/local/bin/openclaw-entrypoint.sh
         COPY scripts/vaultwarden/openclaw-bw-resolver.mjs → /usr/local/bin/openclaw-bw-resolver (chmod +x)
-        COPY scripts/vaultwarden/openclaw-vault-fetch → /usr/local/bin/vault-fetch (chmod +x)
+        (the legacy openclaw-vault-fetch shell bridge has been removed; agent
+         credential access is now the native vault_fetch tool plugin — step 9)
 Step 4  Switch USER node
 Step 5  GOPATH=/home/node/go
 Step 6  go install ser1.net/qcard@${QCARD_VERSION}
@@ -53,6 +56,27 @@ Step 7  npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipe
               @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION}
         (prefix: /home/node/.local — no root required)
         ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
+Step 8  Inject BW_* into the host-env-security policy (between steps 7 and 9).
+        The gateway bundles a hardcoded env-stripping policy that blocks
+        dangerous env vars (NODE_OPTIONS, GITHUB_TOKEN, etc.) from leaking
+        into exec subprocesses. This patch adds BW_PASSWORD, BW_CLIENTID,
+        BW_CLIENTSECRET, and the BW_ prefix to that blocklist. Without it,
+        any exec("env") called by the agent would inherit the Bitwarden
+        master password. Implemented as two sed commands followed by grep -q
+        assertions that fail the build if the file hash changed (fail-closed).
+        To update on base-image upgrade: locate the new file via
+        grep -r host-env-security-policy /app/dist/ and adjust sed patterns.
+Step 9  Build the vault-fetch tool plugin (plugins/vault-fetch/ → tsc →
+        openclaw plugins build/validate → npm prune → symlink openclaw→/app)
+        at /home/node/.openclaw-plugin-vault-fetch, registered in openclaw.json
+        via plugins.load.paths + plugins.entries["vault-fetch"].enabled.
+        Exposes the vault_fetch({name, mode?}) agent tool for on-demand
+        Vaultwarden credential access. The shared bw auth/unlock/fetch/lock
+        logic lives in src/bw-client.ts and is compiled to dist/bw-client.js;
+        scripts/vaultwarden/openclaw-bw-resolver.mjs imports that compiled
+        module at runtime so resolver + tool plugin stay in sync.
+        Runs in-process (process.env.BW_*), no /proc/1/environ and no
+        reliance on the exec-env stripping patch.
 ```
 
 **Skill version note**: ClawHub skill pins like `browser-use` are authoritative from the ClawHub skill registry/page for the owner/slug (for example `https://clawhub.ai/shawnpana/browser-use`). These skill versions are not the same as npm package versions or GitHub repo package metadata, so verify them against the published ClawHub skill listing when checking or updating skill arguments.
