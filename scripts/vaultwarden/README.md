@@ -2,15 +2,15 @@
 
 This directory contains the credential-fetching infrastructure for integrating with Vaultwarden (self-hosted password manager) within OpenClaw agents.
 
-> Note: this README documents the repository/container integration and build/runtime helper behavior. It is not the OpenClaw skill manifest (`SKILL.md`) for an agent skill.
+> Note: this README documents the repository/container integration and build/runtime helper behavior. It is not the OpenClaw skill manifest (`SKILL.md`) for an agent skill — that lives at `~/.openclaw/skills/vaultwarden/SKILL.md` on the host volume.
 
 ## Architecture
 
-Two complementary pieces work together to bridge a security boundary:
+Two layers work together:
 
-### 1. `openclaw-bw-resolver.mjs` — Core Protocol Handler
+### 1. `openclaw-bw-resolver.mjs` — Core Protocol Handler (lower-level)
 
-- **Role**: Translates between OpenClaw's credential protocol and Vaultwarden's `bw` CLI
+- **Role**: Implements OpenClaw's exec SecretRef protocol and the underlying vault-unlock/fetch logic. Also the engine behind the `vault_fetch` tool.
 - **Input**: JSON over stdin with credential IDs to fetch
 - **Output**: JSON with resolved credentials or errors
 - **Security**: Requires `BW_*` environment variables (server URL, API key, master password)
@@ -34,100 +34,61 @@ stdout:
 }
 ```
 
-### 2. `vault-fetch` — Exec Bridge
+Installed at `/usr/local/bin/openclaw-bw-resolver` in the image, and registered as the `vaultwarden` exec provider under `secrets.providers` in `openclaw.json` for gateway-level SecretRef resolution (e.g. the qcard CardDAV password fetched at container startup by `openclaw-init.sh`).
 
-- **Role**: Bridges the security boundary between agent exec environments and credential storage
+### 2. `vault_fetch` tool plugin — agent credential access (primary)
+
+- **Role**: Exposes a native OpenClaw agent-callable tool `vault_fetch({ name, mode? })` that retrieves a credential from the vault on demand, mid-task.
+- **Location**: `plugins/vault-fetch/` in this repo, built at image build time (Dockerfile.gateway step 8) into `/home/node/.openclaw-plugin-vault-fetch/`, enabled via `plugins.load.paths` + `plugins.entries` in `openclaw.json`.
 - **How it works**:
-  1. Reads `BW_*` variables from gateway's `/proc/1/environ` (process 1 = gateway)
-  2. Calls the resolver with those credentials loaded
-  3. Returns plaintext credential to agent session
+  1. The `execute()` handler runs **in-process** inside the gateway, so it has direct access to `process.env.BW_*`.
+  2. It calls the `bw` CLI at `/home/node/.local/lib/bw-private` (private path, not on exec PATH) to unlock the vault, fetch the item, and lock the vault on every call.
+  3. The credential value is returned to the agent as a typed tool result.
 
-**Implementation detail:** The source file in the repository is `openclaw-vault-fetch`, but the helper is installed in the image as `vault-fetch` for agents to invoke.
+This **supersedes the old shell bridge** (`openclaw-vault-fetch`), which read `BW_*` from `/proc/1/environ` and has been removed.
 
-**Naming note:** `openclaw-vault-fetch` deliberately has no `.sh` extension so it behaves like a normal CLI helper command in the repo and can be installed as `vault-fetch` in `/usr/local/bin`.
-
-## Why Two Files?
-
-This is **intentional security design**:
-
-**Without the bridge:**
-```bash
-# Agent tries to call resolver directly
-echo '{"protocolVersion":1,...}' | node /usr/local/bin/openclaw-bw-resolver
-# → Error: BW_PASSWORD not available
-# (stripped by host-env-security policy in Dockerfile step 7)
-```
-
-**With the bridge:**
-```bash
-# Agent calls the fetch script
-vault-fetch "x.com (Django ElRey)"
-# → R3qj#e&QSuMh
-
-# How it works internally:
-# 1. Script reads BW_* from /proc/1/environ (gateway process has them)
-# 2. Script calls resolver with credentials loaded
-# 3. Returns credential to agent
-```
-
-## Security Model
+## Security model
 
 | Layer | Has Access | Note |
 |-------|-----------|------|
-| **Gateway process (PID 1)** | `BW_PASSWORD`, `BW_CLIENTID`, `BW_CLIENTSECRET` | Injected via `.env` + `passEnv` in docker-compose |
-| **Agent exec environment** | ❌ Blocked | Credentials stripped by host-env-security policy |
-| **vault-fetch** | ✅ Via `/proc/1/environ` | Can read gateway's env, forwards to resolver |
-| **openclaw-bw-resolver** | ✅ If called with creds | Handles vault unlock and item retrieval |
+| **Gateway process** | `BW_PASSWORD`, `BW_CLIENTID`, `BW_CLIENTSECRET` | Injected via `.env` + `env_file` in docker-compose |
+| **`vault_fetch` tool plugin** | ✅ in-process `process.env.BW_*` | Runs as part of the gateway, not an exec subprocess |
+| **Agent exec environment** | ❌ Blocked | `BW_*` stripped by host-env-security policy (Dockerfile `sed` patch) |
+| **`openclaw-bw-resolver`** | ✅ When invoked by the gateway or `openclaw-init.sh` | Not callable from agent exec (env stripped) |
 
-## Usage
+The agent only ever sees the *credential values* returned by the `vault_fetch` tool — never the master password or `BW_*` material itself.
 
-From within an agent session:
+## Usage (from an agent session)
 
-```bash
-# Fetch a specific credential
-password=$(vault-fetch "my-service/api-key")
+Call the `vault_fetch` tool:
 
-# Use in downstream tools
-curl -H "Authorization: Bearer $password" https://api.example.com
+```
+vault_fetch({ name: "my-service/api-key" })              # password (default)
+vault_fetch({ name: "my-service/api-key", mode: "json" })  # full item object
+vault_fetch({ name: "my-service/api-key#notes" })          # Secure Note body
+vault_fetch({ name: "my-service/api-key#customFieldName" })# custom field
 ```
 
-## Item Naming Convention
+The agent learns this from the `vaultwarden` skill (`~/.openclaw/skills/vaultwarden/SKILL.md`).
 
-Create Login items in Vaultwarden whose **Name** field exactly matches the credential ID:
+## Item naming convention
+
+Create Login items in Vaultwarden whose **Name** field exactly matches the credential id:
 
 - `x.com (Django ElRey)` — stored in Vaultwarden with that exact name
 - `openclaw/providers/openai/apiKey` — stored with that path-like name
-- `smtp/mailgun/token` — stored with that path-like name
+- `openclaw/qcard/henning@sieh.org` — qcard CardDAV password (fetched at startup)
 
-### Field Selectors
+### Field selectors
 
-By default, the resolver returns the **password** field. Use suffix selectors for other fields:
+By default, `vault_fetch` returns the **password** field. Use suffix selectors for other fields:
 
-```bash
-# Password field (default)
-vault-fetch "my-service/api-key"
+- `#notes` — Secure Note body
+- `#<customFieldName>` — named custom field
 
-# Secure Note body
-vault-fetch "my-service/api-key#notes"
+## Environment variables
 
-# Custom field
-vault-fetch "my-service/api-key#customFieldName"
-```
-
-## Installation & Deployment
-
-Both files are copied into the Docker image at build time:
-
-```dockerfile
-COPY scripts/vaultwarden/openclaw-bw-resolver.mjs /usr/local/bin/openclaw-bw-resolver
-COPY scripts/vaultwarden/openclaw-vault-fetch /usr/local/bin/openclaw-vault-fetch
-RUN chmod +x /usr/local/bin/openclaw-bw-resolver /usr/local/bin/openclaw-vault-fetch
-RUN ln -sf /usr/local/bin/openclaw-vault-fetch /usr/local/bin/vault-fetch
-```
-
-## Environment Variables
-
-**Required** (injected by docker-compose → `/proc/1/environ`):
+**Required** (injected by docker-compose → gateway process env):
 
 | Variable | Example | Purpose |
 |----------|---------|---------|
@@ -144,6 +105,17 @@ RUN ln -sf /usr/local/bin/openclaw-vault-fetch /usr/local/bin/vault-fetch
 
 Leave all `BW_*` empty to disable Vaultwarden integration.
 
+## Build / installation
+
+The resolver is copied into the image at build time:
+
+```dockerfile
+COPY scripts/vaultwarden/openclaw-bw-resolver.mjs /usr/local/bin/openclaw-bw-resolver
+RUN chmod +x /usr/local/bin/openclaw-bw-resolver
+```
+
+The tool plugin is built and validated at build time (see `Dockerfile.gateway` step 8 and `plugins/vault-fetch/README.md`).
+
 ## Troubleshooting
 
 **Error: "BW resolver: missing required env vars"**
@@ -154,6 +126,12 @@ Leave all `BW_*` empty to disable Vaultwarden integration.
 - Check `BW_SERVER_URL` is reachable
 - Verify `BW_CLIENTID` and `BW_CLIENTSECRET` match Vaultwarden account settings
 
+**`vault_fetch` tool not visible to the agent**
+- Check `openclaw plugins list --enabled` shows `vault-fetch` as `enabled`
+- Check `openclaw plugins inspect vault-fetch --runtime` shows `Status: loaded` and `Tools: vault_fetch`
+- Verify `plugins.load.paths` includes `/home/node/.openclaw-plugin-vault-fetch` and `plugins.entries["vault-fetch"].enabled` is true
+- Restart/reload the gateway after config changes
+
 **Credential not found**
-- Verify the item name in Vaultwarden exactly matches the ID you're requesting
+- Verify the item name in Vaultwarden exactly matches the id you are requesting
 - Check for typos and case sensitivity

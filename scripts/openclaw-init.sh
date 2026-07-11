@@ -51,8 +51,9 @@ if [ -n "${BW_SERVER_URL:-}" ]; then
 fi
 
 # Pre-warm bw CLI cache: login (if needed), sync from server, then lock.
-# Without this, vault-fetch queries after a container recreate would return
-# stale data because bw list items relies on the local cache.
+# Without this, vault_fetch tool queries (and SecretRef resolution) after a
+# container recreate would return stale data because bw list items relies on
+# the local cache.
 # The sync credentials are inherited from container env (BW_CLIENTID etc.).
 if [ -n "${BW_CLIENTID:-}" ] && [ -n "${BW_CLIENTSECRET:-}" ] && [ -n "${BW_PASSWORD:-}" ]; then
   # Login with API key — idempotent, no-op if already logged in

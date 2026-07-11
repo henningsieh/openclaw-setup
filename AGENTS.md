@@ -45,7 +45,8 @@ Step 1  apt-get: system packages — two passes:
 Step 2  Go toolchain: installed at /usr/local/go (version from GO_VERSION arg)
 Step 3  COPY scripts/openclaw-init.sh → /usr/local/bin/openclaw-entrypoint.sh
         COPY scripts/vaultwarden/openclaw-bw-resolver.mjs → /usr/local/bin/openclaw-bw-resolver (chmod +x)
-        COPY scripts/vaultwarden/openclaw-vault-fetch → /usr/local/bin/vault-fetch (chmod +x)
+        (the legacy openclaw-vault-fetch shell bridge has been removed; agent
+         credential access is now the native vault_fetch tool plugin — step 8)
 Step 4  Switch USER node
 Step 5  GOPATH=/home/node/go
 Step 6  go install ser1.net/qcard@${QCARD_VERSION}
@@ -53,6 +54,13 @@ Step 7  npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipe
               @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION}
         (prefix: /home/node/.local — no root required)
         ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
+Step 8  Build the vault-fetch tool plugin (plugins/vault-fetch/ → tsc →
+        openclaw plugins build/validate → npm prune → symlink openclaw→/app)
+        at /home/node/.openclaw-plugin-vault-fetch, registered in openclaw.json
+        via plugins.load.paths + plugins.entries["vault-fetch"].enabled.
+        Exposes the vault_fetch({name, mode?}) agent tool for on-demand
+        Vaultwarden credential access. Runs in-process (process.env.BW_*),
+        no /proc/1/environ and no reliance on the exec-env stripping patch.
 ```
 
 **Skill version note**: ClawHub skill pins like `browser-use` are authoritative from the ClawHub skill registry/page for the owner/slug (for example `https://clawhub.ai/shawnpana/browser-use`). These skill versions are not the same as npm package versions or GitHub repo package metadata, so verify them against the published ClawHub skill listing when checking or updating skill arguments.
