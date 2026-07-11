@@ -26,6 +26,8 @@ This repository extends the official OpenClaw Docker image with:
 | `.env` | Local secrets and path overrides — **gitignored, never commit**. |
 | `.env.example` | Template with all keys documented. Commit-safe (no real secrets). |
 | `README.md` | Human-oriented guide for Docker setup, upgrading, PR-based local builds and image management. |
+| `plugins/vault-fetch/` | OpenClaw tool plugin that exposes the `vault_fetch` agent tool for Vaultwarden credentials. The shared `bw` auth/unlock/fetch/lock logic lives in `src/bw-client.ts` and is also imported (as compiled `dist/bw-client.js`) by the resolver. |
+| `scripts/vaultwarden/` | Vaultwarden exec SecretRef protocol handler (`openclaw-bw-resolver.mjs`) and integration docs. |
 
 ---
 
@@ -59,8 +61,12 @@ Step 8  Build the vault-fetch tool plugin (plugins/vault-fetch/ → tsc →
         at /home/node/.openclaw-plugin-vault-fetch, registered in openclaw.json
         via plugins.load.paths + plugins.entries["vault-fetch"].enabled.
         Exposes the vault_fetch({name, mode?}) agent tool for on-demand
-        Vaultwarden credential access. Runs in-process (process.env.BW_*),
-        no /proc/1/environ and no reliance on the exec-env stripping patch.
+        Vaultwarden credential access. The shared bw auth/unlock/fetch/lock
+        logic lives in src/bw-client.ts and is compiled to dist/bw-client.js;
+        scripts/vaultwarden/openclaw-bw-resolver.mjs imports that compiled
+        module at runtime so resolver + tool plugin stay in sync.
+        Runs in-process (process.env.BW_*), no /proc/1/environ and no
+        reliance on the exec-env stripping patch.
 ```
 
 **Skill version note**: ClawHub skill pins like `browser-use` are authoritative from the ClawHub skill registry/page for the owner/slug (for example `https://clawhub.ai/shawnpana/browser-use`). These skill versions are not the same as npm package versions or GitHub repo package metadata, so verify them against the published ClawHub skill listing when checking or updating skill arguments.

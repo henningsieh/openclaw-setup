@@ -34,7 +34,7 @@ fixed-field SecretRef use.
 - [x] A1. Build the `vault-fetch` tool plugin package (`plugins/vault-fetch/`) —
       `defineToolPlugin` with one `vault_fetch({ name, mode? })` tool reusing the
       proven `bw` resolver logic. `tsc` clean, `openclaw plugins validate` →
-      `Plugin vault-fetch is valid.`
+      `Plugin vault-fetch is valid`.
 - [x] A2. Bake the build into `Dockerfile.gateway` — compiles TS, generates
       manifest, validates, prunes to runtime deps, symlinks `openclaw → /app`.
       Image builds green.
@@ -58,12 +58,20 @@ fixed-field SecretRef use.
       patch is the only thing preventing exec("env") from leaking the master
       password). Kept as-is; making it fail-closed is tracked separately as §C2.
 - [x] A9. Commit the working state on `feature/professionalization-plan`.
+- [x] A10. Extract the shared `bw` auth/unlock/fetch/lock logic into a single
+      module (`plugins/vault-fetch/src/bw-client.ts`) that is imported natively
+      by the tool plugin and (as compiled `dist/bw-client.js`) by the resolver.
+      Verified head-to-head: both paths fetch `"kuma"` and return the identical
+      value, proving they share the same logic.
 
-**Verification:** end-to-end proven twice — agent reads the updated skill, calls
-the `vault_fetch` tool unprompted, and returns real Vaultwarden credentials
-(`kuma` → `KvmO...`) with 0 failures. Old `/usr/local/bin/vault-fetch` is gone
-from the running container; the resolver + entrypoint PIM bootstrap are
-unaffected.
+**Verification:**
+- Agent reads the updated skill and calls `vault_fetch` unprompted (`kuma` →
+  `KvmO...`) with 0 failures.
+- Head-to-head shared-module proof: resolver path and tool-plugin path both
+  fetch `"kuma"` and return the identical value (`KvmOrJk4U5k3wJGxnx8TONIf`).
+- Old `/usr/local/bin/vault-fetch` is gone from the running container; the
+  resolver + entrypoint PIM bootstrap are unaffected and also use the shared
+  compiled `bw-client.js`.
 
 ---
 
