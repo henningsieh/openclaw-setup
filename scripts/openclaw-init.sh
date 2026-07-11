@@ -23,6 +23,22 @@ elif ! jq -e '.browser' "$OPENCLAW_JSON" > /dev/null 2>&1; then
     && mv "$OPENCLAW_JSON.tmp" "$OPENCLAW_JSON"
 fi
 
+# ── Start Xvfb virtual display (enables headed Chrome, bypasses Cloudflare headless detection) ──
+if command -v Xvfb >/dev/null 2>&1; then
+    export DISPLAY=:99
+    Xvfb "$DISPLAY" -screen 0 1920x1080x24 -ac >/dev/null 2>&1 &
+    XVFB_PID=$!
+    echo "Xvfb started on $DISPLAY (PID $XVFB_PID)"
+    
+    # Update browser config to run headed (no HeadlessChrome fingerprint)
+    if jq -e '.browser.headless' "$OPENCLAW_JSON" > /dev/null 2>&1; then
+        jq '.browser.headless = false | .browser.extraArgs = ["--window-size=1920,1080", "--no-first-run", "--no-default-browser-check", "--disable-blink-features=AutomationControlled"]' "$OPENCLAW_JSON" \
+            > "$OPENCLAW_JSON.tmp" \
+            && mv "$OPENCLAW_JSON.tmp" "$OPENCLAW_JSON"
+        echo "Browser config updated: headless=false (via Xvfb)"
+    fi
+fi
+
 # Configure Vaultwarden server URL for bw CLI — only when not yet authenticated,
 # because bw rejects server changes while a login session is active.
 # Uses the private bw path (not on agent exec PATH — see Dockerfile step 7).
