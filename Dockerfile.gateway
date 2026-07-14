@@ -125,6 +125,30 @@ RUN mkdir -p /home/node/.local \
  && npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION} \
  && npm cache clean --force
 
+# Patch bw CLI's device identification so Vaultwarden's "New Device Logged
+# In" email shows a meaningful name instead of the generic "Linux" derived
+# from process.platform. bw has NO supported flag/env/config for this —
+# CliPlatformUtilsService.getDeviceString() is hardcoded, and DeviceRequest
+# (libs/common/src/auth/models/request/identity-token/device.request.ts)
+# reads it directly with no override point. This patches the compiled
+# method in place. Verified against @bitwarden/cli@2026.6.0's build/bw.js
+# by pulling the actual npm package and reading the source — not guessing.
+#
+# Fail-closed: if the exact block isn't found (bw version bump reformatted
+# it), the node script throws and the build breaks instead of silently
+# leaving "Linux" in place.
+RUN export BW_JS=/home/node/.local/lib/node_modules/@bitwarden/cli/build/bw.js \
+ && node -e ' \
+    const fs = require("fs"); \
+    const p = process.env.BW_JS; \
+    let s = fs.readFileSync(p, "utf8"); \
+    const before = `getDeviceString() {\n        const device = DeviceType[this.getDevice()].toLowerCase();\n        return device.replace("cli", "");\n    }`; \
+    const after  = `getDeviceString() {\n        return "openclaw-gateway";\n    }`; \
+    if (!s.includes(before)) { throw new Error("bw.js getDeviceString() block not found - bw CLI version changed, re-check the patch"); } \
+    fs.writeFileSync(p, s.replace(before, after)); \
+    console.log("Patched bw CLI device string in " + p); \
+  '
+
 # Move bw CLI to a private path so it is NOT on the agent's exec PATH.
 # The openclaw-bw-resolver calls it via an explicit compiled-in path;
 # removing it from PATH prevents accidental or deliberate credential
