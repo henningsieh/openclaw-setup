@@ -1,3 +1,4 @@
 {
-    "chat.agent.sandbox.enabled": "allowNetwork"
+    "chat.agent.sandbox.enabled": "on",
+    "chat.agent.sandbox.allowNetwork": true
 }
