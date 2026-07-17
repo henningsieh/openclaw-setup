@@ -74,6 +74,9 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/* \
  && update-ca-certificates
 
+# Set timezone to Europe/Berlin (for tools reading /etc/localtime directly)
+RUN ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
+
 # 2. Python tools (root required — externally managed environment)
 RUN pip3 install uptime-kuma-api --no-cache-dir --break-system-packages
 
