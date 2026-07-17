@@ -29,6 +29,8 @@ services:
       - HCLOUD_TOKEN=${HCLOUD_TOKEN}
       - COOLIFY_API_TOKEN=${COOLIFY_API_TOKEN}
       - OPENCLAW_DIR=${OPENCLAW_DIR:-/home/node/.openclaw}
+      # Timezone
+      - TZ=Europe/Berlin
       # Other gateway runtime environment variables
       - HOME=/home/node
       - NODE_ENV=production
@@ -84,6 +86,7 @@ services:
     env_file:
       - .env
     environment:
+      - TZ=Europe/Berlin
       - HOME=/home/node
       - NODE_ENV=production
       - HCLOUD_TOKEN=${HCLOUD_TOKEN}
