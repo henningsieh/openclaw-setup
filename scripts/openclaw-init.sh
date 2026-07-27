@@ -163,6 +163,15 @@ KHAL
     fi
 fi
 
+# Install khal-event wrapper so agent exec callers get atomic create + server sync.
+KHAL_EVENT_SRC="${OPENCLAW_DIR}/workspace/openclaw-setup/scripts/khal-event"
+KHAL_EVENT_DST=/usr/local/bin/khal-event
+if [ -f "$KHAL_EVENT_SRC" ]; then
+    cp "$KHAL_EVENT_SRC" "$KHAL_EVENT_DST"
+    chmod 755 "$KHAL_EVENT_DST"
+    echo "khal-event installed at ${KHAL_EVENT_DST}"
+fi
+
 # Refresh persisted plugin registry on every start so the policy hash stays
 # current after upgrades. Without this, the CLI falls back to an expensive
 # "derived" plugin scan on every invocation (~8s extra per command).
