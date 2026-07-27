@@ -147,7 +147,7 @@ highlight_event_days = True
 
 [locale]
 timeformat = %H:%M
-dateformat = %d.%m.%Y
+dateformat = %Y-%m-%d
 local_timezone = Europe/Berlin
 default_timezone = Europe/Berlin
 KHAL
