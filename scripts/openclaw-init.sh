@@ -79,43 +79,43 @@ EOF
     chmod 600 /home/node/.config/gh/hosts.yml
 fi
 
-# Persist qcard CardDAV credentials to disk for agent sessions.
-# ~/.config is on the container layer and gets wiped on Docker rebuilds.
-# The password is fetched from Vaultwarden at container startup via the
-# bw-resolver — never stored as an env var.
-QCARD_SERVER_URL="https://mail.sieh.org/SOGo/dav/henning@sieh.org/Contacts/personal/"
-QCARD_USERNAME="henning@sieh.org"
-QCARD_RESOLVER_ID="openclaw/qcard/henning@sieh.org"
+# Persist both CardDAV (qcard) and CalDAV (vdirsyncer/khal) credentials to disk
+# for agent sessions. The password comes from the Vaultwarden MailCow item that
+# has SOGO_EMAIL as its login username, resolved at container startup — never
+# stored as an env var (the .env holds SOGO_EMAIL, not the password).
+SOGO_BASE_URL="https://mail.sieh.org/SOGo/dav"
+: "${SOGO_EMAIL:?SOGO_EMAIL is not set}"
 
-if [ -n "${BW_SERVER_URL:-}" ] && [ -n "${BW_CLIENTID:-}" ] && [ -n "${BW_CLIENTSECRET:-}" ] && [ -n "${BW_PASSWORD:-}" ]; then
-    RESOLVER_INPUT=$(printf '{"protocolVersion":1,"provider":"vaultwarden","ids":["%s"]}' "$QCARD_RESOLVER_ID")
-    QCARD_PASSWORD=$(echo "$RESOLVER_INPUT" | node /usr/local/bin/openclaw-bw-resolver | jq -r ".values[\"$QCARD_RESOLVER_ID\"]")
+if [ -n "${BW_CLIENTID:-}" ] && [ -n "${BW_CLIENTSECRET:-}" ] && [ -n "${BW_PASSWORD:-}" ]; then
+    # Unlock vault and find the MailCow item whose login username matches SOGO_EMAIL
+    QCARD_SESSION=$("$BW_BIN" unlock --passwordenv BW_PASSWORD --raw 2>/dev/null) || true
+    if [ -n "$QCARD_SESSION" ]; then
+        QCARD_PASSWORD=$("$BW_BIN" list items --search "MailCow" --session "$QCARD_SESSION" 2>/dev/null | \
+            jq -r --arg user "$SOGO_EMAIL" '.[] | select(.login.username == $user) | .login.password' 2>/dev/null)
+        "$BW_BIN" lock --session "$QCARD_SESSION" >/dev/null 2>&1
+    fi
 
     if [ -n "$QCARD_PASSWORD" ] && [ "$QCARD_PASSWORD" != "null" ]; then
+        # ── CardDAV (qcard) ────────────────────────────────────────────────
         mkdir -p /home/node/.config/qcard
         jq -n \
-            --arg url "$QCARD_SERVER_URL" \
-            --arg user "$QCARD_USERNAME" \
+            --arg url "${SOGO_BASE_URL}/${SOGO_EMAIL}/Contacts/personal/" \
+            --arg user "$SOGO_EMAIL" \
             --arg pass "$QCARD_PASSWORD" \
             '{Addressbooks: [{Url: $url, Username: $user, Password: $pass}], DetailThreshold: 3, SortByLastname: false}' \
             > /home/node/.config/qcard/config.json
         chmod 600 /home/node/.config/qcard/config.json
-    else
-        echo "WARNING: qcard credential lookup failed (id: $QCARD_RESOLVER_ID)" >&2
-    fi
-fi
 
-# ── Persist CalDAV credentials ────────────────────────────────
-if [ -n "$QCARD_PASSWORD" ] && [ "$QCARD_PASSWORD" != "null" ]; then
-    # Password file + vdirsyncer + khal config dirs
-    mkdir -p /home/node/.config/vdirsyncer /home/node/.config/khal /home/node/.local/share/vdirsyncer/status /home/node/.local/share/vdirsyncer/calendars/personal
-    chmod 700 /home/node/.config/vdirsyncer /home/node/.config/khal
+        # ── CalDAV (vdirsyncer + khal) ────────────────────────────────────
+        mkdir -p /home/node/.config/vdirsyncer /home/node/.config/khal \
+                 /home/node/.local/share/vdirsyncer/status \
+                 /home/node/.local/share/vdirsyncer/calendars/personal
+        chmod 700 /home/node/.config/vdirsyncer /home/node/.config/khal
 
-    printf '%s' "$QCARD_PASSWORD" > /home/node/.config/vdirsyncer/caldav_password
-    chmod 600 /home/node/.config/vdirsyncer/caldav_password
+        printf '%s' "$QCARD_PASSWORD" > /home/node/.config/vdirsyncer/caldav_password
+        chmod 600 /home/node/.config/vdirsyncer/caldav_password
 
-    # vdirsyncer config
-    cat > /home/node/.config/vdirsyncer/config <<'VDIRSYNCER'
+        cat > /home/node/.config/vdirsyncer/config << VDIRSYNCER
 [general]
 status_path = "~/.local/share/vdirsyncer/status/"
 
@@ -127,8 +127,8 @@ conflict_resolution = "a wins"
 
 [storage personal_remote]
 type = "caldav"
-url = "https://mail.sieh.org/SOGo/dav/henning@sieh.org/Calendar/personal/"
-username = "henning@sieh.org"
+url = "${SOGO_BASE_URL}/${SOGO_EMAIL}/Calendar/personal/"
+username = "${SOGO_EMAIL}"
 password.fetch = ["command", "cat", "~/.config/vdirsyncer/caldav_password"]
 
 [storage personal_local]
@@ -137,8 +137,7 @@ path = "~/.local/share/vdirsyncer/calendars/personal/"
 fileext = ".ics"
 VDIRSYNCER
 
-    # khal config
-    cat > /home/node/.config/khal/config <<'KHAL'
+        cat > /home/node/.config/khal/config <<'KHAL'
 [calendars]
 [[personal]]
 path = ~/.local/share/vdirsyncer/calendars/personal/
@@ -152,12 +151,14 @@ dateformat = %d.%m.%Y
 local_timezone = Europe/Berlin
 default_timezone = Europe/Berlin
 KHAL
-    chmod 600 /home/node/.config/khal/config
+        chmod 600 /home/node/.config/khal/config
 
-    # Initial discovery + sync so the calendar is queryable right away.
-    # Without this, the first khal query after a rebuild would see an empty cache.
-    echo y | vdirsyncer discover personal >/dev/null 2>&1 || true
-    vdirsyncer sync >/dev/null 2>&1 || true
+        # Initial discovery + sync so the calendar is queryable right away.
+        echo y | vdirsyncer discover personal >/dev/null 2>&1 || true
+        vdirsyncer sync >/dev/null 2>&1 || true
+    else
+        echo "WARNING: qcard/caldav credential lookup failed (no MailCow item with username $SOGO_EMAIL)" >&2
+    fi
 fi
 
 # Refresh persisted plugin registry on every start so the policy hash stays
