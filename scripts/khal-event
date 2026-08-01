@@ -1,0 +1,36 @@
+#!/bin/sh
+# khal-event — atomarer Wrapper für khal new + vdirsyncer sync
+#
+# Erzeugt einen Termin via khal und pusht ihn SOFORT per vdirsyncer
+# auf den CalDAV-Server (MailCow/SOGo). Schlägt der Sync fehl,
+# wird der Termin zurückgerollt (lokale .ics gelöscht).
+#
+# Usage: khal-event [khal-new-argumente…]
+# Example: khal-event "2026-07-29 10:00" 14:00 "Einkaufen" -a personal -m 1h
+set -eu
+
+CALENDAR_DIR="${HOME}/.local/share/vdirsyncer/calendars/personal"
+
+# Letzen Eintrag vorher merken (letzte ics im Kalender-Ordner)
+BEFORE=$(ls -1t "$CALENDAR_DIR" 2>/dev/null | head -1)
+
+# Termin lokal anlegen — schlägt das fehl, brechen wir ab
+khal new "$@"
+
+# Neue .ics identifizieren
+AFTER=$(ls -1t "$CALENDAR_DIR" 2>/dev/null | head -1)
+if [ "$BEFORE" != "$AFTER" ] && [ -n "$AFTER" ]; then
+    NEW_ICS="${CALENDAR_DIR}/${AFTER}"
+else
+    echo "khal-event: ERROR - no new .ics file detected" >&2
+    exit 1
+fi
+
+# Zum Server pushen — schlägt das fehl, lokales ICS löschen
+if vdirsyncer sync >/dev/null 2>&1; then
+    echo "khal-event: event created and synced to server ✅"
+else
+    rm -f "$NEW_ICS"
+    echo "khal-event: ERROR - vdirsyncer sync failed, event deleted" >&2
+    exit 1
+fi
