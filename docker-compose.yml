@@ -13,8 +13,8 @@ x-common-build: &common-build
     CLAWHUB_CLI_VERSION: ${CLAWHUB_CLI_VERSION}
     BROWSER_USE_CLI_VERSION: ${BROWSER_USE_CLI_VERSION}
     NEXTCLOUD_DOCUMENTS_DIR: ${NEXTCLOUD_DOCUMENTS_DIR}
-    - AIOHTTP_VERSION: ${AIOHTTP_VERSION}
-    - ARGON2_VERSION: ${ARGON2_VERSION}
+    AIOHTTP_VERSION: ${AIOHTTP_VERSION}
+    ARGON2_VERSION: ${ARGON2_VERSION}
 
 services:
   openclaw-gateway:
@@ -39,7 +39,8 @@ services:
       - NODE_COMPILE_CACHE=${NODE_COMPILE_CACHE}/${OPENCLAW_VERSION}
       - TERM=xterm-256color
       - PATH=/home/node/.local/bin:/home/node/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - HOYMILES_PLANT_ID=\n    volumes:
+      - HOYMILES_PLANT_ID=${HOYMILES_PLANT_ID}
+    volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
       - ${NODE_COMPILE_CACHE}/${OPENCLAW_VERSION}:${NODE_COMPILE_CACHE}/${OPENCLAW_VERSION}
