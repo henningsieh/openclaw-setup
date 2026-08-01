@@ -79,6 +79,10 @@ RUN ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime && dpkg-reconfigure 
 
 # 2. Python tools (root required — externally managed environment)
 RUN pip3 install uptime-kuma-api --no-cache-dir --break-system-packages
+# Hoymiles cloud monitor Python environment
+RUN python3 -m venv /opt/hoymiles-cloud/venv \
+    && /opt/hoymiles-cloud/venv/bin/pip install --no-cache-dir \
+        aiohttp==3.14.3 argon2-cffi==25.1.0
 
 # 3. Go (root required to place in /usr/local)
 RUN rm -rf /usr/local/go \
