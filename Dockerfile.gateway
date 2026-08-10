@@ -12,12 +12,16 @@ ARG GO_VERSION
 ARG QCARD_VERSION
 ARG CLAWHUB_CLI_VERSION
 ARG BROWSER_USE_CLI_VERSION
+ARG AIOHTTP_VERSION
+ARG ARGON2_VERSION
 
 # Guard at build time — fail fast rather than produce a silent no-op
 RUN test -n "${GO_VERSION}"                              || (echo "GO_VERSION is required" && exit 1)
 RUN test -n "${QCARD_VERSION}"                           || (echo "QCARD_VERSION is required" && exit 1)
 RUN test -n "${CLAWHUB_CLI_VERSION}"                     || (echo "CLAWHUB_CLI_VERSION is required" && exit 1)
 RUN test -n "${BROWSER_USE_CLI_VERSION}"                  || (echo "BROWSER_USE_CLI_VERSION is required" && exit 1)
+RUN test -n "${AIOHTTP_VERSION}"                         || (echo "AIOHTTP_VERSION is required" && exit 1)
+RUN test -n "${ARGON2_VERSION}"                          || (echo "ARGON2_VERSION is required" && exit 1)
 
 # 1. System deps (root required)
 USER root
@@ -51,7 +55,7 @@ RUN apt-get update \
     # --- TLS / PKI ---
     openssl gnutls-bin \
     # --- Scripting ---
-    python3 python-is-python3 python3-pip nano \
+    python3 python-is-python3 python3-pip python3-venv nano \
     # --- Virtual display for headed browser mode (Cloudflare bypass) ---
     xvfb xauth \
     # --- CalDAV calendar support ---
@@ -82,7 +86,7 @@ RUN pip3 install uptime-kuma-api --no-cache-dir --break-system-packages
 # Hoymiles cloud monitor Python environment
 RUN python3 -m venv /opt/hoymiles-cloud/venv \
     && /opt/hoymiles-cloud/venv/bin/pip install --no-cache-dir \
-        aiohttp=${AIOHTTP_VERSION} argon2-cffi=${ARGON2_VERSION}
+        aiohttp==${AIOHTTP_VERSION} argon2-cffi==${ARGON2_VERSION}
 # 3. Go (root required to place in /usr/local)
 RUN rm -rf /usr/local/go \
  && curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" -o /tmp/go.tgz \
