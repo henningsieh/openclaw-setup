@@ -36,37 +36,48 @@ This repository extends the official OpenClaw Docker image with:
 ### Dockerfile.gateway — step summary
 
 ```
-Step 1  apt-get: system packages — two passes:
-          Pass A (main block): jq, ripgrep, git, curl, gnupg, ca-certificates, gh,
-                  util-linux, iproute2, nmap, htop, dstat, glances, strace, sysstat,
-                  iperf3, socat, hping3, arp-scan, iftop, nethogs,
-                  lsof, ncdu, lshw, dmidecode, hdparm, xxd,
-                  ldap-utils, smbclient, krb5-user,
-                  snmp, openssl, gnutls-bin, python3, python3-pip, nano, …
-          Pass B (optional): snmp-mibs-downloader (non-free; silently skipped if unavailable)
-Step 2  Go toolchain: installed at /usr/local/go (version from GO_VERSION arg)
-Step 3  COPY scripts/openclaw-init.sh → /usr/local/bin/openclaw-entrypoint.sh
+Step 1  apt-get: system packages (root) — core utils (jq, ripgrep, git, curl, gnupg,
+          ca-certificates), IT-admin/networking (iputils-ping, iproute2, net-tools,
+          dnsutils, traceroute, mtr, telnet, netcat-openbsd, tcpdump, nmap, whois,
+          iperf3, socat, hping3, arp-scan, iftop, nethogs), monitoring (procps,
+          htop, dstat, glances, sysstat, strace), file/storage (file, tree, less,
+          vim-tiny, unzip, zip, p7zip-full, fdisk, parted, smartmontools, rsync,
+          openssh-client, wget, bc), identity (ldap-utils, smbclient, krb5-user),
+          SNMP, TLS/PKI (openssl, gnutls-bin), scripting (python3,
+          python-is-python3, python3-pip, python3-venv, nano), virtual display (xvfb, xauth),
+          CalDAV (vdirsyncer, khal); then gh CLI + google-chrome-stable from
+          third-party repos. Sets timezone Europe/Berlin.
+Step 2  Python tools (root): pip3 install uptime-kuma-api (--break-system-packages);
+          Hoymiles cloud venv at /opt/hoymiles-cloud/venv with
+          aiohttp=${AIOHTTP_VERSION} argon2-cffi=${ARGON2_VERSION}
+Step 3  Go toolchain at /usr/local/go (GO_VERSION arg) + hcloud CLI (Hetzner Cloud,
+          latest release tarball → /usr/local/bin/hcloud)
+Step 4  COPY scripts/openclaw-init.sh → /usr/local/bin/openclaw-entrypoint.sh
         COPY scripts/vaultwarden/openclaw-bw-resolver.mjs → /usr/local/bin/openclaw-bw-resolver (chmod +x)
         (the legacy openclaw-vault-fetch shell bridge has been removed; agent
-         credential access is now the native vault_fetch tool plugin — step 9)
-Step 4  Switch USER node
-Step 5  GOPATH=/home/node/go
+         credential access is now the native vault_fetch tool plugin — step 8)
+        Switch USER node; ENV NODE_EXTRA_CA_CERTS
+Step 5  GOPATH=/home/node/go; PATH prepends /usr/local/go/bin and /home/node/go/bin
 Step 6  go install ser1.net/qcard@${QCARD_VERSION}
 Step 7  npm install -g @xdevplatform/xurl clawhub@${CLAWHUB_CLI_VERSION} @steipete/summarize
               @tobilu/qmd @bitwarden/cli browser-use@${BROWSER_USE_CLI_VERSION}
         (prefix: /home/node/.local — no root required)
-        ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]
-Step 8  Inject BW_* into the host-env-security policy (between steps 7 and 9).
-        The gateway bundles a hardcoded env-stripping policy that blocks
-        dangerous env vars (NODE_OPTIONS, GITHUB_TOKEN, etc.) from leaking
-        into exec subprocesses. This patch adds BW_PASSWORD, BW_CLIENTID,
-        BW_CLIENTSECRET, and the BW_ prefix to that blocklist. Without it,
-        any exec("env") called by the agent would inherit the Bitwarden
-        master password. Implemented as two sed commands followed by grep -q
-        assertions that fail the build if the file hash changed (fail-closed).
-        To update on base-image upgrade: locate the new file via
-        grep -r host-env-security-policy /app/dist/ and adjust sed patterns.
-Step 9  Build the vault-fetch tool plugin (plugins/vault-fetch/ → tsc →
+        ENTRYPOINT ["/usr/local/bin/openclaw-entrypoint.sh"]. Then credential hardening:
+          • Patch bw CLI's getDeviceString() to report "openclaw-gateway"
+            (fail-closed node script — build breaks if the block moves).
+          • Move the bw binary to /home/node/.local/lib/bw-private and remove it
+            from PATH (prevents exec("bw unlock …") from agent sessions).
+          • Inject BW_PASSWORD, BW_CLIENTID, BW_CLIENTSECRET and the BW_ prefix
+            into the bundled host-env-security policy. The gateway bundles a
+            hardcoded env-stripping policy that blocks dangerous env vars
+            (NODE_OPTIONS, GITHUB_TOKEN, etc.) from leaking into exec subprocesses;
+            this patch adds the BW_* names to that blocklist. Without it, any
+            exec("env") called by the agent would inherit the Bitwarden master
+            password. Implemented as two sed commands followed by grep -q
+            assertions that fail the build if the file hash changed (fail-closed).
+            To update on base-image upgrade: locate the new file via
+            grep -r host-env-security-policy /app/dist/ and adjust sed patterns.
+Step 8  Build the vault-fetch tool plugin (plugins/vault-fetch/ → tsc →
         openclaw plugins build/validate → npm prune → symlink openclaw→/app)
         at /home/node/.openclaw-plugin-vault-fetch, registered in openclaw.json
         via plugins.load.paths + plugins.entries["vault-fetch"].enabled.
@@ -77,6 +88,7 @@ Step 9  Build the vault-fetch tool plugin (plugins/vault-fetch/ → tsc →
         module at runtime so resolver + tool plugin stay in sync.
         Runs in-process (process.env.BW_*), no /proc/1/environ and no
         reliance on the exec-env stripping patch.
+HEALTHCHECK polls /healthz; CMD ["node", "dist/index.js", "gateway", "--allow-unconfigured"]
 ```
 
 **Skill version note**: ClawHub skill pins like `browser-use` are authoritative from the ClawHub skill registry/page for the owner/slug (for example `https://clawhub.ai/shawnpana/browser-use`). These skill versions are not the same as npm package versions or GitHub repo package metadata, so verify them against the published ClawHub skill listing when checking or updating skill arguments.
@@ -99,10 +111,10 @@ Skills are installed into the live, host-mounted `~/.openclaw` volume by `script
 - For each pinned skill in the `SKILLS` array, runs:
   ```bash
   docker compose run --rm --no-deps --entrypoint node openclaw-gateway \
-    dist/index.js skills install @owner/slug --version <version> --global --no-input --force
+    dist/index.js skills install @owner/slug --version <version> --global --force
   ```
 - `--global` installs into the shared managed skills directory (`/home/node/.openclaw/skills` inside the container, i.e. `OPENCLAW_CONFIG_DIR/skills` on the host).
-- `--no-input --force` makes the install non-interactive and idempotent.
+- `--force` makes the install converge to the pinned version (idempotent in effect).
 - Version pins come from `CLAWHUB_*_SKILL_VERSION` variables in `.env`.
 
 ### When to run it
@@ -119,6 +131,8 @@ Edit the `SKILLS` array in `scripts/install-skills.sh`:
 SKILLS=(
   "@steipete/github:CLAWHUB_GITHUB_SKILL_VERSION"
   "@shawnpana/browser-use:CLAWHUB_BROWSER_USE_SKILL_VERSION"
+  "@matrixy/agent-browser-clawdbot:CLAWHUB_AGENT_BROWSER_SKILL_VERSION"
+  "@asleep123/caldav-calendar:CLAWHUB_CALDAV_CALENDAR_SKILL_VERSION"
   # add new "@owner/slug:VAR_NAME" lines here
 )
 ```
@@ -129,18 +143,21 @@ No Dockerfile change and no image rebuild are required. Run `scripts/install-ski
 
 ## Environment variables
 
-All variables are defined in `.env` (never committed) and documented in `example.env`. Key variables:
+All variables are defined in `.env` (never committed) and documented in `.env.example`. Key variables:
 
 ### Build args (Dockerfile.gateway)
 
 | Variable | Example | Purpose |
 |---|---|---|
-| `OPENCLAW_VERSION` | `2026.5.18` | Image tag for base and output images |
+| `OPENCLAW_VERSION` | `2026.7.1` | Image tag for base and output images |
+| `OPENCLAW_IMAGE` | `openclaw-local` | Local tag for the built gateway image |
 | `OPENCLAW_BASE_IMAGE` | `ghcr.io/openclaw/openclaw` | Which base image to extend |
 | `GO_VERSION` | `1.26.3` | Go toolchain version to install |
-| `QCARD_VERSION` | *(version pin)* | `go install ser1.net/qcard@…` version |
+| `QCARD_VERSION` | `latest` | `go install ser1.net/qcard@…` version (resolved at build time) |
 | `CLAWHUB_CLI_VERSION` | `latest` | `clawhub` CLI version installed globally |
-| `BROWSER_USE_CLI_VERSION` | `0.7.1` | `browser-use` CLI version installed globally |
+| `BROWSER_USE_CLI_VERSION` | `latest` | `browser-use` CLI version installed globally |
+| `AIOHTTP_VERSION` | `3.14.3` | `aiohttp` pin in the Hoymiles venv (step 2) |
+| `ARGON2_VERSION` | `25.1.0` | `argon2-cffi` pin in the Hoymiles venv (step 2) |
 
 ### Skill install script (`scripts/install-skills.sh`)
 
@@ -160,20 +177,33 @@ These variables are no longer build args. They are read at runtime by `scripts/i
 | `OPENCLAW_DIR` | `/home/node/.openclaw` | Host-mounted live config dir |
 | `OPENCLAW_CONFIG_DIR` | `/home/shelldon/.openclaw` | Host path mounted to `/home/node/.openclaw` — see note below |
 | `OPENCLAW_WORKSPACE_DIR` | `/home/shelldon/.openclaw/workspace` | Host path for workspace — see note below |
-| `NODE_COMPILE_CACHE` | `/var/tmp/openclaw-compile-cache` | V8 compile cache (version-stamped) |
-| `XDG_CONFIG_HOME` | `/home/node/.openclaw` | XDG config override inside container |
+| `OPENCLAW_BACKUP_DIR` | `/mnt/openclaw-backup` | Host path mounted to `/mnt/nextcloud/Backups` (backups share) |
+| `NEXTCLOUD_DOCUMENTS_DIR` | `/mnt/nextcloud/Documents` | Host path mounted read-only to `/mnt/nextcloud/Documents` |
+| `NODE_COMPILE_CACHE` | `/var/tmp/openclaw-compile-cache` | V8 compile cache root — compose appends `${OPENCLAW_VERSION}` |
+| `XDG_CONFIG_HOME` | `/home/node/.config` | XDG config override inside container |
+| `OPENCLAW_BUNDLED_PLUGINS_DIR` | `/app/dist/extensions` | Image-bundled plugins dir |
 | `OPENCLAW_GATEWAY_TOKEN` | *(secret)* | Bearer token for gateway API auth |
 | `GATEWAY_AUTH_PASSWORD` | *(secret)* | Web UI password |
+| `OPENCLAW_NO_RESPAWN` | `1` | Disable internal respawn (Docker handles restarts) |
+| `OPENCLAW_GATEWAY_BIND` | `lan` | Gateway bind mode (passed as `--bind`) |
+| `OPENCLAW_GATEWAY_PORT` | `18789` | Published gateway port |
+| `OPENCLAW_DISABLE_BONJOUR` | `1` | Disable mDNS (Docker bridge doesn't forward multicast) |
+| `OPENCLAW_TRUSTED_PROXIES` | `172.25.0.1` | Trusted proxy (docker bridge) for the gateway |
+| `SOGO_EMAIL` | `henning@sieh.org` | SOGo/MailCow account used for CardDAV/CalDAV provisioning |
+| `HOYMILES_PLANT_ID` | `14557760` | Hoymiles S-Miles plant ID (creds via `vault_fetch`) |
+| `COMPOSE_BAKE` | `1` | Compose-only: delegate builds to BuildKit bake (not passed to container) |
+
+Compose additionally sets fixed constants on the container: `TZ=Europe/Berlin`, `HOME=/home/node`, `NODE_ENV=production`, `TERM=xterm-256color`, and the `PATH` string (see `docker-compose.yml`).
 
 ### API keys passed through to the gateway
 
-`COPILOT_GITHUB_TOKEN`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `OPENCODE_API_KEY`, `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`
+`GITHUB_TOKEN`, `COPILOT_GITHUB_TOKEN`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `OPENCODE_API_KEY`, `TELEGRAM_BOT_TOKEN`, `DISCORD_BOT_TOKEN`, `HCLOUD_TOKEN`, `COOLIFY_API_TOKEN`, `GROCY_API_KEY`
 
 ### Vaultwarden bootstrap credentials (secrets provider)
 
 | Variable | Purpose |
 |---|---|
-| `BW_SERVER_URL` | Vaultwarden base URL (e.g. `https://vault.example.com`) |
+| `BW_SERVER_URL` | Vaultwarden base URL (this deployment: `https://vault.apps.sieh.org`) |
 | `BW_CLIENTID` | API client_id from Vaultwarden → Account Settings → Security → API Key |
 | `BW_CLIENTSECRET` | API client_secret (same source) |
 | `BW_PASSWORD` | Master password used to unlock the vault |
@@ -191,6 +221,8 @@ Host path                              → Container path
 /home/shelldon/.openclaw               → /home/node/.openclaw   (config + skills)
 /home/shelldon/.openclaw/workspace     → /home/node/.openclaw/workspace
 /var/tmp/openclaw-compile-cache/…      → /var/tmp/openclaw-compile-cache/…
+/mnt/openclaw-backup                   → /mnt/nextcloud/Backups
+/mnt/nextcloud/Documents               → /mnt/nextcloud/Documents (read-only)
 ```
 
 **Non-default host path**: the config tree lives under `/home/shelldon/` rather than `/root/`. System user `shelldon` holds uid/gid `1000:1000`, matching the container's `node` user. Files written by the container are therefore owned by `shelldon` (not `root`), which means you can SSH in as `shelldon` and work in the config dir without permission conflicts. On a root-only server use `/root/.openclaw[/workspace]` instead.
@@ -247,7 +279,7 @@ This installs every skill defined in the script's `SKILLS` array into the host-m
 ### Install a single skill manually
 
 ```bash
-docker exec openclaw-openclaw-gateway-1 node dist/index.js skills install @owner/slug --global --no-input --force
+docker exec openclaw-openclaw-gateway-1 node dist/index.js skills install @owner/slug --global --force
 ```
 
 This writes to `/home/node/.openclaw/skills/` (the host volume) and persists across restarts.

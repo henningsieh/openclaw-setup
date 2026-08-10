@@ -164,12 +164,18 @@ KHAL
 fi
 
 # Install khal-event wrapper so agent exec callers get atomic create + server sync.
+# Lives in ~/.local/bin (user-writable, already on PATH) — /usr/local/bin is
+# root-owned and this container runs as user `node`, so a copy there would fail.
 KHAL_EVENT_SRC="${OPENCLAW_DIR}/workspace/openclaw-setup/scripts/khal-event"
-KHAL_EVENT_DST=/usr/local/bin/khal-event
 if [ -f "$KHAL_EVENT_SRC" ]; then
-    cp "$KHAL_EVENT_SRC" "$KHAL_EVENT_DST"
-    chmod 755 "$KHAL_EVENT_DST"
-    echo "khal-event installed at ${KHAL_EVENT_DST}"
+    KHAL_EVENT_DIR="${HOME:-/home/node}/.local/bin"
+    mkdir -p "$KHAL_EVENT_DIR"
+    if cp "$KHAL_EVENT_SRC" "$KHAL_EVENT_DIR/khal-event" 2>/dev/null; then
+        chmod 755 "$KHAL_EVENT_DIR/khal-event"
+        echo "khal-event installed at ${KHAL_EVENT_DIR}/khal-event"
+    else
+        echo "WARNING: could not install khal-event into ${KHAL_EVENT_DIR}" >&2
+    fi
 fi
 
 # Refresh persisted plugin registry on every start so the policy hash stays
