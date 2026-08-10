@@ -87,6 +87,9 @@ RUN pip3 install uptime-kuma-api --no-cache-dir --break-system-packages
 RUN python3 -m venv /opt/hoymiles-cloud/venv \
     && /opt/hoymiles-cloud/venv/bin/pip install --no-cache-dir \
         aiohttp==${AIOHTTP_VERSION} argon2-cffi==${ARGON2_VERSION}
+# Hoymiles cloud monitor — vendored API client (pinned upstream commit f1082228)
+COPY hoymiles_cloud/ /opt/hoymiles-cloud/hoymiles_cloud/
+COPY hoymiles_cloud_monitor.py /opt/hoymiles-cloud/hoymiles_cloud_monitor.py
 # 3. Go (root required to place in /usr/local)
 RUN rm -rf /usr/local/go \
  && curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" -o /tmp/go.tgz \
