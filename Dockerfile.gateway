@@ -12,16 +12,12 @@ ARG GO_VERSION
 ARG QCARD_VERSION
 ARG CLAWHUB_CLI_VERSION
 ARG BROWSER_USE_CLI_VERSION
-ARG AIOHTTP_VERSION
-ARG ARGON2_VERSION
 
 # Guard at build time — fail fast rather than produce a silent no-op
 RUN test -n "${GO_VERSION}"                              || (echo "GO_VERSION is required" && exit 1)
 RUN test -n "${QCARD_VERSION}"                           || (echo "QCARD_VERSION is required" && exit 1)
 RUN test -n "${CLAWHUB_CLI_VERSION}"                     || (echo "CLAWHUB_CLI_VERSION is required" && exit 1)
 RUN test -n "${BROWSER_USE_CLI_VERSION}"                  || (echo "BROWSER_USE_CLI_VERSION is required" && exit 1)
-RUN test -n "${AIOHTTP_VERSION}"                         || (echo "AIOHTTP_VERSION is required" && exit 1)
-RUN test -n "${ARGON2_VERSION}"                          || (echo "ARGON2_VERSION is required" && exit 1)
 
 # 1. System deps (root required)
 USER root
