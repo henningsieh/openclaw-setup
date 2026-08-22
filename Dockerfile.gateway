@@ -51,7 +51,7 @@ RUN apt-get update \
     # --- TLS / PKI ---
     openssl gnutls-bin \
     # --- Scripting ---
-    python3 python-is-python3 python3-pip nano \
+    python3 python-is-python3 python3-pip python3-venv nano \
     # --- Virtual display for headed browser mode (Cloudflare bypass) ---
     xvfb xauth \
     # --- CalDAV calendar support ---
@@ -78,8 +78,8 @@ RUN apt-get update \
 RUN ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
 
 # 2. Python tools (root required — externally managed environment)
-RUN pip3 install uptime-kuma-api --no-cache-dir --break-system-packages
-
+RUN pip3 install --no-cache-dir --break-system-packages \
+    uptime-kuma-api aiohttp==3.14.3 argon2-cffi==25.1.0
 # 3. Go (root required to place in /usr/local)
 RUN rm -rf /usr/local/go \
  && curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" -o /tmp/go.tgz \
