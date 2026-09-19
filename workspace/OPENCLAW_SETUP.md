@@ -2,6 +2,11 @@
 
 > This is the setup hand-off document. It lives in the tracked agent workspace at
 > `/home/shelldon/.openclaw/workspace/OPENCLAW_SETUP.md`.
+>
+> **Documentation rule for all OpenClaw documentation page URLs:** append
+> `.md` to the URL to fetch clean Markdown. For example,
+> `https://docs.openclaw.ai/cli/status.md`. This applies to every docs page link;
+> index files such as `llms.txt` are already Markdown indexes.
 
 Fresh native install, September 2026. Replaces the previous Docker-based deployment.
 No migration was performed — this is a clean setup; the old state is kept as backup.
@@ -17,6 +22,59 @@ No migration was performed — this is a clean setup; the old state is kept as b
 | Public URL | `https://ai.sieh.org/` |
 | Gateway bind / port | `lan` (0.0.0.0) / `18789` |
 | Agent name | Shelldon |
+
+## Official documentation
+
+Index and reference pages, ordered to match how they're used below (onboarding →
+providers → gateway/secrets → channels → automation → concepts → security).
+Every link carries `.md` per the rule above; only the `llms.txt` index is exempt.
+
+- **Documentation index (agents):** https://docs.openclaw.ai/llms.txt
+- **CLI reference:** https://docs.openclaw.ai/cli.md
+- **Onboarding (CLI):** https://docs.openclaw.ai/start/wizard.md
+- **CLI setup reference:** https://docs.openclaw.ai/start/wizard-cli-reference.md
+- **`openclaw status`:** https://docs.openclaw.ai/cli/status.md
+- **Backup:** https://docs.openclaw.ai/cli/backup.md
+
+**Models and provider auth**
+  - https://docs.openclaw.ai/cli/models.md
+  - https://docs.openclaw.ai/concepts/model-providers.md
+  - https://docs.openclaw.ai/concepts/model-providers/official-provider-plugins.md
+
+**Gateway configuration & secrets**
+  - https://docs.openclaw.ai/gateway/configuration-reference.md
+  - https://docs.openclaw.ai/gateway/config-secrets-env.md
+  - https://docs.openclaw.ai/gateway/secrets.md
+  - https://docs.openclaw.ai/gateway/secrets/secretref-contract.md
+  - https://docs.openclaw.ai/cli/secrets.md
+
+**Channels**
+  - Overview: https://docs.openclaw.ai/channels.md
+  - Discord — setup: https://docs.openclaw.ai/channels/discord/setup.md
+  - Discord — access control: https://docs.openclaw.ai/channels/discord/access-control.md
+  - Discord — troubleshooting: https://docs.openclaw.ai/channels/discord/troubleshooting.md
+  - Telegram — setup: https://docs.openclaw.ai/channels/telegram/setup.md
+  - Telegram — access control: https://docs.openclaw.ai/channels/telegram/access-control.md
+  - Telegram — troubleshooting: https://docs.openclaw.ai/channels/telegram/troubleshooting.md
+  - Pairing / access control: https://docs.openclaw.ai/channels/pairing.md
+
+**Cron / automations**
+  - https://docs.openclaw.ai/cli/cron.md
+  - https://docs.openclaw.ai/automation/cron-jobs.md
+  - https://docs.openclaw.ai/automation/cron-jobs/managing-jobs.md
+
+**Concepts**
+  - User/profile model: https://docs.openclaw.ai/concepts/user-model.md
+  - Memory: https://docs.openclaw.ai/concepts/memory.md
+  - Builtin memory engine: https://docs.openclaw.ai/concepts/memory-builtin.md
+
+**Security**
+  - https://docs.openclaw.ai/gateway/security.md
+  - https://docs.openclaw.ai/gateway/security/secrets-and-storage.md
+
+When a local command and a remembered procedure disagree, check the docs for
+OpenClaw `2026.9.5` behavior and verify with `openclaw <command> --help` as the
+installed CLI is authoritative for this host.
 
 ## Layout (all owned by `shelldon`)
 
@@ -73,8 +131,6 @@ openclaw logs --follow
   ⚠️ The per-agent entry (`agents.entries.shelldon.model`) overrides the global
   default — both must point at the same model, otherwise new chats silently use
   the agent-level pin.
-- Avatar: `workspace/avatars/shelldon.png` (restored from backup, renamed),
-  wired as `agents.entries.shelldon.identity.avatar`.
 
 ## Repository tracking
 
