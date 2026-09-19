@@ -130,12 +130,13 @@ to review changes before committing.
   workspace, memory, skills, channels — telegram/discord setups live here).
 - Previous OpenClaw credential files: `/home/shelldon/.openclaw_BAK/credentials/`.
   Inspect selectively; do not replace the fresh state wholesale.
-- Previous deployment secrets and service credentials: `/home/shelldon/.env`.
-  This is a `600` `shelldon`-owned copy of the former `/root/openclaw/.env`.
-  It contains provider/channel/service secrets and is a source for selective
-  setup only; the native OpenClaw service does not load it automatically.
-- Old deployment files (docker-compose.yml, Dockerfile.gateway, original `.env`):
-  `/root/openclaw/`. The old image (`openclaw-local:2026.7.1-2`) was deleted.
+- Previous deployment secrets and service credentials: `/home/shelldon/.openclaw_BAK/.env`.
+  This is a `600` `shelldon`-owned copy of the former `/root/openclaw/.env`, kept
+  inside the old deployment backup. It contains provider/channel/service secrets
+  and is a source for selective setup only; the native OpenClaw service does not
+  load it automatically.
+- Original deployment files (docker-compose.yml, Dockerfile.gateway, original
+  `.env`): `/root/openclaw/`. The old image (`openclaw-local:2026.7.1-2`) was deleted.
 - This doc's install log: fresh `openclaw onboard` (non-interactive, auth skipped
   initially), then `opencode-go` auth + daemon install + `config set` hardening.
 
