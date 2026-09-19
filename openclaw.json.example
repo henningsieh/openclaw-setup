@@ -1,0 +1,98 @@
+{
+  "agents": {
+    "defaults": {
+      "authInheritance": {
+        "agentId": "main"
+      },
+      "workspace": "/home/shelldon/.openclaw/workspace",
+      "model": {
+        "primary": "opencode-go/muse-spark-1.3-contributor",
+        "fallbacks": []
+      },
+      "models": {
+        "opencode-go/muse-spark-1.3-contributor": {}
+      },
+      "thinkingDefault": "medium"
+    },
+    "entries": {
+      "shelldon": {
+        "name": "Shelldon",
+        "workspace": "/home/shelldon/.openclaw/workspace",
+        "agentDir": "/home/shelldon/.openclaw/agents/shelldon/agent",
+        "identity": {
+          "name": "Shelldon",
+          "avatar": "avatars/shelldon.png"
+        },
+        "models": {},
+        "model": "opencode-go/muse-spark-1.3-contributor@opencode-go:setup-ec8c94c6-e0ed-4787-8299-d44504c337c3"
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "anthropic": {
+        "config": {
+          "sessionCatalog": {
+            "enabled": false
+          }
+        }
+      },
+      "codex": {
+        "config": {
+          "sessionCatalog": {
+            "enabled": false
+          }
+        }
+      },
+      "opencode-go": {
+        "enabled": true
+      }
+    }
+  },
+  "meta": {
+    "migrations": {
+      "modelPolicyAllowlist": true,
+      "utilityModelSeparation": true
+    },
+    "lastTouchedVersion": "2026.9.5"
+  },
+  "gateway": {
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": "REDACTED-set-via-openclaw-config-set-gateway-auth-token"
+    },
+    "port": 18789,
+    "bind": "lan",
+    "tailscale": {
+      "mode": "off"
+    },
+    "trustedProxies": [
+      "127.0.0.1",
+      "::1",
+      "172.25.0.6"
+    ],
+    "controlUi": {
+      "allowedOrigins": [
+        "https://ai.sieh.org"
+      ]
+    }
+  },
+  "tools": {
+    "profile": "full"
+  },
+  "wizard": {
+    "lastRunAt": "2026-09-19T05:47:44.727Z",
+    "lastRunVersion": "2026.9.5",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "opencode-go:setup-ec8c94c6-e0ed-4787-8299-d44504c337c3": {
+        "provider": "opencode-go",
+        "mode": "api_key"
+      }
+    }
+  }
+}
