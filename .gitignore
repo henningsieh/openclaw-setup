@@ -1,0 +1,46 @@
+# =====================================================================
+# Shelldon's OpenClaw setup — what stays OUT of git.
+# NOTE: this file itself must stay tracked. Never add `.gitignore` here,
+# or fresh clones lose all ignore rules.
+# (Sections are thematic; entries inside each section are sorted A–Z.)
+# =====================================================================
+
+# --- Agent runtime: sessions, credentials, indexes (private + churn) ---
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite*
+/agents/*/qmd/
+/agents/*/sessions/
+
+# --- Browser profile data ---
+/browser/
+
+# --- Gateway config: TRACKED ONLY AS REDACTED EXAMPLE (see below) ---
+# openclaw.json holds the literal gateway token, so the live file stays out.
+# Commit openclaw.json.example instead (same shape, secrets redacted).
+/openclaw.json
+/openclaw.json.last-good
+/openclaw.json.bak*
+
+# --- Regenerable plugin sandboxes and package skill links ---
+# Both are recreated from the installed OpenClaw package; plugin-skills/*
+# are absolute symlinks and would be broken in another checkout.
+/npm/
+/plugin-skills/
+
+# --- Runtime churn: caches, logs, temp, locks, state, media ---
+/cache/
+/locks/
+/logs/
+/media/
+/migration/
+/state/
+/tmp/
+/tui
+
+# --- Secrets & key material (never commit) ---
+/config-journal-fingerprint.key
+
+# --- Workspace: TRACKED on purpose (IDENTITY/USER/SOUL/avatar) ---
+# If agent output files pile up here, narrow this down later,
+# e.g. track only IDENTITY.md, USER.md, SOUL.md and avatars/.
