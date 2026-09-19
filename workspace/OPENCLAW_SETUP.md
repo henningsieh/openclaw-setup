@@ -365,12 +365,7 @@ openclaw onboard --non-interactive --accept-risk --flow quickstart \
 # trustedProxies via `openclaw config set`, gateway restart, NPM repoint.
 ```
 
-## Open items (joint session)
+## Outstanding work
 
-1. Deferred native restoration of the `clawfred` agent and its dedicated Discord
-   binding, as documented above.
-2. Review and selectively clean the restored wiki’s historical Docker/QMD claims;
-   see `workspace/backlog_todos.md`.
-3. Choose a supported native embedding provider only if semantic memory recall is
-   wanted; do not restore QMD.
-4. `shelldon` sudo/group privileges for future root-level tasks (to be defined).
+`workspace/backlog_todos.md` is the canonical list of unfinished work. The
+Clawfred section above remains the detailed restoration procedure.
