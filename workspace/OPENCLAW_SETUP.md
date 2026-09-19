@@ -141,9 +141,10 @@ openclaw logs --follow
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
 - `gateway.controlUi.allowedOrigins`: `["https://ai.sieh.org"]`.
-- Configured default model: `openai/gpt-5.6-luna`, thinking `high`, with no
-  configured fallbacks (`agents.defaults.model.primary`,
-  `agents.defaults.thinkingDefault`, and `agents.defaults.model.fallbacks`).
+- Configured default model: `openai/gpt-5.6-luna`, thinking `high`, with
+  `openai/gpt-5.6-terra` as the global fallback
+  (`agents.defaults.model.primary`, `agents.defaults.thinkingDefault`, and
+  `agents.defaults.model.fallbacks`).
   The per-agent entry (`agents.entries.shelldon.model`) also uses
   `openai/gpt-5.6-luna`. OpenClaw's current canonical provider prefix is
   `openai/`; the older `openai-codex/` prefix is legacy. The OpenAI OAuth profile
@@ -306,6 +307,25 @@ openclaw cron runs acac3466-9a15-45ab-a223-7be425800984
 Archives contain sensitive state and credentials. Keep the destination restricted
 to `shelldon`; never add archives to Git. `openclaw backup enable` is for
 versioned Git backups and is not used for these timestamped archives.
+
+## Current automations
+
+All schedules use `Europe/Berlin`; the native managed jobs without an explicit
+timezone use the Gateway host's local timezone, which is Europe/Berlin.
+
+| Automation | Schedule | Model | Purpose | Delivery |
+|---|---|---|---|---|
+| `🦀 OpenClaw Nightly Backup` | Daily 00:01 | — command job | Creates and verifies the official archive on the StorageBox/Nextcloud mount. | Concise success status → Discord `#system-status` |
+| `📧 MailCow Nightly Update` | Daily 02:00 | — command job | Checks MailCow via the native `host-server` SSH alias; applies an available update, then reports container status. The private key is at `~/.ssh/host-server`, outside the workspace and Git. | Discord `#system-status` |
+| `Memory Dreaming Promotion` | Daily 03:00 | Native managed: `nvidia/nemotron-3-ultra-550b-a55b`; global fallback: `openai/gpt-5.6-terra` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. | None |
+| `🧹 Session Cleanup (Trajectory & Orphans)` | Daily 04:00, 10-minute stagger | `nvidia/nemotron-3-super-120b-a12b` | Prunes stale session transcripts and trajectory sidecars. | German summary → Discord `#system-status` |
+| `📺 Markus Lanz Guest Lookup` | Every 30 minutes, 11:00–17:59, Tue–Thu | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning`; fallbacks: `nvidia/nemotron-3-super-120b-a12b`, `openai/gpt-5.6-luna` | Runs the deterministic guest-lookup script; it sends Telegram only when it finds a new result. | Telegram `8788775758`, conditional |
+| `📋 Weekly AI Wiki Curation (Entities & Concepts)` | Sunday 06:00 | `nvidia/nemotron-3-ultra-550b-a55b`; fallbacks: `nvidia/nemotron-3-super-120b-a12b`, `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` | Makes up to three evidence-based native-wiki curation changes; preserves Docker/QMD/Clawfred history without promoting retired claims. | Up to five lines → Discord `#system-status` |
+| `skill-collection-review-shelldon` | Every 7 days | Native managed; agent default `openai/gpt-5.6-luna`; global fallback: `openai/gpt-5.6-terra` | Native managed review of the local Skill Workshop collection. | None |
+
+Inspect jobs and their outcomes with `openclaw cron list --json`, `openclaw cron
+get <job-id>`, and `openclaw cron runs <job-id>`. Do not restore the retired QMD
+embedding cron or the disabled one-off PR76 notification.
 
 ## Backup / history
 
