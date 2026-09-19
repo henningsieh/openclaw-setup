@@ -8,8 +8,9 @@
 > `https://docs.openclaw.ai/cli/status.md`. This applies to every docs page link;
 > index files such as `llms.txt` are already Markdown indexes.
 
-Fresh native install, September 2026. Replaces the previous Docker-based deployment.
-No migration was performed — this is a clean setup; the old state is kept as backup.
+Native install, September 2026, replacing the previous Docker-based deployment.
+It began clean, then selectively restored the native workspace identity, channels,
+automations, and wiki. The complete Docker-era state remains preserved as backup.
 
 ## Overview
 
@@ -93,10 +94,10 @@ installed CLI is authoritative for this host.
 
 - `~/.openclaw/openclaw.json` — main config (mode `600`, **not** in git — holds the
   literal gateway token; `openclaw.json.example` is the tracked redacted copy)
-- `~/.openclaw/workspace/` — agent workspace: `IDENTITY.md` + `USER.md` restored
-  from backup (see below), `SOUL.md` kept from fresh install, `BOOTSTRAP.md`
-  deleted, avatar at `avatars/shelldon.png`, this hand-off document
-  (`OPENCLAW_SETUP.md`)
+- `~/.openclaw/workspace/` — agent workspace: restored `IDENTITY.md` + `USER.md`,
+  fresh-install `SOUL.md`, compact wiki-routing `MEMORY.md`, avatar at
+  `avatars/shelldon.png`, and this hand-off document (`OPENCLAW_SETUP.md`);
+  `BOOTSTRAP.md` is deleted
 - `~/.openclaw/agents/shelldon/` — agent state, incl. `agent/openclaw-agent.sqlite` (provider credentials)
   and the ignored `agent/codex-home/` (Codex app-server runtime state).
 - `~/.npm-global/` — npm global prefix; CLI at `~/.npm-global/bin/openclaw`
@@ -145,8 +146,8 @@ openclaw logs --follow
   `agents.defaults.thinkingDefault`, and `agents.defaults.model.fallbacks`).
   The per-agent entry (`agents.entries.shelldon.model`) also uses
   `openai/gpt-5.6-luna`. OpenClaw's current canonical provider prefix is
-  `openai/`; the older `openai-codex/` prefix is legacy. The OpenAI account is
-  authenticated through the native Codex runtime.
+  `openai/`; the older `openai-codex/` prefix is legacy. The OpenAI OAuth profile
+  is stored in the native agent auth store.
 - The Control UI's `+` New Session flow independently remembers the latest model
   choice per Gateway user/agent. It may preselect a previously selected model;
   select `openai/gpt-5.6-luna` explicitly if needed.
@@ -171,11 +172,12 @@ openclaw logs --follow
 The local repository is `/home/shelldon/.openclaw/`. It tracks setup/configuration
 artifacts only — not runtime state or credentials.
 
-Tracked on the initial setup commit:
+Tracked setup artifacts:
 
 - `.gitignore`
 - `openclaw.json.example` (redacted configuration template)
-- `workspace/` (agent instructions, identity, user model, soul, avatar, and this document)
+- `workspace/` (agent instructions, identity, user model, soul, compact memory
+  routing, avatar, and this document)
 
 Ignored deliberately:
 
@@ -235,24 +237,18 @@ agent rather than copying Docker runtime state wholesale:
 
 ## Providers
 
-- **opencode-go**: API key configured (key originally from `/root/openclaw/.env`,
-  `OPENCODE_API_KEY`), activated, inference-verified. Credential lives in the
-  agent sqlite store as profile `opencode-go:setup-<uuid>`; no env file needed
-  at runtime. (The bare `opencode-go:default` profile was removed — redundant.)
-- **Codex / OpenAI**: the bundled `codex` plugin is installed and enabled;
-  ChatGPT/Codex OAuth is configured and verified for the `shelldon` agent as
-  profile `openai:henning@sieh.org` (stored in the agent SQLite auth store).
-  `openai/gpt-5.6-luna` has been tested successfully with
-  `Runtime: OpenAI Codex`. The configured default remains
-  `opencode-go/muse-spark-1.3-contributor`.
-- **Plugins**: relevant enabled plugins are the OpenAI provider, OpenCode Go
-  provider, OpenCode provider, Codex harness, and DuckDuckGo search plugin.
-  After installing the Codex plugin, `openclaw plugins registry --refresh` and a
-  Gateway restart were required to make the harness available to new sessions.
-- **Web search**: `web_search` and `web_fetch` are enabled; the DuckDuckGo
-  experimental plugin is installed and enabled as the key-free search provider.
-- Previously used providers (nvidia, openrouter, google, telegram, discord, …) are
-  **not** configured — to be pulled selectively from the backup (see below).
+- The configured default for `shelldon` is `openai/gpt-5.6-luna` with thinking
+  `high` and no fallback model.
+- Native credential profiles exist for OpenAI (OAuth), NVIDIA (API key), and
+  OpenCode Go (API key), stored in the agent SQLite auth store rather than an
+  environment file. NVIDIA is used by the Session Cleanup automation.
+- The `codex` plugin is enabled and loaded. Use `openclaw models status` before
+  changing provider or runtime configuration; it is the live authority for model
+  routes and credential usability.
+- `web_search` and `web_fetch` are enabled with DuckDuckGo as the key-free search
+  provider.
+- Legacy provider configuration was not copied wholesale from Docker; restore
+  additional providers only through the current native setup flow.
 
 ## Reverse proxy (Nginx Proxy Manager)
 
@@ -268,6 +264,48 @@ agent rather than copying Docker runtime state wholesale:
   container is recreated with a different IP, update `gateway.trustedProxies`
   (`openclaw config set gateway.trustedProxies '["127.0.0.1", "::1", "<new-ip>"]'`)
   and restart the gateway.
+
+## Official OpenClaw backups
+
+Official archives are written to the `shelldon`-owned mount:
+
+```text
+/mnt/openclaw-backup
+```
+
+It is a bind mount of the OpenClaw folder in the Nextcloud files tree:
+
+```text
+/mnt/storagebox-node/nextcloud/data/henning/files/Backup/OpenClaw
+```
+
+The StorageBox CIFS mount must use `serverino`, not `noserverino`: the official
+archiver verifies hard-link file identity during atomic publication. This was
+fixed and the mount, manual archive, and scheduled archive were verified.
+
+The enabled `🦀 OpenClaw Nightly Backup` automation runs at `00:01` daily in
+`Europe/Berlin`. It invokes the official command with `--verify` and announces a
+concise success status in Discord `#system-status`. The historical custom tar
+script remains only under `.openclaw_BAK` and must not be restored.
+
+```bash
+# Preview without writing.
+openclaw backup create --output /mnt/openclaw-backup --dry-run --json
+
+# Create and immediately verify an archive.
+openclaw backup create --output /mnt/openclaw-backup --verify
+
+# Verify an existing archive.
+openclaw backup verify /mnt/openclaw-backup/<timestamp>-openclaw-backup.tar.gz
+
+# Inspect the scheduled job or its runs.
+openclaw cron get acac3466-9a15-45ab-a223-7be425800984
+openclaw cron runs acac3466-9a15-45ab-a223-7be425800984
+```
+
+Archives contain sensitive state and credentials. Keep the destination restricted
+to `shelldon`; never add archives to Git. `openclaw backup enable` is for
+versioned Git backups and is not used for these timestamped archives.
 
 ## Backup / history
 
