@@ -151,6 +151,21 @@ openclaw logs --follow
   choice per Gateway user/agent. It may preselect a previously selected model;
   select `openai/gpt-5.6-luna` explicitly if needed.
 
+## Memory and wiki migration
+
+- The bundled `memory-wiki` plugin is enabled in bridge mode with its native vault
+  at `~/.openclaw/wiki/main`. The legacy wiki has been restored there, excluding
+  its old compiled cache and `log.jsonl`; native compilation rebuilt the current
+  derived state.
+- QMD was the Docker-era memory backend. It was removed from current OpenClaw and
+  must not be restored: no `memory.backend: "qmd"` configuration, QMD CLI/indexes,
+  GGUF model cache, session exports, or periodic QMD embedding cron were migrated.
+  The complete legacy QMD material remains preserved under `.openclaw_BAK`.
+- Native `memory-core` is the supported memory engine. Keep keyword/wiki retrieval
+  as the baseline; choose a supported embedding provider separately if semantic
+  recall is wanted later. Do not treat the retired QMD configuration as a migration
+  template.
+
 ## Repository tracking
 
 The local repository is `/home/shelldon/.openclaw/`. It tracks setup/configuration
@@ -175,148 +190,48 @@ The repository must remain local unless the live token is removed from the confi
 and all personal data is reviewed first. Use `git status` from `/home/shelldon/.openclaw`
 to review changes before committing.
 
-## Re-setup runbook: Discord and Telegram
+## Deferred re-setup: Clawfred
 
-The native installation currently has neither channel enabled. Everything needed
-for a selective re-setup is preserved locally:
+The Discord and Telegram channels are fully restored, validated, and connected.
+Discord is restricted to the configured allowlist of four channels and the owner;
+Telegram uses its restored allowlist. The current default agent is `shelldon`.
 
-- **Previous secrets:** `/home/shelldon/.openclaw_BAK/.env` (mode `600`, owned by
-  `shelldon`). The relevant variable names are `DISCORD_BOT_TOKEN` and
-  `TELEGRAM_BOT_TOKEN`. Never copy their values into this document, Git, or chat.
-- **Previous channel configuration:**
-  `/home/shelldon/.openclaw_BAK/openclaw.json` under `channels.discord` and
-  `channels.telegram` (also contains the old token values; do not copy the whole
-  file into the fresh setup).
-- **Previous channel-related memory:**
-  `/home/shelldon/.openclaw_BAK/workspace/memory/` (search the Telegram/Discord
-  daily notes if historical context is needed).
+When Clawfred is deliberately restored, recreate the complete agent as a native
+agent rather than copying Docker runtime state wholesale:
 
-Use the official setup pages first:
-
-- **Discord setup:** https://docs.openclaw.ai/channels/discord/setup.md
-- **Discord access control:** https://docs.openclaw.ai/channels/discord/access-control.md
-- **Telegram setup:** https://docs.openclaw.ai/channels/telegram/setup.md
-- **Telegram access control:** https://docs.openclaw.ai/channels/telegram/access-control.md
-- **Channel CLI:** https://docs.openclaw.ai/cli/channels.md
-
-All commands below run as `shelldon`, from `/home/shelldon`, and use the existing
-user service. Do not run OpenClaw as root.
-
-### Discord recovery
-
-1. In the Discord Developer Portal, verify the old bot or create a replacement.
-   Enable **Message Content Intent** and **Server Members Intent**; invite it with
-   `bot` and `applications.commands` plus View Channels, Send Messages, Read
-   Message History, Embed Links, and Attach Files. The official setup page above
-   has the exact portal steps.
-2. Enable Developer Mode and retain these old IDs:
-   - Server/guild: `1489535366854610994`
-   - Owner/user: `400054493640916993`
-   - Previously enabled channels: `1489535368859488421`,
-     `1489587973715656786`, `1514565511223181363`, `1524758094079459418`
-3. Start guided setup and enter the token locally when prompted. Retrieve it from
-   `/home/shelldon/.openclaw_BAK/.env`; do not print it:
-
-   ```bash
-   cd /home/shelldon
-   openclaw channels add --channel discord
-   ```
-4. The previous policy was `groupPolicy: "open"`, `allowBots: true`,
-   `requireMention: false` for the guild, restricted to the four channels above
-   and owner ID above. If that exact behavior is wanted, apply this **token-free**
-   policy patch after adding the account:
+1. Create agent ID `clawfred` (display/identity name `Clawfred`) with a native
+   workspace at `~/.openclaw/workspace-clawfred`. Restore the legacy workspace
+   from `~/.openclaw_BAK/workspace-clawfred/`, including its agent instructions,
+   identity, soul, user model, memory, skills, scripts, entities, exports, and
+   avatar (`avatars/Cooking-Crab_as_Nutri-Consultant.png`). Review the nested Git
+   repository deliberately rather than carrying its old runtime state implicitly.
+2. Recreate its current-compatible model and provider authentication deliberately.
+   The legacy agent used `opencode-go/deepseek-v4-flash` with NVIDIA fallbacks;
+   do not copy its old agent SQLite, session store, credentials, QMD cache, or
+   Docker paths into the native agent.
+3. Apply its identity theme: “A meticulous digital butler — part crab, part
+   database steward, part sysadmin. Sharp-pincered, precise, and impeccably
+   organized.”
+4. Add the specific Discord binding for `#🍴-nutriclaw`
+   (`1524758094079459418`) without removing any existing bindings. Other Discord
+   traffic must remain routed to `shelldon`:
 
    ```json5
    {
-     channels: {
-       discord: {
-         enabled: true,
-         allowBots: true,
-         groupPolicy: "open",
-         threadBindings: { spawnSessions: true },
-         guilds: {
-           "1489535366854610994": {
-             requireMention: false,
-             users: ["400054493640916993"],
-             channels: {
-               "1489535368859488421": { enabled: true, users: ["400054493640916993"] },
-               "1489587973715656786": { enabled: true, users: ["400054493640916993"] },
-               "1514565511223181363": { enabled: true, users: ["400054493640916993"] },
-               "1524758094079459418": { enabled: true, users: ["400054493640916993"] }
-             }
-           }
+     bindings: [
+       {
+         agentId: "clawfred",
+         match: {
+           channel: "discord",
+           peer: { kind: "channel", id: "1524758094079459418" }
          }
        }
-     }
+     ]
    }
    ```
 
-   Save that as a temporary file outside the repository, run
-   `openclaw config patch --file <file> --dry-run`, then apply it without
-   `--dry-run` and remove the temporary file. Review the `groupPolicy: "open"`
-   choice before applying; `allowlist` is safer for a shared server.
-
-### Telegram recovery
-
-1. Verify the old bot with `@BotFather`, or create a replacement with `/newbot`.
-   Keep the token local in `/home/shelldon/.openclaw_BAK/.env` under
-   `TELEGRAM_BOT_TOKEN`.
-2. The old owner/user ID is `8788775758`. The old policy was:
-   `dmPolicy: "allowlist"`, `allowFrom: ["8788775758"]`,
-   `groupPolicy: "allowlist"`, `groupAllowFrom: ["8788775758"]`, and
-   `groups: { "*": { requireMention: true } }`. No specific group IDs were
-   recorded; replace `"*"` with explicit negative `-100...` group IDs if tighter
-   access is required.
-3. Start guided setup and enter the token locally when prompted:
-
-   ```bash
-   cd /home/shelldon
-   openclaw channels add --channel telegram
-   ```
-
-4. Reapply the old token-free access policy if desired:
-
-   ```json5
-   {
-     channels: {
-       telegram: {
-         enabled: true,
-         dmPolicy: "allowlist",
-         allowFrom: ["8788775758"],
-         groupPolicy: "allowlist",
-         groupAllowFrom: ["8788775758"],
-         groups: { "*": { requireMention: true } },
-         streaming: { mode: "partial" }
-       }
-     }
-   }
-   ```
-
-### Verify and pair
-
-After either channel is configured:
-
-```bash
-openclaw config validate
-openclaw gateway restart
-openclaw channels status --probe
-openclaw status --deep
-```
-
-For first-user access, DM each bot and approve the pairing code locally:
-
-```bash
-openclaw pairing list discord
-openclaw pairing approve discord <CODE>
-openclaw pairing list telegram
-openclaw pairing approve telegram <CODE>
-```
-
-The old Discord routing also had channel `1524758094079459418` bound to a
-legacy `clawfred` agent, with other Discord traffic routed to `main`. Those
-agents do not exist in the fresh native setup; do not restore that binding unless
-they are deliberately recreated. The current setup should use the `shelldon`
-agent by default.
+5. Validate the configuration, restart the gateway if required, and verify the
+   channel binding with a controlled message in `#🍴-nutriclaw`.
 
 ## Providers
 
@@ -394,6 +309,10 @@ openclaw onboard --non-interactive --accept-risk --flow quickstart \
 
 ## Open items (joint session)
 
-1. Selective import from `.openclaw_BAK`: Telegram/Discord channels, skills, memory,
-   workspace files (IDENTITY/USER/avatar already done), model fallbacks.
-2. `shelldon` sudo/group privileges for future root-level tasks (to be defined).
+1. Deferred native restoration of the `clawfred` agent and its dedicated Discord
+   binding, as documented above.
+2. Review and selectively clean the restored wiki’s historical Docker/QMD claims;
+   see `workspace/backlog_todos.md`.
+3. Choose a supported native embedding provider only if semantic memory recall is
+   wanted; do not restore QMD.
+4. `shelldon` sudo/group privileges for future root-level tasks (to be defined).

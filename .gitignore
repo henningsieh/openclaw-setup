@@ -38,7 +38,8 @@
 /migration/
 /state/
 /tmp/
-/tui
+/tui/
+/wiki/
 
 # --- Secrets & key material (never commit) ---
 /config-journal-fingerprint.key
