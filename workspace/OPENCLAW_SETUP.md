@@ -140,16 +140,16 @@ openclaw logs --follow
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
 - `gateway.controlUi.allowedOrigins`: `["https://ai.sieh.org"]`.
-- Configured default model: `opencode-go/muse-spark-1.3-contributor`, thinking
-  `high`, with no configured fallbacks (`agents.defaults.model.primary`,
+- Configured default model: `openai/gpt-5.6-luna`, thinking `high`, with no
+  configured fallbacks (`agents.defaults.model.primary`,
   `agents.defaults.thinkingDefault`, and `agents.defaults.model.fallbacks`).
-  `agents.defaults.models` also declares `openai/gpt-5.6-luna` as a selectable
-  model. The per-agent entry (`agents.entries.shelldon.model`) points at the same
-  OpenCode model, with its auth-profile suffix.
+  The per-agent entry (`agents.entries.shelldon.model`) also uses
+  `openai/gpt-5.6-luna`. OpenClaw's current canonical provider prefix is
+  `openai/`; the older `openai-codex/` prefix is legacy. The OpenAI account is
+  authenticated through the native Codex runtime.
 - The Control UI's `+` New Session flow independently remembers the latest model
-  choice per Gateway user/agent and may preselect Luna even while the configured
-  primary remains OpenCode. There is currently no config switch to disable that
-  preference; selecting Muse Spark once in the New Session picker updates it.
+  choice per Gateway user/agent. It may preselect a previously selected model;
+  select `openai/gpt-5.6-luna` explicitly if needed.
 
 ## Repository tracking
 
