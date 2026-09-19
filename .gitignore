@@ -31,6 +31,7 @@
 
 # --- Runtime churn: caches, logs, temp, locks, state, media ---
 /cache/
+/credentials/
 /locks/
 /logs/
 /media/
