@@ -38,11 +38,16 @@ Every link carries `.md` per the rule above; only the `llms.txt` index is exempt
 
 **Models and provider auth**
   - https://docs.openclaw.ai/cli/models.md
+  - https://docs.openclaw.ai/concepts/models.md
   - https://docs.openclaw.ai/concepts/model-providers.md
   - https://docs.openclaw.ai/concepts/model-providers/official-provider-plugins.md
+  - https://docs.openclaw.ai/gateway/config-agents/models.md
+  - https://docs.openclaw.ai/providers/openai/setup.md
+  - https://docs.openclaw.ai/plugins/codex-harness.md
 
 **Gateway configuration & secrets**
   - https://docs.openclaw.ai/gateway/configuration-reference.md
+  - https://docs.openclaw.ai/plugins/manage-plugins.md
   - https://docs.openclaw.ai/gateway/config-secrets-env.md
   - https://docs.openclaw.ai/gateway/secrets.md
   - https://docs.openclaw.ai/gateway/secrets/secretref-contract.md
@@ -68,6 +73,14 @@ Every link carries `.md` per the rule above; only the `llms.txt` index is exempt
   - Memory: https://docs.openclaw.ai/concepts/memory.md
   - Builtin memory engine: https://docs.openclaw.ai/concepts/memory-builtin.md
 
+**Web tools**
+  - https://docs.openclaw.ai/tools/web.md
+  - https://docs.openclaw.ai/tools/duckduckgo-search.md
+
+**Control UI**
+  - https://docs.openclaw.ai/web/control-ui.md
+  - https://docs.openclaw.ai/web/control-ui/sessions-and-sidebar.md
+
 **Security**
   - https://docs.openclaw.ai/gateway/security.md
   - https://docs.openclaw.ai/gateway/security/secrets-and-storage.md
@@ -85,6 +98,7 @@ installed CLI is authoritative for this host.
   deleted, avatar at `avatars/shelldon.png`, this hand-off document
   (`OPENCLAW_SETUP.md`)
 - `~/.openclaw/agents/shelldon/` — agent state, incl. `agent/openclaw-agent.sqlite` (provider credentials)
+  and the ignored `agent/codex-home/` (Codex app-server runtime state).
 - `~/.npm-global/` — npm global prefix; CLI at `~/.npm-global/bin/openclaw`
 - `~/.config/systemd/user/openclaw-gateway.service` — managed systemd user unit
 - `~/.openclaw/.git/` — local setup-history repository (no remote configured)
@@ -126,11 +140,16 @@ openclaw logs --follow
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
 - `gateway.controlUi.allowedOrigins`: `["https://ai.sieh.org"]`.
-- Default model: `opencode-go/muse-spark-1.3-contributor`, thinking `medium`
-  (`agents.defaults.model.primary` + `agents.defaults.thinkingDefault`).
-  ⚠️ The per-agent entry (`agents.entries.shelldon.model`) overrides the global
-  default — both must point at the same model, otherwise new chats silently use
-  the agent-level pin.
+- Configured default model: `opencode-go/muse-spark-1.3-contributor`, thinking
+  `high`, with no configured fallbacks (`agents.defaults.model.primary`,
+  `agents.defaults.thinkingDefault`, and `agents.defaults.model.fallbacks`).
+  `agents.defaults.models` also declares `openai/gpt-5.6-luna` as a selectable
+  model. The per-agent entry (`agents.entries.shelldon.model`) points at the same
+  OpenCode model, with its auth-profile suffix.
+- The Control UI's `+` New Session flow independently remembers the latest model
+  choice per Gateway user/agent and may preselect Luna even while the configured
+  primary remains OpenCode. There is currently no config switch to disable that
+  preference; selecting Muse Spark once in the New Session picker updates it.
 
 ## Repository tracking
 
@@ -147,13 +166,157 @@ Ignored deliberately:
 
 - live `openclaw.json` and all automatic config backups (contain the gateway token)
 - agent SQLite stores, sessions, browser data, runtime state, logs, caches, locks,
-  temporary files, media, migration data, the regenerable `/npm/` plugin sandbox,
-  and generated absolute symlinks under `/plugin-skills/`
+  temporary files, media, migration data, the Codex app-server home under
+  `/agents/*/codex-home/`, the regenerable `/npm/` plugin sandbox, and generated
+  absolute symlinks under `/plugin-skills/`
 - `config-journal-fingerprint.key`
 
 The repository must remain local unless the live token is removed from the config
 and all personal data is reviewed first. Use `git status` from `/home/shelldon/.openclaw`
 to review changes before committing.
+
+## Re-setup runbook: Discord and Telegram
+
+The native installation currently has neither channel enabled. Everything needed
+for a selective re-setup is preserved locally:
+
+- **Previous secrets:** `/home/shelldon/.openclaw_BAK/.env` (mode `600`, owned by
+  `shelldon`). The relevant variable names are `DISCORD_BOT_TOKEN` and
+  `TELEGRAM_BOT_TOKEN`. Never copy their values into this document, Git, or chat.
+- **Previous channel configuration:**
+  `/home/shelldon/.openclaw_BAK/openclaw.json` under `channels.discord` and
+  `channels.telegram` (also contains the old token values; do not copy the whole
+  file into the fresh setup).
+- **Previous channel-related memory:**
+  `/home/shelldon/.openclaw_BAK/workspace/memory/` (search the Telegram/Discord
+  daily notes if historical context is needed).
+
+Use the official setup pages first:
+
+- **Discord setup:** https://docs.openclaw.ai/channels/discord/setup.md
+- **Discord access control:** https://docs.openclaw.ai/channels/discord/access-control.md
+- **Telegram setup:** https://docs.openclaw.ai/channels/telegram/setup.md
+- **Telegram access control:** https://docs.openclaw.ai/channels/telegram/access-control.md
+- **Channel CLI:** https://docs.openclaw.ai/cli/channels.md
+
+All commands below run as `shelldon`, from `/home/shelldon`, and use the existing
+user service. Do not run OpenClaw as root.
+
+### Discord recovery
+
+1. In the Discord Developer Portal, verify the old bot or create a replacement.
+   Enable **Message Content Intent** and **Server Members Intent**; invite it with
+   `bot` and `applications.commands` plus View Channels, Send Messages, Read
+   Message History, Embed Links, and Attach Files. The official setup page above
+   has the exact portal steps.
+2. Enable Developer Mode and retain these old IDs:
+   - Server/guild: `1489535366854610994`
+   - Owner/user: `400054493640916993`
+   - Previously enabled channels: `1489535368859488421`,
+     `1489587973715656786`, `1514565511223181363`, `1524758094079459418`
+3. Start guided setup and enter the token locally when prompted. Retrieve it from
+   `/home/shelldon/.openclaw_BAK/.env`; do not print it:
+
+   ```bash
+   cd /home/shelldon
+   openclaw channels add --channel discord
+   ```
+4. The previous policy was `groupPolicy: "open"`, `allowBots: true`,
+   `requireMention: false` for the guild, restricted to the four channels above
+   and owner ID above. If that exact behavior is wanted, apply this **token-free**
+   policy patch after adding the account:
+
+   ```json5
+   {
+     channels: {
+       discord: {
+         enabled: true,
+         allowBots: true,
+         groupPolicy: "open",
+         threadBindings: { spawnSessions: true },
+         guilds: {
+           "1489535366854610994": {
+             requireMention: false,
+             users: ["400054493640916993"],
+             channels: {
+               "1489535368859488421": { enabled: true, users: ["400054493640916993"] },
+               "1489587973715656786": { enabled: true, users: ["400054493640916993"] },
+               "1514565511223181363": { enabled: true, users: ["400054493640916993"] },
+               "1524758094079459418": { enabled: true, users: ["400054493640916993"] }
+             }
+           }
+         }
+       }
+     }
+   }
+   ```
+
+   Save that as a temporary file outside the repository, run
+   `openclaw config patch --file <file> --dry-run`, then apply it without
+   `--dry-run` and remove the temporary file. Review the `groupPolicy: "open"`
+   choice before applying; `allowlist` is safer for a shared server.
+
+### Telegram recovery
+
+1. Verify the old bot with `@BotFather`, or create a replacement with `/newbot`.
+   Keep the token local in `/home/shelldon/.openclaw_BAK/.env` under
+   `TELEGRAM_BOT_TOKEN`.
+2. The old owner/user ID is `8788775758`. The old policy was:
+   `dmPolicy: "allowlist"`, `allowFrom: ["8788775758"]`,
+   `groupPolicy: "allowlist"`, `groupAllowFrom: ["8788775758"]`, and
+   `groups: { "*": { requireMention: true } }`. No specific group IDs were
+   recorded; replace `"*"` with explicit negative `-100...` group IDs if tighter
+   access is required.
+3. Start guided setup and enter the token locally when prompted:
+
+   ```bash
+   cd /home/shelldon
+   openclaw channels add --channel telegram
+   ```
+
+4. Reapply the old token-free access policy if desired:
+
+   ```json5
+   {
+     channels: {
+       telegram: {
+         enabled: true,
+         dmPolicy: "allowlist",
+         allowFrom: ["8788775758"],
+         groupPolicy: "allowlist",
+         groupAllowFrom: ["8788775758"],
+         groups: { "*": { requireMention: true } },
+         streaming: { mode: "partial" }
+       }
+     }
+   }
+   ```
+
+### Verify and pair
+
+After either channel is configured:
+
+```bash
+openclaw config validate
+openclaw gateway restart
+openclaw channels status --probe
+openclaw status --deep
+```
+
+For first-user access, DM each bot and approve the pairing code locally:
+
+```bash
+openclaw pairing list discord
+openclaw pairing approve discord <CODE>
+openclaw pairing list telegram
+openclaw pairing approve telegram <CODE>
+```
+
+The old Discord routing also had channel `1524758094079459418` bound to a
+legacy `clawfred` agent, with other Discord traffic routed to `main`. Those
+agents do not exist in the fresh native setup; do not restore that binding unless
+they are deliberately recreated. The current setup should use the `shelldon`
+agent by default.
 
 ## Providers
 
@@ -161,7 +324,18 @@ to review changes before committing.
   `OPENCODE_API_KEY`), activated, inference-verified. Credential lives in the
   agent sqlite store as profile `opencode-go:setup-<uuid>`; no env file needed
   at runtime. (The bare `opencode-go:default` profile was removed — redundant.)
-- **Codex / OpenAI**: bundled `codex` plugin present; OAuth login not done yet (joint step).
+- **Codex / OpenAI**: the bundled `codex` plugin is installed and enabled;
+  ChatGPT/Codex OAuth is configured and verified for the `shelldon` agent as
+  profile `openai:henning@sieh.org` (stored in the agent SQLite auth store).
+  `openai/gpt-5.6-luna` has been tested successfully with
+  `Runtime: OpenAI Codex`. The configured default remains
+  `opencode-go/muse-spark-1.3-contributor`.
+- **Plugins**: relevant enabled plugins are the OpenAI provider, OpenCode Go
+  provider, OpenCode provider, Codex harness, and DuckDuckGo search plugin.
+  After installing the Codex plugin, `openclaw plugins registry --refresh` and a
+  Gateway restart were required to make the harness available to new sessions.
+- **Web search**: `web_search` and `web_fetch` are enabled; the DuckDuckGo
+  experimental plugin is installed and enabled as the key-free search provider.
 - Previously used providers (nvidia, openrouter, google, telegram, discord, …) are
   **not** configured — to be pulled selectively from the backup (see below).
 
@@ -220,7 +394,6 @@ openclaw onboard --non-interactive --accept-risk --flow quickstart \
 
 ## Open items (joint session)
 
-1. Codex (ChatGPT/Codex subscription) OAuth login.
-2. Selective import from `.openclaw_BAK`: Telegram/Discord channels, skills, memory,
+1. Selective import from `.openclaw_BAK`: Telegram/Discord channels, skills, memory,
    workspace files (IDENTITY/USER/avatar already done), model fallbacks.
-3. `shelldon` sudo/group privileges for future root-level tasks (to be defined).
+2. `shelldon` sudo/group privileges for future root-level tasks (to be defined).

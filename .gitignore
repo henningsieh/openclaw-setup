@@ -9,6 +9,7 @@
 *.sqlite-shm
 *.sqlite-wal
 *.sqlite*
+/agents/*/agent/codex-home/
 /agents/*/qmd/
 /agents/*/sessions/
 
