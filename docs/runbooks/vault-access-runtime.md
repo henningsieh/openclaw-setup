@@ -109,7 +109,7 @@ curl --fail --silent --output /dev/null http://127.0.0.1:18789/
 A successful startup journal contains only this non-secret line:
 
 ```text
-vault-access-runtime healthy: bw=2026.8.0 vaultwarden=https://vault.apps.sieh.org credentials=3
+vault-access-runtime healthy: bw=2026.8.0 vaultwarden=https://configured.example credentials=3
 ```
 
 Confirm the ordinary agent shell path has no `bw` entry:
@@ -126,21 +126,23 @@ private absolute CLI path from an agent shell.
 Changing the Bitwarden version is a maintenance change, never an automatic
 upgrade. Before changing it, validate the candidate release's source and
 reported version, complete the broker's controlled fake-CLI tests and production
-validation checklist, then update all three version references together:
+validation checklist, then update all four version references together:
 
 1. this runbook;
 2. `runtime/openclaw-gateway.system.service`;
-3. the installed runtime executable.
+3. `runtime/vault-access-runtime-health` (including its binary digest pin);
+4. both installed runtime files: `bin/bw` and
+   `bin/vault-access-runtime-health`.
 
 The Vaultwarden endpoint may change independently by editing
 `/etc/openclaw/vault-access-broker.env` and restarting the system-managed
 gateway. Keep it an absolute HTTPS URL; the health check rejects other values.
 
 Keep the currently working runtime directory until the new gateway restart and
-health check succeed. To roll back, restore the previous verified `bin/bw`,
-set the previous exact version in the installed system unit, run
-`systemctl daemon-reload`, and restart the gateway. Credentials do not need
-reenrollment for a binary-only rollback.
+health check succeed. To roll back, restore the previous verified `bin/bw` and
+matching `bin/vault-access-runtime-health`, restore the previous exact version
+in the installed system unit, run `systemctl daemon-reload`, and restart the
+gateway. Credentials do not need reenrollment for a binary-only rollback.
 
 If the gateway fails its startup health check, do not weaken the check or move
 credentials into environment variables. Inspect only service status and the
