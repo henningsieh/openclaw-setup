@@ -16,6 +16,10 @@ Read startup files again only when:
 2. Needed context is missing.
 3. A deeper follow-up read is needed.
 
+## OpenClaw Instance Reference
+
+When a task needs detailed, host-specific knowledge about this OpenClaw instance — such as its gateway, service, channels, providers, automations, backups, or deployment history — consult the upper-level [`~/.openclaw/AGENTS.md`](/home/shelldon/.openclaw/AGENTS.md) conditionally. Do not load it for ordinary workspace tasks that do not depend on this instance's setup.
+
 ## Memory
 
 Use files for continuity across sessions:
