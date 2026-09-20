@@ -369,3 +369,17 @@ openclaw onboard --non-interactive --accept-risk --flow quickstart \
 
 `workspace/backlog_todos.md` is the canonical list of unfinished work. The
 Clawfred section above remains the detailed restoration procedure.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live in GitHub Issues for `henningsieh/openclaw-setup`; use the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the canonical labels `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repository using `CONTEXT.md` and `docs/adr/`; read `AGENTS.md` first for authoritative instance context. See `docs/agents/domain.md`.
