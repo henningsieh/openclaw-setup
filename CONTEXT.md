@@ -166,21 +166,24 @@ installed CLI is authoritative for this host.
 - `~/.openclaw/agents/shelldon/` — agent state, incl. `agent/openclaw-agent.sqlite` (provider credentials)
   and the ignored `agent/codex-home/` (Codex app-server runtime state).
 - `~/.npm-global/` — npm global prefix; CLI at `~/.npm-global/bin/openclaw`
-- `~/.config/systemd/user/openclaw-gateway.service` — managed systemd user unit
+- `/etc/systemd/system/openclaw-gateway.service` — system-managed unit that runs as `shelldon`
 - `~/.openclaw/.git/` — setup-history repository; GitHub remote is `origin`, with native work on branch `native-setup` and the Docker-era setup on `main`
 
 ## Service management (as `shelldon`)
 
 ```bash
-export XDG_RUNTIME_DIR=/run/user/1000   # needed for systemctl --user over ssh/sudo
-systemctl --user status openclaw-gateway.service
-openclaw gateway status                  # includes connectivity probe
-openclaw gateway restart
-openclaw logs --follow
+systemctl status openclaw-gateway.service
+curl --fail --silent --output /dev/null http://127.0.0.1:18789/
+sudo systemctl restart openclaw-gateway.service
+sudo journalctl -u openclaw-gateway.service --follow
 ```
 
-- Persistence across logouts: `loginctl enable-linger shelldon` (enabled).
-- User manager: `user@1000.service` must be running for `systemctl --user` to work.
+- The system manager owns the gateway unit, but `User=shelldon` keeps the
+  gateway process unprivileged. This is required for systemd 255 to decrypt the
+  Encrypted Bootstrap Credential Set; see ADR 0004.
+- Persistence across logouts: `loginctl enable-linger shelldon` remains enabled
+  for user-owned OpenClaw state, though the gateway itself no longer depends on
+  the user manager.
 
 ## Identity (restored from backup)
 

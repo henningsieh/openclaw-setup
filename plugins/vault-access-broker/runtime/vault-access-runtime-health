@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Verifies the non-secret prerequisites injected into the gateway by systemd.
+set -euo pipefail
+
+readonly EXPECTED_BW_SHA256="73b6e9b5706b6ba315974ada6723b5bb3e54b51b99583a58d9968925b607cd9c"
+readonly REQUIRED_CREDENTIALS=(
+  vault_api_key
+  vault_api_client_secret
+  vault_master_password
+)
+
+fail() {
+  printf 'vault-access-runtime health check failed: %s\n' "$1" >&2
+  exit 1
+}
+
+require_environment() {
+  local name=$1
+  [[ -n ${!name:-} ]] || fail "missing ${name}"
+}
+
+for name in \
+  CREDENTIALS_DIRECTORY \
+  VAULT_ACCESS_BROKER_RUNTIME_DIR \
+  VAULT_ACCESS_BROKER_BW_BIN \
+  VAULT_ACCESS_BROKER_BW_VERSION \
+  VAULT_ACCESS_BROKER_SERVER_URL \
+  BITWARDENCLI_APPDATA_DIR; do
+  require_environment "$name"
+done
+
+readonly runtime_dir=$VAULT_ACCESS_BROKER_RUNTIME_DIR
+readonly bw_bin=$VAULT_ACCESS_BROKER_BW_BIN
+readonly state_dir=$BITWARDENCLI_APPDATA_DIR
+
+[[ "$VAULT_ACCESS_BROKER_SERVER_URL" =~ ^https://[^[:space:]/]+(/.*)?$ ]] \
+  || fail "Vaultwarden URL must be an absolute HTTPS URL"
+[[ "$bw_bin" == "$runtime_dir/bin/bw" ]] || fail "Bitwarden CLI is outside the runtime"
+[[ "$state_dir" == "$runtime_dir/state" ]] || fail "Bitwarden CLI state is outside the runtime"
+[[ -d "$runtime_dir" && -d "$state_dir" ]] || fail "runtime directory is missing"
+[[ $(stat -c '%a' "$runtime_dir") == "700" ]] || fail "runtime directory permissions are not 700"
+[[ $(stat -c '%a' "$state_dir") == "700" ]] || fail "state directory permissions are not 700"
+[[ -x "$bw_bin" ]] || fail "pinned Bitwarden CLI is not executable"
+
+for credential in "${REQUIRED_CREDENTIALS[@]}"; do
+  [[ -s "$CREDENTIALS_DIRECTORY/$credential" ]] || fail "required credential input is unavailable"
+done
+
+actual_version=$($bw_bin --version)
+[[ "$actual_version" == "$VAULT_ACCESS_BROKER_BW_VERSION" ]] \
+  || fail "Bitwarden CLI version does not match the pin"
+[[ $(sha256sum "$bw_bin" | cut -d ' ' -f1) == "$EXPECTED_BW_SHA256" ]] \
+  || fail "Bitwarden CLI digest does not match the pin"
+
+printf 'vault-access-runtime healthy: bw=%s vaultwarden=%s credentials=%s\n' \
+  "$actual_version" "$VAULT_ACCESS_BROKER_SERVER_URL" "${#REQUIRED_CREDENTIALS[@]}"
