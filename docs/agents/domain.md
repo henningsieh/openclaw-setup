@@ -2,22 +2,29 @@
 
 This is a single-context repository.
 
+## Context hierarchy
+
+`AGENTS.md` is the short, always-loaded routing and safety guide. `CONTEXT.md`
+is the full instance and domain reference, loaded when the task enters one of
+its documented branches.
+
 ## Required context before exploring
 
-1. Read `AGENTS.md`. It contains the authoritative operational, deployment,
-   security, provider, automation, and instance-history context for OpenClaw.
-2. Read `CONTEXT.md`. It currently documents the Vaultwarden / `vault_fetch`
-   feature and its domain terminology.
+1. Read `AGENTS.md`.
+2. For native OpenClaw operations, repository-history questions, or Vault
+   Credential Access work, follow its routing rules and read the relevant
+   sections of `CONTEXT.md`.
 3. Read relevant ADRs under `docs/adr/` before changing an area they cover.
 
-`CONTEXT.md` is not a replacement for `AGENTS.md`; both must be consulted.
+The Vault Credential Access vocabulary and constraints live in `CONTEXT.md` and
+are further constrained by the Vault ADRs. Do not replace them with synonyms.
 
 ## File structure
 
 ```text
 /
-├── AGENTS.md
-├── CONTEXT.md
+├── AGENTS.md                 # always-loaded routing and safety guide
+├── CONTEXT.md                # full instance and domain reference
 └── docs/
     ├── agents/
     └── adr/
