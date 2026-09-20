@@ -139,7 +139,7 @@ export class BitwardenCli implements BitwardenCliBoundary {
       if (status.status === "unauthenticated") {
         await this.login(signal);
       }
-      if (status.status !== "unlocked" || !process.env.BW_SESSION) {
+      if (status.status !== "unlocked") {
         session = (await this.command(
           ["unlock", "--passwordfile", credentialPath(this.options.credentialDirectory, "vault_master_password"), "--raw"],
           undefined,
@@ -156,7 +156,7 @@ export class BitwardenCli implements BitwardenCliBoundary {
       if (!isLogin(item)) throw safeError("Vault Item is not a username-and-password login");
       return { username: item.login.username, password: item.login.password };
     } finally {
-      await this.command(["lock"], undefined, signal).catch(() => undefined);
+      await this.command(["lock"], session, signal).catch(() => undefined);
     }
   }
 
@@ -212,36 +212,30 @@ function isSubagentSession(sessionKey: string | undefined) {
   return !sessionKey || /(^|:)subagent(?::|$)/.test(sessionKey);
 }
 
-function isInteractiveVerifiedOwnerTurn(context: {
+type TurnContext = {
   agentId?: string;
-  messageChannel?: string;
-  nativeChannelId?: string;
-  requesterSenderId?: string;
-  senderIsOwner?: boolean;
   sessionKey?: string;
   sandboxed?: boolean;
-}) {
-  return (
-    context.agentId === SHELLDON_AGENT_ID &&
-    context.senderIsOwner === true &&
-    Boolean(context.requesterSenderId) &&
-    Boolean(context.messageChannel) &&
-    Boolean(context.nativeChannelId) &&
-    !context.sandboxed &&
-    !isSubagentSession(context.sessionKey)
-  );
-}
-
-function isApprovedTurnContext(context: {
-  agentId?: string;
-  sessionKey?: string;
+  messageChannel?: string;
+  nativeChannelId?: string;
+  channelId?: string;
+  requesterSenderId?: string;
+  senderIsOwner?: boolean;
   requester?: { channel?: string; senderId?: string; senderIsOwner?: boolean };
-}) {
+};
+
+function isInteractiveVerifiedOwnerTurn(context: TurnContext) {
+  const senderIsOwner = context.senderIsOwner ?? context.requester?.senderIsOwner;
+  const senderId = context.requesterSenderId ?? context.requester?.senderId;
+  const channel = context.messageChannel ?? context.requester?.channel;
+  const nativeChannelId = context.nativeChannelId ?? context.channelId;
   return (
     context.agentId === SHELLDON_AGENT_ID &&
-    context.requester?.senderIsOwner === true &&
-    Boolean(context.requester.senderId) &&
-    Boolean(context.requester.channel) &&
+    senderIsOwner === true &&
+    Boolean(senderId) &&
+    Boolean(channel) &&
+    Boolean(nativeChannelId) &&
+    context.sandboxed !== true &&
     !isSubagentSession(context.sessionKey)
   );
 }
@@ -290,7 +284,7 @@ export function createVaultAccessBrokerPlugin(cli: BitwardenCliBoundary = create
     registerTools(api);
     api.on("before_tool_call", (event, context) => {
       if (event.toolName !== VAULT_FETCH_TOOL_NAME) return;
-      if (!isApprovedTurnContext(context)) {
+      if (!isInteractiveVerifiedOwnerTurn(context)) {
         return { block: true, blockReason: "Vault Access Broker requires an Interactive Verified-Owner Turn." };
       }
       return {

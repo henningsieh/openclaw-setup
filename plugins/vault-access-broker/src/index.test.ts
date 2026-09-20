@@ -94,6 +94,7 @@ describe("vault-access-broker", () => {
         {
           agentId: "shelldon",
           sessionKey: "agent:shelldon:telegram:owner-chat",
+          channelId: "owner-chat",
           requester: { channel: "telegram", senderId: "owner", senderIsOwner: true },
         },
       ),
@@ -109,16 +110,38 @@ describe("vault-access-broker", () => {
     const hooks: Array<{ name: string; hook: Hook }> = [];
     entry.register({ registerTool: vi.fn(), on: (name: string, hook: Hook) => hooks.push({ name, hook }) } as never);
     const beforeFetch = hooks.find(({ name }) => name === "before_tool_call")?.hook;
+    const event = { toolName: "vault_fetch", params: {} };
 
-    expect(beforeFetch?.({ toolName: "vault_fetch", params: {} }, { agentId: "shelldon" })).toMatchObject({
-      block: true,
-    });
+    expect(beforeFetch?.(event, { agentId: "shelldon" })).toMatchObject({ block: true });
+    for (const context of [
+      { agentId: "shelldon", sessionKey: "agent:shelldon:telegram:owner-chat", requester: { channel: "telegram", senderId: "owner", senderIsOwner: true } },
+      {
+        agentId: "shelldon",
+        sessionKey: "agent:shelldon:telegram:owner-chat",
+        channelId: "owner-chat",
+        sandboxed: true,
+        requester: { channel: "telegram", senderId: "owner", senderIsOwner: true },
+      },
+      {
+        agentId: "shelldon",
+        sessionKey: "agent:shelldon:subagent:child",
+        channelId: "owner-chat",
+        requester: { channel: "telegram", senderId: "owner", senderIsOwner: true },
+      },
+      { agentId: "shelldon", sessionKey: "cron:shelldon:job" },
+      { agentId: "shelldon", sessionKey: "heartbeat:shelldon" },
+      { agentId: "shelldon", sessionKey: "agent:shelldon:background:job" },
+    ]) {
+      expect(beforeFetch?.(event, context)).toMatchObject({ block: true });
+    }
   });
 
   it("uses exact-name lookup before a single fallback and returns only a login pair", async () => {
     const calls: string[][] = [];
-    const runner: BitwardenCommandRunner = async ({ args }) => {
+    const sessions: Array<string | undefined> = [];
+    const runner: BitwardenCommandRunner = async ({ args, environment }) => {
       calls.push(args);
+      sessions.push(environment?.BW_SESSION);
       if (args[0] === "status") return '{"status":"locked","serverUrl":"https://vault.example"}';
       if (args[0] === "unlock") return "session-token\n";
       if (args[0] === "list") {
@@ -145,6 +168,7 @@ describe("vault-access-broker", () => {
       ["list", "items", "--search", "Example"],
       ["lock"],
     ]);
+    expect(sessions.slice(2)).toEqual(["session-token", "session-token"]);
   });
 
   it("configures and authenticates only when the CLI status requires it", async () => {
@@ -183,6 +207,29 @@ describe("vault-access-broker", () => {
     });
 
     await expect(cli.fetchLogin("search phrase")).resolves.toEqual({ username: "alice", password: "password" });
+  });
+
+  it("locks the fetched session and fails closed for a cancelled request", async () => {
+    const sessions: Array<string | undefined> = [];
+    const controller = new AbortController();
+    const runner: BitwardenCommandRunner = async ({ args, environment, signal }) => {
+      sessions.push(environment?.BW_SESSION);
+      if (args[0] === "status") return '{"status":"locked","serverUrl":"https://vault.example"}';
+      if (args[0] === "unlock") return "session-token";
+      if (args[0] === "list") {
+        controller.abort(new Error("cancelled"));
+        signal?.throwIfAborted();
+      }
+      return "";
+    };
+    const cli = new BitwardenCli(runner, {
+      bwBin: "/private/bw",
+      serverUrl: "https://vault.example",
+      credentialDirectory: "/credentials",
+    });
+
+    await expect(cli.fetchLogin("Example", controller.signal)).rejects.toThrow();
+    expect(sessions.at(-1)).toBe("session-token");
   });
 
   it("rejects ambiguous or non-login results and locks the vault after failure", async () => {
