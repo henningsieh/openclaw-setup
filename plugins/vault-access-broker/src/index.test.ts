@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
-import entry, { createVaultAccessBrokerPlugin } from "./index.js";
+import entry, {
+  BitwardenCli,
+  createVaultAccessBrokerPlugin,
+  redactVaultFetchResult,
+  type BitwardenCommandRunner,
+} from "./index.js";
 import { getToolPluginMetadata } from "openclaw/plugin-sdk/tool-plugin";
 
 type RegisteredTool = {
@@ -16,14 +21,28 @@ type ToolRegistration = {
   options: { optional?: boolean };
 };
 
-function loadVaultFetchTool(plugin = entry): ToolRegistration {
+type Hook = (event: Record<string, unknown>, context: Record<string, unknown>) => unknown;
+
+function loadVaultFetchTool(
+  plugin = entry,
+  toolContext: Record<string, unknown> = {
+    agentId: "shelldon",
+    messageChannel: "telegram",
+    nativeChannelId: "owner-chat",
+    requesterSenderId: "owner",
+    senderIsOwner: true,
+    sessionKey: "agent:shelldon:telegram:owner-chat",
+  },
+): ToolRegistration | undefined {
   const registrations: ToolRegistration[] = [];
   plugin.register({
-    registerTool: (tool: RegisteredTool, options: { optional?: boolean }) =>
-      registrations.push({ tool, options }),
+    registerTool: (factory: (context: Record<string, unknown>) => RegisteredTool | null, options: { optional?: boolean }) => {
+      const tool = factory(toolContext);
+      if (tool) registrations.push({ tool, options });
+    },
+    on: vi.fn(),
   } as never);
 
-  expect(registrations).toHaveLength(1);
   return registrations[0];
 }
 
@@ -34,22 +53,182 @@ describe("vault-access-broker", () => {
     ]);
   });
 
-  it("registers vault_fetch as optional in the loaded plugin runtime", () => {
-    const registration = loadVaultFetchTool();
+  it("only exposes vault_fetch to Shelldon's interactive verified-owner turn", () => {
+    expect(loadVaultFetchTool()?.options).toMatchObject({ optional: true });
 
-    expect(registration.tool.name).toBe("vault_fetch");
-    expect(registration.options).toMatchObject({ optional: true });
+    for (const context of [
+      { agentId: "other", senderIsOwner: true, requesterSenderId: "owner", messageChannel: "telegram" },
+      { agentId: "shelldon", senderIsOwner: false, requesterSenderId: "owner", messageChannel: "telegram" },
+      { agentId: "shelldon", senderIsOwner: true, messageChannel: "telegram" },
+      {
+        agentId: "shelldon",
+        senderIsOwner: true,
+        requesterSenderId: "owner",
+        messageChannel: "telegram",
+        sessionKey: "agent:shelldon:subagent:child",
+      },
+      {
+        agentId: "shelldon",
+        senderIsOwner: true,
+        requesterSenderId: "owner",
+        messageChannel: "telegram",
+        sandboxed: true,
+      },
+    ]) {
+      expect(loadVaultFetchTool(entry, context)).toBeUndefined();
+    }
   });
 
-  it("invokes the public tool through a controlled Bitwarden CLI boundary", async () => {
-    const cli = {
-      fetchLogin: vi.fn().mockRejectedValue(new Error("fake CLI is not provisioned")),
+  it("requires only one-time approval before a fetch", () => {
+    const hooks: Array<{ name: string; hook: Hook }> = [];
+    entry.register({
+      registerTool: vi.fn(),
+      on: (name: string, hook: Hook) => hooks.push({ name, hook }),
+    } as never);
+    const beforeFetch = hooks.find(({ name }) => name === "before_tool_call")?.hook;
+
+    expect(beforeFetch).toBeDefined();
+    expect(
+      beforeFetch?.(
+        { toolName: "vault_fetch", params: { itemName: "Example" } },
+        {
+          agentId: "shelldon",
+          sessionKey: "agent:shelldon:telegram:owner-chat",
+          requester: { channel: "telegram", senderId: "owner", senderIsOwner: true },
+        },
+      ),
+    ).toMatchObject({
+      requireApproval: {
+        allowedDecisions: ["allow-once", "deny"],
+        title: "Retrieve login credential",
+      },
+    });
+  });
+
+  it("fails closed before approval when the tool context is not an Interactive Verified-Owner Turn", () => {
+    const hooks: Array<{ name: string; hook: Hook }> = [];
+    entry.register({ registerTool: vi.fn(), on: (name: string, hook: Hook) => hooks.push({ name, hook }) } as never);
+    const beforeFetch = hooks.find(({ name }) => name === "before_tool_call")?.hook;
+
+    expect(beforeFetch?.({ toolName: "vault_fetch", params: {} }, { agentId: "shelldon" })).toMatchObject({
+      block: true,
+    });
+  });
+
+  it("uses exact-name lookup before a single fallback and returns only a login pair", async () => {
+    const calls: string[][] = [];
+    const runner: BitwardenCommandRunner = async ({ args }) => {
+      calls.push(args);
+      if (args[0] === "status") return '{"status":"locked","serverUrl":"https://vault.example"}';
+      if (args[0] === "unlock") return "session-token\n";
+      if (args[0] === "list") {
+        return JSON.stringify([
+          { name: "Other Example", type: 1, login: { username: "other", password: "other-password" } },
+          { name: "Example", type: 1, login: { username: "alice", password: "correct-password", totp: "hidden" } },
+        ]);
+      }
+      return "";
     };
+    const cli = new BitwardenCli(runner, {
+      bwBin: "/private/bw",
+      serverUrl: "https://vault.example",
+      credentialDirectory: "/credentials",
+    });
+
+    await expect(cli.fetchLogin("Example")).resolves.toEqual({
+      username: "alice",
+      password: "correct-password",
+    });
+    expect(calls).toEqual([
+      ["status", "--raw"],
+      ["unlock", "--passwordfile", "/credentials/vault_master_password", "--raw"],
+      ["list", "items", "--search", "Example"],
+      ["lock"],
+    ]);
+  });
+
+  it("configures and authenticates only when the CLI status requires it", async () => {
+    const calls: string[][] = [];
+    const runner: BitwardenCommandRunner = async ({ args }) => {
+      calls.push(args);
+      if (args[0] === "status") return '{"status":"unauthenticated","serverUrl":"https://other.example"}';
+      if (args[0] === "unlock") return "session-token";
+      if (args[0] === "list") return JSON.stringify([{ name: "Example", type: 1, login: { username: "alice", password: "password" } }]);
+      return "";
+    };
+    const cli = new BitwardenCli(runner, {
+      bwBin: "/private/bw",
+      serverUrl: "https://vault.example",
+      credentialDirectory: "/credentials",
+    }, async () => "bootstrap");
+
+    await cli.fetchLogin("Example");
+
+    expect(calls.map((args) => args[0])).toEqual(["status", "config", "login", "unlock", "list", "lock"]);
+  });
+
+  it("accepts exactly one Lookup Fallback candidate", async () => {
+    const runner: BitwardenCommandRunner = async ({ args }) => {
+      if (args[0] === "status") return '{"status":"locked","serverUrl":"https://vault.example"}';
+      if (args[0] === "unlock") return "session-token";
+      if (args[0] === "list") return JSON.stringify([
+        { name: "Actual Item", type: 1, login: { username: "alice", password: "password" } },
+      ]);
+      return "";
+    };
+    const cli = new BitwardenCli(runner, {
+      bwBin: "/private/bw",
+      serverUrl: "https://vault.example",
+      credentialDirectory: "/credentials",
+    });
+
+    await expect(cli.fetchLogin("search phrase")).resolves.toEqual({ username: "alice", password: "password" });
+  });
+
+  it("rejects ambiguous or non-login results and locks the vault after failure", async () => {
+    const calls: string[][] = [];
+    const runner: BitwardenCommandRunner = async ({ args }) => {
+      calls.push(args);
+      if (args[0] === "status") return '{"status":"locked","serverUrl":"https://vault.example"}';
+      if (args[0] === "unlock") return "session-token";
+      if (args[0] === "list") return JSON.stringify([
+        { name: "One", type: 1, login: { username: "one", password: "one" } },
+        { name: "Two", type: 1, login: { username: "two", password: "two" } },
+      ]);
+      return "";
+    };
+    const cli = new BitwardenCli(runner, {
+      bwBin: "/private/bw",
+      serverUrl: "https://vault.example",
+      credentialDirectory: "/credentials",
+    });
+
+    await expect(cli.fetchLogin("missing")).rejects.toThrow("ambiguous Vault Item lookup");
+    expect(calls.at(-1)).toEqual(["lock"]);
+  });
+
+  it("redacts persisted Credential Responses", () => {
+    const password = "correct-password";
+    const redacted = redactVaultFetchResult({
+      role: "tool",
+      toolCallId: "call-1",
+      content: [{ type: "text", text: `alice:${password}` }],
+      details: { username: "alice", password },
+    } as never);
+
+    expect(JSON.stringify(redacted)).not.toContain(password);
+    expect(redacted).toMatchObject({
+      content: [{ type: "text", text: "[Vault Access Broker Credential Response redacted]" }],
+    });
+  });
+
+  it("invokes the public tool through the controlled Bitwarden CLI boundary", async () => {
+    const cli = { fetchLogin: vi.fn().mockResolvedValue({ username: "alice", password: "password" }) };
     const registration = loadVaultFetchTool(createVaultAccessBrokerPlugin(cli));
 
-    await expect(registration.tool.execute("test-call", { itemName: "Example" })).rejects.toThrow(
-      "fake CLI is not provisioned",
-    );
-    expect(cli.fetchLogin).toHaveBeenCalledWith("Example");
+    await expect(registration?.tool.execute("test-call", { itemName: "Example" })).resolves.toMatchObject({
+      details: { username: "alice", password: "password" },
+    });
+    expect(cli.fetchLogin).toHaveBeenCalledWith("Example", undefined);
   });
 });

@@ -11,17 +11,24 @@ installed. A later activation change must explicitly allowlist it in
 Shelldon's agent-specific tool policy; no other agent receives access by
 default.
 
-This foundation deliberately does not configure a Bitwarden executable, service
-credentials, a Vaultwarden URL, or a tool-policy grant. Until the Pinned Vault
-Access Runtime and approved retrieval behavior are implemented, invoking the
-tool fails closed without opening a vault connection.
+`vault_fetch` is exposed only in Shelldon's Interactive Verified-Owner Turn:
+the runtime must supply a verified owner sender, a message channel and native
+conversation, and a non-subagent, non-sandboxed Shelldon session. Every call
+then requests an allow-once Retrieval Approval; denial, timeout, cancellation,
+or unavailable approval routes fail closed.
+
+The controlled CLI boundary configures the Vaultwarden endpoint,
+authenticates and unlocks only when needed, searches for a Vault Item by exact
+name before accepting one fallback candidate, and attempts to lock the vault in
+all outcomes. It returns only a username-and-password Credential Response. Tool
+result persistence replaces that response with a redaction marker, so it must
+be used for the downstream login and never repeated in chat.
 
 ## Test seam
 
-Tests exercise `vault_fetch` through the plugin's loaded registration surface.
-They use no Vaultwarden service, credential data, or real Bitwarden CLI. The
-follow-on retrieval implementation must retain this public-tool seam and
-substitute a controlled fake Bitwarden CLI at its process boundary.
+Tests exercise `vault_fetch` through its loaded registration surface and use a
+controlled fake Bitwarden CLI boundary. They never contact Vaultwarden, read
+real credential files, or invoke the installed Bitwarden CLI.
 
 ## Local verification
 
