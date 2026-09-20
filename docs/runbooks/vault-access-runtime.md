@@ -121,6 +121,97 @@ PATH=/usr/bin:/home/shelldon/.npm-global/bin:/usr/local/bin:/bin command -v bw
 This command must produce no output and exit nonzero. Do not invoke the
 private absolute CLI path from an agent shell.
 
+## Broker activation and tool policy
+
+The Vault Access Broker is installed from the credential-free Local Plugin
+Source through OpenClaw's managed plugin lifecycle. The install copies the
+source into the managed plugin root and records provenance; it never uses
+`--link` or a bare `plugins.load.paths` entry.
+
+```bash
+openclaw plugins install ./plugins/vault-access-broker --force --accept-capabilities
+openclaw plugins enable vault-access-broker --accept-capabilities
+openclaw plugins inspect vault-access-broker --runtime --json
+```
+
+The local-path source requires `--force` (non-ClawHub provenance) and
+`--accept-capabilities` (local copies never inherit official trust). The
+recorded capability acceptance covers exactly one declared tool,
+`vault_fetch`, with no channels, providers, hooks, MCP servers, CLI commands,
+skills, or dangerous configuration flags. The runtime inspection must report
+`status: loaded`, `enabled: true`, `activated: true`, the tool as
+`optional: true`, and exactly the `before_tool_call` and
+`tool_result_persist` typed hooks.
+
+Shelldon is the sole Authorized Agent. The grant lives only in Shelldon's
+agent-specific tool policy:
+
+```bash
+openclaw config patch --stdin <<'EOF'
+{
+  agents: {
+    entries: {
+      shelldon: {
+        tools: {
+          alsoAllow: ["vault_fetch"]
+        }
+      }
+    }
+  }
+}
+EOF
+```
+
+The explicit entry is load-bearing, not decorative: the gateway resolves an
+optional plugin tool into an agent catalog only when the effective allowlist
+names the tool (or its plugin id) for that agent. No other agent entry may
+carry `vault_fetch`, the plugin id, or `group:plugins` for this purpose, and
+a future agent receives broker access only through its own explicit entry.
+The broker's own factory and approval gates additionally refuse every
+non-Shelldon agent and every non-interactive context at runtime.
+
+Reload the broker without restarting the gateway after source or manifest
+edits:
+
+```bash
+openclaw plugins reload vault-access-broker --json
+openclaw plugins inspect vault-access-broker --runtime --json
+curl --fail --silent --output /dev/null http://127.0.0.1:18789/
+```
+
+The reload must report `restartRequired: false` with a new generation
+receipt, the inspection must still report the loaded optional tool, and the
+gateway health probe must succeed with uninterrupted uptime.
+
+## Production validation checklist
+
+Complete this checklist with the owner in an Interactive Verified-Owner Turn
+before treating any broker change as production-ready. It uses one
+non-sensitive disposable Vault Item and prints no bootstrap material or
+Credential Response at any step.
+
+1. Create a disposable Vault Item with a random username and password that
+   grants access to nothing real. Note only its item name.
+2. From the owner chat, ask Shelldon to fetch the disposable item for a
+   downstream login. Confirm the gateway pauses for a Retrieval Approval
+   (`Retrieve login credential`, allow-once / deny).
+3. Approve once. Confirm Shelldon completes the downstream login without
+   repeating the username or password in chat, channel progress, or any
+   other reply surface.
+4. Deny a second fetch and confirm it fails closed with no CLI invocation
+   and no credential handling. Confirm an approval timeout or cancellation
+   behaves the same way.
+5. Confirm the persisted tool result contains only the redaction marker
+   `[Vault Access Broker Credential Response redacted]`.
+6. Confirm a non-authorized agent context and each excluded trigger class
+   (cron, heartbeat, background, subagent, unverified requester) are denied
+   without invoking the Bitwarden CLI.
+7. Confirm gateway health (`systemctl status`, local HTTP probe), a plugin
+   reload receipt, and restart behavior without emitting bootstrap material.
+   Confirm the only retrieval evidence is the normal OpenClaw
+   approval/session record, which carries no credential values.
+8. Delete the disposable Vault Item from the vault.
+
 ## Deliberate update and rollback
 
 Changing the Bitwarden version is a maintenance change, never an automatic
