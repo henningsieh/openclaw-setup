@@ -7,15 +7,17 @@ native OpenClaw managed-plugin package pinned to OpenClaw `2026.9.5`.
 
 The package owns one optional tool: `vault_fetch`. Optional metadata means the
 tool is not included in any agent's catalog merely because the plugin is
-installed. A later activation change must explicitly allowlist it in
-Shelldon's agent-specific tool policy; no other agent receives access by
-default.
+installed; it requires an explicit allowlist entry in that agent's tool policy.
 
-`vault_fetch` is exposed only to Shelldon. Every Shelldon invocation, regardless
-of requester, channel, or session type, requests an allow-once Retrieval
-Approval; denial, timeout, cancellation, or unavailable approval routes fail
-closed. Configure an explicit `approvals.plugin` route to the owner's approval-capable
-channel so requests that originate elsewhere can be reviewed.
+`vault_fetch` is exposed only to Shelldon, requires a one-time owner Retrieval
+Approval on every invocation, and fails closed on denial, timeout, cancellation,
+or an unavailable approval route. A Credential Response is use-only and is
+replaced by a redaction marker on persistence, so it must never be repeated in
+chat.
+
+Domain vocabulary lives in `CONTEXT.md` (Vault Credential Access). Activation,
+approval routing, and the production validation checklist live in
+`docs/runbooks/vault-access-runtime.md`.
 
 The controlled CLI boundary configures the Vaultwarden endpoint,
 authenticates and unlocks only when needed, searches for a Vault Item by exact
