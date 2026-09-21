@@ -11,11 +11,11 @@ installed. A later activation change must explicitly allowlist it in
 Shelldon's agent-specific tool policy; no other agent receives access by
 default.
 
-`vault_fetch` is exposed only in Shelldon's Interactive Verified-Owner Turn:
-the runtime must supply a verified owner sender, a message channel and native
-conversation, and a non-subagent, non-sandboxed Shelldon session. Every call
-then requests an allow-once Retrieval Approval; denial, timeout, cancellation,
-or unavailable approval routes fail closed.
+`vault_fetch` is exposed only to Shelldon. Every Shelldon invocation, regardless
+of requester, channel, or session type, requests an allow-once Retrieval
+Approval; denial, timeout, cancellation, or unavailable approval routes fail
+closed. Configure an explicit `approvals.plugin` route to the owner's approval-capable
+channel so requests that originate elsewhere can be reviewed.
 
 The controlled CLI boundary configures the Vaultwarden endpoint,
 authenticates and unlocks only when needed, searches for a Vault Item by exact
