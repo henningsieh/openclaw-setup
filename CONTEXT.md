@@ -166,21 +166,24 @@ installed CLI is authoritative for this host.
 - `~/.openclaw/agents/shelldon/` — agent state, incl. `agent/openclaw-agent.sqlite` (provider credentials)
   and the ignored `agent/codex-home/` (Codex app-server runtime state).
 - `~/.npm-global/` — npm global prefix; CLI at `~/.npm-global/bin/openclaw`
-- `~/.config/systemd/user/openclaw-gateway.service` — managed systemd user unit
+- `/etc/systemd/system/openclaw-gateway.service` — system-managed unit that runs as `shelldon`
 - `~/.openclaw/.git/` — setup-history repository; GitHub remote is `origin`, with native work on branch `native-setup` and the Docker-era setup on `main`
 
 ## Service management (as `shelldon`)
 
 ```bash
-export XDG_RUNTIME_DIR=/run/user/1000   # needed for systemctl --user over ssh/sudo
-systemctl --user status openclaw-gateway.service
-openclaw gateway status                  # includes connectivity probe
-openclaw gateway restart
-openclaw logs --follow
+systemctl status openclaw-gateway.service
+curl --fail --silent --output /dev/null http://127.0.0.1:18789/
+sudo systemctl restart openclaw-gateway.service
+sudo journalctl -u openclaw-gateway.service --follow
 ```
 
-- Persistence across logouts: `loginctl enable-linger shelldon` (enabled).
-- User manager: `user@1000.service` must be running for `systemctl --user` to work.
+- The system manager owns the gateway unit, but `User=shelldon` keeps the
+  gateway process unprivileged. This is required for systemd 255 to decrypt the
+  Encrypted Bootstrap Credential Set; see ADR 0004.
+- Persistence across logouts: `loginctl enable-linger shelldon` remains enabled
+  for user-owned OpenClaw state, though the gateway itself no longer depends on
+  the user manager.
 
 ## Identity (restored from backup)
 
@@ -206,17 +209,17 @@ openclaw logs --follow
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
 - `gateway.controlUi.allowedOrigins`: `["https://ai.sieh.org"]`.
-- Configured default model: `openai/gpt-5.6-luna`, thinking `high`, with
-  `openai/gpt-5.6-terra` as the global fallback
+- Configured default model: `opencode-go/deepseek-v4.1-flash` (DeepSeek V4.1
+  Flash), thinking `high`, with `opencode-go/muse-spark-1.3-contributor`
+  (Muse Spark 1.3 Contributor) as the global fallback
   (`agents.defaults.model.primary`, `agents.defaults.thinkingDefault`, and
   `agents.defaults.model.fallbacks`).
-  The per-agent entry (`agents.entries.shelldon.model`) also uses
-  `openai/gpt-5.6-luna`. OpenClaw's current canonical provider prefix is
-  `openai/`; the older `openai-codex/` prefix is legacy. The OpenAI OAuth profile
-  is stored in the native agent auth store.
+  The per-agent override (`agents.entries.shelldon.model`) is intentionally
+  absent, so Shelldon inherits this global route. The OpenCode Go API-key
+  profile is stored in the native agent auth store.
 - The Control UI's `+` New Session flow independently remembers the latest model
   choice per Gateway user/agent. It may preselect a previously selected model;
-  select `openai/gpt-5.6-luna` explicitly if needed.
+  select `opencode-go/deepseek-v4.1-flash` explicitly if needed.
 
 ## Memory and wiki migration
 
@@ -301,8 +304,9 @@ agent rather than copying Docker runtime state wholesale:
 
 ## Providers
 
-- The configured default for `shelldon` is `openai/gpt-5.6-luna` with thinking
-  `high` and no fallback model.
+- The configured default for `shelldon` is `opencode-go/deepseek-v4.1-flash`
+  with thinking `high` and `opencode-go/muse-spark-1.3-contributor` as its
+  only global fallback.
 - Native credential profiles exist for OpenAI (OAuth), NVIDIA (API key), and
   OpenCode Go (API key), stored in the agent SQLite auth store rather than an
   environment file. NVIDIA is used by the Session Cleanup automation.
@@ -380,11 +384,14 @@ timezone use the Gateway host's local timezone, which is Europe/Berlin.
 |---|---|---|---|---|
 | `🦀 OpenClaw Nightly Backup` | Daily 00:01 | — command job | Creates and verifies the official archive on the StorageBox/Nextcloud mount. | Concise success status → Discord `#system-status` |
 | `📧 MailCow Nightly Update` | Daily 02:00 | — command job | Checks MailCow via the native `host-server` SSH alias; applies an available update, then reports container status. The private key is at `~/.ssh/host-server`, outside the workspace and Git. | Discord `#system-status` |
-| `Memory Dreaming Promotion` | Daily 03:00 | Native managed: `nvidia/nemotron-3-ultra-550b-a55b`; global fallback: `openai/gpt-5.6-terra` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. | None |
+| `Memory Dreaming Promotion` | Daily 03:00 | Native managed: `nvidia/nemotron-3-ultra-550b-a55b`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. | None |
 | `🧹 Session Cleanup (Trajectory & Orphans)` | Daily 04:00, 10-minute stagger | `nvidia/nemotron-3-super-120b-a12b` | Prunes stale session transcripts and trajectory sidecars. | German summary → Discord `#system-status` |
-| `📺 Markus Lanz Guest Lookup` | Every 30 minutes, 11:00–17:59, Tue–Thu | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning`; fallbacks: `nvidia/nemotron-3-super-120b-a12b`, `openai/gpt-5.6-luna` | Runs the deterministic guest-lookup script; it sends Telegram only when it finds a new result. | Telegram `8788775758`, conditional |
+| `📺 Markus Lanz Guest Lookup` | Every 30 minutes, 11:00–17:59, Tue–Thu | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning`; fallbacks: `nvidia/nemotron-3-super-120b-a12b`, `opencode-go/muse-spark-1.3-contributor` | Runs the deterministic guest-lookup script; it sends Telegram only when it finds a new result. | Telegram `8788775758`, conditional |
 | `📋 Weekly AI Wiki Curation (Entities & Concepts)` | Sunday 06:00 | `nvidia/nemotron-3-ultra-550b-a55b`; fallbacks: `nvidia/nemotron-3-super-120b-a12b`, `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` | Makes up to three evidence-based native-wiki curation changes; preserves Docker/QMD/Clawfred history without promoting retired claims. | Up to five lines → Discord `#system-status` |
-| `skill-collection-review-shelldon` | Every 7 days | Native managed; agent default `openai/gpt-5.6-luna`; global fallback: `openai/gpt-5.6-terra` | Native managed review of the local Skill Workshop collection. | None |
+| `skill-collection-review-shelldon` | Every 7 days | Native managed; agent default `opencode-go/deepseek-v4.1-flash`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native managed review of the local Skill Workshop collection. | None |
+
+No OpenAI model remains in any configured default or fallback chain; the
+OpenAI OAuth profile is retained solely for the `codex` plugin harness.
 
 Inspect jobs and their outcomes with `openclaw cron list --json`, `openclaw cron
 get <job-id>`, and `openclaw cron runs <job-id>`. Do not restore the retired QMD
