@@ -208,36 +208,12 @@ function createRuntimeBitwardenCli(): BitwardenCliBoundary {
   return new BitwardenCli(runBitwardenCommand, { bwBin, serverUrl, credentialDirectory });
 }
 
-function isSubagentSession(sessionKey: string | undefined) {
-  return !sessionKey || /(^|:)subagent(?::|$)/.test(sessionKey);
-}
-
 type TurnContext = {
   agentId?: string;
-  sessionKey?: string;
-  sandboxed?: boolean;
-  messageChannel?: string;
-  nativeChannelId?: string;
-  channelId?: string;
-  requesterSenderId?: string;
-  senderIsOwner?: boolean;
-  requester?: { channel?: string; senderId?: string; senderIsOwner?: boolean };
 };
 
-function isInteractiveVerifiedOwnerTurn(context: TurnContext) {
-  const senderIsOwner = context.senderIsOwner ?? context.requester?.senderIsOwner;
-  const senderId = context.requesterSenderId ?? context.requester?.senderId;
-  const channel = context.messageChannel ?? context.requester?.channel;
-  const nativeChannelId = context.nativeChannelId ?? context.channelId;
-  return (
-    context.agentId === SHELLDON_AGENT_ID &&
-    senderIsOwner === true &&
-    Boolean(senderId) &&
-    Boolean(channel) &&
-    Boolean(nativeChannelId) &&
-    context.sandboxed !== true &&
-    !isSubagentSession(context.sessionKey)
-  );
+function isShelldonTurn(context: TurnContext) {
+  return context.agentId === SHELLDON_AGENT_ID;
 }
 
 export function redactVaultFetchResult<T extends object>(message: T): T {
@@ -283,8 +259,8 @@ export function createVaultAccessBrokerPlugin(cli: BitwardenCliBoundary = create
     registerTools(api);
     api.on("before_tool_call", (event, context) => {
       if (event.toolName !== VAULT_FETCH_TOOL_NAME) return;
-      if (!isInteractiveVerifiedOwnerTurn(context)) {
-        return { block: true, blockReason: "Vault Access Broker requires an Interactive Verified-Owner Turn." };
+      if (!isShelldonTurn(context)) {
+        return { block: true, blockReason: "Vault Access Broker is available only to Shelldon." };
       }
       return {
         requireApproval: {

@@ -57,7 +57,7 @@ describe("vault-access-broker", () => {
     expect(loadVaultFetchTool(entry, {})).toMatchObject({ options: { optional: true } });
   });
 
-  it("requires only one-time approval before a fetch", () => {
+  it("requires one-time approval for every Shelldon vault fetch", () => {
     const hooks: Array<{ name: string; hook: Hook }> = [];
     entry.register({
       registerTool: vi.fn(),
@@ -69,12 +69,7 @@ describe("vault-access-broker", () => {
     expect(
       beforeFetch?.(
         { toolName: "vault_fetch", params: { itemName: "Example" } },
-        {
-          agentId: "shelldon",
-          sessionKey: "agent:shelldon:telegram:owner-chat",
-          channelId: "owner-chat",
-          requester: { channel: "telegram", senderId: "owner", senderIsOwner: true },
-        },
+        { agentId: "shelldon" },
       ),
     ).toMatchObject({
       requireApproval: {
@@ -84,34 +79,33 @@ describe("vault-access-broker", () => {
     });
   });
 
-  it("fails closed before approval when the tool context is not an Interactive Verified-Owner Turn", () => {
+  it("requires approval regardless of Shelldon session or requester context", () => {
     const hooks: Array<{ name: string; hook: Hook }> = [];
     entry.register({ registerTool: vi.fn(), on: (name: string, hook: Hook) => hooks.push({ name, hook }) } as never);
     const beforeFetch = hooks.find(({ name }) => name === "before_tool_call")?.hook;
     const event = { toolName: "vault_fetch", params: {} };
 
-    expect(beforeFetch?.(event, { agentId: "shelldon" })).toMatchObject({ block: true });
     for (const context of [
-      { agentId: "shelldon", sessionKey: "agent:shelldon:telegram:owner-chat", requester: { channel: "telegram", senderId: "owner", senderIsOwner: true } },
-      {
-        agentId: "shelldon",
-        sessionKey: "agent:shelldon:telegram:owner-chat",
-        channelId: "owner-chat",
-        sandboxed: true,
-        requester: { channel: "telegram", senderId: "owner", senderIsOwner: true },
-      },
-      {
-        agentId: "shelldon",
-        sessionKey: "agent:shelldon:subagent:child",
-        channelId: "owner-chat",
-        requester: { channel: "telegram", senderId: "owner", senderIsOwner: true },
-      },
+      { agentId: "shelldon", sessionKey: "agent:shelldon:webchat:any-session" },
+      { agentId: "shelldon", sessionKey: "agent:shelldon:subagent:child", sandboxed: true },
       { agentId: "shelldon", sessionKey: "cron:shelldon:job" },
       { agentId: "shelldon", sessionKey: "heartbeat:shelldon" },
       { agentId: "shelldon", sessionKey: "agent:shelldon:background:job" },
+      {
+        agentId: "shelldon",
+        requester: { channel: "telegram", senderId: "any-user", senderIsOwner: false },
+      },
     ]) {
-      expect(beforeFetch?.(event, context)).toMatchObject({ block: true });
+      expect(beforeFetch?.(event, context)).toMatchObject({ requireApproval: { allowedDecisions: ["allow-once", "deny"] } });
     }
+  });
+
+  it("blocks vault fetches for agents other than Shelldon", () => {
+    const hooks: Array<{ name: string; hook: Hook }> = [];
+    entry.register({ registerTool: vi.fn(), on: (name: string, hook: Hook) => hooks.push({ name, hook }) } as never);
+    const beforeFetch = hooks.find(({ name }) => name === "before_tool_call")?.hook;
+
+    expect(beforeFetch?.({ toolName: "vault_fetch", params: {} }, { agentId: "another-agent" })).toMatchObject({ block: true });
   });
 
   it("uses exact-name lookup before a single fallback and returns only a login pair", async () => {

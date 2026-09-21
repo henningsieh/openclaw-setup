@@ -168,7 +168,25 @@ names the tool (or its plugin id) for that agent. No other agent entry may
 carry `vault_fetch`, the plugin id, or `group:plugins` for this purpose, and
 a future agent receives broker access only through its own explicit entry.
 The broker's own factory and approval gates additionally refuse every
-non-Shelldon agent and every non-interactive context at runtime.
+non-Shelldon agent at runtime. Every Shelldon invocation, regardless of
+requester, channel, or session type, requires a one-time Retrieval Approval.
+Route those approvals to the owner rather than relying on the originating
+conversation:
+
+```json5
+{
+  approvals: {
+    plugin: {
+      enabled: true,
+      mode: "targets",
+      agentFilter: ["shelldon"],
+      targets: [{ channel: "telegram", to: "<owner-telegram-user-id>" }]
+    }
+  }
+}
+```
+
+Denial, timeout, cancellation, or an unavailable approval route fails closed.
 
 Reload the broker without restarting the gateway after source or manifest
 edits:

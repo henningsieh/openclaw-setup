@@ -140,21 +140,8 @@ function createRuntimeBitwardenCli() {
     }
     return new BitwardenCli(runBitwardenCommand, { bwBin, serverUrl, credentialDirectory });
 }
-function isSubagentSession(sessionKey) {
-    return !sessionKey || /(^|:)subagent(?::|$)/.test(sessionKey);
-}
-function isInteractiveVerifiedOwnerTurn(context) {
-    const senderIsOwner = context.senderIsOwner ?? context.requester?.senderIsOwner;
-    const senderId = context.requesterSenderId ?? context.requester?.senderId;
-    const channel = context.messageChannel ?? context.requester?.channel;
-    const nativeChannelId = context.nativeChannelId ?? context.channelId;
-    return (context.agentId === SHELLDON_AGENT_ID &&
-        senderIsOwner === true &&
-        Boolean(senderId) &&
-        Boolean(channel) &&
-        Boolean(nativeChannelId) &&
-        context.sandboxed !== true &&
-        !isSubagentSession(context.sessionKey));
+function isShelldonTurn(context) {
+    return context.agentId === SHELLDON_AGENT_ID;
 }
 export function redactVaultFetchResult(message) {
     const record = message;
@@ -196,8 +183,8 @@ export function createVaultAccessBrokerPlugin(cli = createRuntimeBitwardenCli())
         api.on("before_tool_call", (event, context) => {
             if (event.toolName !== VAULT_FETCH_TOOL_NAME)
                 return;
-            if (!isInteractiveVerifiedOwnerTurn(context)) {
-                return { block: true, blockReason: "Vault Access Broker requires an Interactive Verified-Owner Turn." };
+            if (!isShelldonTurn(context)) {
+                return { block: true, blockReason: "Vault Access Broker is available only to Shelldon." };
             }
             return {
                 requireApproval: {
