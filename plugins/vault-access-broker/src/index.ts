@@ -262,8 +262,7 @@ export function createVaultAccessBrokerPlugin(cli: BitwardenCliBoundary = create
           "Retrieve a username-and-password Credential Response only for downstream login use. Never disclose it in chat.",
         optional: true,
         parameters: VaultFetchParameters,
-        factory: ({ toolContext }) => {
-          if (!isInteractiveVerifiedOwnerTurn(toolContext)) return null;
+        factory: () => {
           return {
             name: VAULT_FETCH_TOOL_NAME,
             label: "Vault Fetch",

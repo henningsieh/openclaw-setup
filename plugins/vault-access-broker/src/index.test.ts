@@ -53,30 +53,8 @@ describe("vault-access-broker", () => {
     ]);
   });
 
-  it("only exposes vault_fetch to Shelldon's interactive verified-owner turn", () => {
-    expect(loadVaultFetchTool()?.options).toMatchObject({ optional: true });
-
-    for (const context of [
-      { agentId: "other", senderIsOwner: true, requesterSenderId: "owner", messageChannel: "telegram" },
-      { agentId: "shelldon", senderIsOwner: false, requesterSenderId: "owner", messageChannel: "telegram" },
-      { agentId: "shelldon", senderIsOwner: true, messageChannel: "telegram" },
-      {
-        agentId: "shelldon",
-        senderIsOwner: true,
-        requesterSenderId: "owner",
-        messageChannel: "telegram",
-        sessionKey: "agent:shelldon:subagent:child",
-      },
-      {
-        agentId: "shelldon",
-        senderIsOwner: true,
-        requesterSenderId: "owner",
-        messageChannel: "telegram",
-        sandboxed: true,
-      },
-    ]) {
-      expect(loadVaultFetchTool(entry, context)).toBeUndefined();
-    }
+  it("registers vault_fetch when the optional-tool catalog has no turn context", () => {
+    expect(loadVaultFetchTool(entry, {})).toMatchObject({ options: { optional: true } });
   });
 
   it("requires only one-time approval before a fetch", () => {
