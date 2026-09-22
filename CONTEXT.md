@@ -163,8 +163,8 @@ installed CLI is authoritative for this host.
   `GEMINI_API_KEY`, `GROCY_API_KEY`. The gateway loads it into the process
   environment at startup; config strings reference it as `${VAR}`. Never create a
   second plaintext location for an environment secret.
-- `~/.openclaw/openclaw.json` — main config (mode `600`, **not** in git — holds the
-  literal gateway token; `openclaw.json.example` is the tracked redacted copy)
+- `~/.openclaw/openclaw.json` — tracked main config (mode `600`); credential fields
+  use `${VAR}` references resolved from the ignored `.env` at gateway startup.
 - `~/.openclaw/workspace/` — agent workspace: restored `IDENTITY.md` + `USER.md`,
   fresh-install `SOUL.md`, compact wiki-routing `MEMORY.md`, avatar at
   `avatars/shelldon.png`; `BOOTSTRAP.md` is deleted
@@ -203,13 +203,11 @@ sudo journalctl -u openclaw-gateway.service --follow
 
 ## Config notes
 
-- Gateway auth: `gateway.auth.mode: token`, token stored **literally** in `openclaw.json`
-  (mode `600`, shelldon-only). SecretRef (`${OPENCLAW_GATEWAY_TOKEN}`) was tried
-  and REJECTED for this purpose: the managed systemd service scrubs exactly this
-  variable from the gateway environment, so the reference never resolves and the
-  gateway falls back to a random per-start token (breaks all auth). SecretRefs
-  remain fine for *provider* credentials — just not for the gateway ingress token.
-  Live config stays out of git; `openclaw.json.example` (redacted) is tracked.
+- Gateway auth: `gateway.auth.mode: token`, with `${OPENCLAW_GATEWAY_TOKEN}` in
+  `openclaw.json`. The gateway resolves the reference from the ignored mode-`600`
+  `.env` at startup; its value must never enter Git. Telegram, Discord, and
+  llama.cpp credential fields likewise use `${VAR}` references. The tracked config
+  and retained snapshots contain references only, never credential values.
 - `gateway.trustedProxies`: `["127.0.0.1", "::1", "172.25.0.6"]` — the new gateway
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
@@ -248,13 +246,15 @@ artifacts only — not runtime state or credentials.
 Tracked setup artifacts:
 
 - `.gitignore`
-- `openclaw.json.example` (redacted configuration template)
+- `openclaw.json`, `openclaw.json.last-good`, and `openclaw.json.pre-update`
+  (credential fields use `${VAR}` references only)
 - `workspace/` (agent instructions, identity, user model, soul, compact memory
   routing, avatar, and this document)
 
 Ignored deliberately:
 
-- live `openclaw.json` and all automatic config backups (contain the gateway token)
+- automatic `openclaw.json.bak*` backups, which may retain pre-migration plaintext
+  credentials
 - agent SQLite stores, sessions, browser data, runtime state, logs, caches, locks,
   temporary files, media, migration data, the Codex app-server home under
   `/agents/*/codex-home/`, the regenerable `/npm/` plugin sandbox, and generated
