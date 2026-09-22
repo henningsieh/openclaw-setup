@@ -2,7 +2,7 @@
 
 ## Review restored Memory Wiki
 
-The wiki restored from `.openclaw_BAK` passes lint with **0 errors and 457 warnings**.
+The restored Memory Wiki passes lint with **0 errors and 457 warnings**.
 
 - Review stale historical claims before treating operational details as current.
 - Remove, revise, or clearly mark legacy Docker and QMD material that no longer applies to the native OpenClaw setup.
@@ -13,7 +13,7 @@ The wiki restored from `.openclaw_BAK` passes lint with **0 errors and 457 warni
 
 - Deliberately recreate the `clawfred` agent, its workspace, identity, compatible
   model/authentication, and Discord binding to `#🍴-nutriclaw`.
-- Follow the detailed procedure in `workspace/OPENCLAW_SETUP.md`; do not copy
+- Follow the detailed procedure in `~/.openclaw/CONTEXT.md`; do not copy
   legacy Docker runtime state, QMD state, or credentials wholesale.
 
 ## Consider native semantic embeddings
