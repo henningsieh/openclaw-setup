@@ -1,0 +1,41 @@
+[Unit]
+Description=OpenClaw Gateway
+After=network-online.target
+Wants=network-online.target
+StartLimitBurst=10
+StartLimitIntervalSec=300
+
+[Service]
+User=shelldon
+Group=shelldon
+ExecStart=/usr/bin/node --max-old-space-size=3875 /home/shelldon/.npm-global/lib/node_modules/openclaw/dist/index.js gateway --port 18789
+Restart=always
+RestartSec=5
+RestartPreventExitStatus=78
+TimeoutStopSec=330
+TimeoutStartSec=30
+SuccessExitStatus=0 143
+OOMPolicy=continue
+KillMode=mixed
+EnvironmentFile=-/home/shelldon/.openclaw/gateway.systemd.env
+EnvironmentFile=/etc/openclaw/vault-access-broker.env
+Environment=OPENCLAW_SERVICE_MANAGED_ENV_KEYS=OPENCLAW_GATEWAY_TOKEN
+Environment=HOME=/home/shelldon
+Environment=TMPDIR=/tmp
+Environment=PATH=/usr/bin:/home/shelldon/.npm-global/bin:/usr/local/bin:/bin:/home/shelldon/.local/bin:/home/shelldon/bin:/home/shelldon/.nix-profile/bin
+Environment=NODE_OPTIONS=
+Environment=OPENCLAW_GATEWAY_PORT=18789
+Environment=OPENCLAW_SYSTEMD_UNIT=openclaw-gateway.service
+Environment=OPENCLAW_SERVICE_MARKER=openclaw
+Environment=OPENCLAW_SERVICE_KIND=gateway
+Environment=VAULT_ACCESS_BROKER_RUNTIME_DIR=/home/shelldon/.local/lib/openclaw/vault-access-broker
+Environment=VAULT_ACCESS_BROKER_BW_BIN=/home/shelldon/.local/lib/openclaw/vault-access-broker/bin/bw
+Environment=VAULT_ACCESS_BROKER_BW_VERSION=2026.8.0
+Environment=BITWARDENCLI_APPDATA_DIR=/home/shelldon/.local/lib/openclaw/vault-access-broker/state
+LoadCredentialEncrypted=vault_api_key:/etc/openclaw/credentials/vault-access-broker/vault-api-key.cred
+LoadCredentialEncrypted=vault_api_client_secret:/etc/openclaw/credentials/vault-access-broker/vault-api-client-secret.cred
+LoadCredentialEncrypted=vault_master_password:/etc/openclaw/credentials/vault-access-broker/vault-master-password.cred
+ExecStartPre=/home/shelldon/.local/lib/openclaw/vault-access-broker/bin/vault-access-runtime-health
+
+[Install]
+WantedBy=multi-user.target

@@ -72,6 +72,12 @@ Before proposing or building a custom solution, briefly check existing open-sour
 
 **Ask first:** sending emails, tweets, public posts; anything that leaves the machine; anything you're uncertain about.
 
+### Cross-channel actions
+
+- Acknowledge the request in the originating channel before starting an action that delivers elsewhere.
+- For asynchronous work, state that it is running and name the destination; do not treat delivery in the destination channel as a reply to the originating request.
+- After completion, failure, or timeout, report the result in the originating channel. If the gateway or tool becomes unavailable, send the failure status before retrying.
+
 ## Group Chats
 
 Keep private information private. Participate as yourself, not as your human's voice or proxy.

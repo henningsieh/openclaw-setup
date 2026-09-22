@@ -35,6 +35,6 @@ current time/weather, and simple reasoning do not require a wiki search.
 - QMD is retired Docker-era infrastructure. Do not restore its backend,
   configuration, models, indexes, cache, sessions, or maintenance cron. Use the
   native wiki and supported native memory facilities instead.
-- Consult `workspace/OPENCLAW_SETUP.md` for current native configuration,
-  channel policy, backup procedure, and restoration runbooks. It is the source
-  of truth for setup details, not this file.
+- Consult `~/.openclaw/CONTEXT.md` for current native configuration, channel
+  policy, backup procedure, and restoration runbooks. It is the source of truth
+  for setup details, not this file.
