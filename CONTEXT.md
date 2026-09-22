@@ -65,8 +65,9 @@ _Avoid_: floating latest, automatic upgrade
 
 Read the ADRs under `docs/adr/` before changing this feature.
 
-> This is the setup hand-off document. It lives in the tracked agent workspace at
-> `/home/shelldon/.openclaw/workspace/OPENCLAW_SETUP.md`.
+> This is the setup hand-off document for the native Shelldon instance. It lives in
+> the tracked setup repository at `/home/shelldon/.openclaw/CONTEXT.md`; the short
+> always-loaded routing and safety guide is `/home/shelldon/.openclaw/AGENTS.md`.
 >
 > **Documentation rule for all OpenClaw documentation page URLs:** append
 > `.md` to the URL to fetch clean Markdown. For example,
@@ -157,12 +158,16 @@ installed CLI is authoritative for this host.
 
 ## Layout (all owned by `shelldon`)
 
+- `~/.openclaw/.env` — the **single** environment-secrets file (mode `600`,
+  gitignored). Holds `HCLOUD_TOKEN`, `COOLIFY_API_TOKEN`, `OPENROUTER_API_KEY`,
+  `GEMINI_API_KEY`, `GROCY_API_KEY`. The gateway loads it into the process
+  environment at startup; config strings reference it as `${VAR}`. Never create a
+  second plaintext location for an environment secret.
 - `~/.openclaw/openclaw.json` — main config (mode `600`, **not** in git — holds the
   literal gateway token; `openclaw.json.example` is the tracked redacted copy)
 - `~/.openclaw/workspace/` — agent workspace: restored `IDENTITY.md` + `USER.md`,
   fresh-install `SOUL.md`, compact wiki-routing `MEMORY.md`, avatar at
-  `avatars/shelldon.png`, and this hand-off document (`OPENCLAW_SETUP.md`);
-  `BOOTSTRAP.md` is deleted
+  `avatars/shelldon.png`; `BOOTSTRAP.md` is deleted
 - `~/.openclaw/agents/shelldon/` — agent state, incl. `agent/openclaw-agent.sqlite` (provider credentials)
   and the ignored `agent/codex-home/` (Codex app-server runtime state).
 - `~/.npm-global/` — npm global prefix; CLI at `~/.npm-global/bin/openclaw`
@@ -185,12 +190,12 @@ sudo journalctl -u openclaw-gateway.service --follow
   for user-owned OpenClaw state, though the gateway itself no longer depends on
   the user manager.
 
-## Identity (restored from backup)
+## Identity
 
-- `IDENTITY.md`: verbatim copy from `.openclaw_BAK` (Shelldon crab persona).
-- `USER.md`: copy from `.openclaw_BAK`, except `## Professional Background`
-  was replaced with a pointer to `https://henningsieh.de` — keeps the file at
-  ~3.2 KB, under the 4,000-char session budget.
+- `IDENTITY.md` — Shelldon crab persona.
+- `USER.md`, except `## Professional Background` was replaced with a pointer to
+  `https://henningsieh.de` — keeps the file at ~3.2 KB, under the 4,000-char
+  session budget.
 - `SOUL.md`: kept from the fresh install (untouched).
 - `BOOTSTRAP.md`: deleted.
 - Avatar: `workspace/avatars/shelldon.png` (restored from backup, renamed),
@@ -230,7 +235,6 @@ sudo journalctl -u openclaw-gateway.service --follow
 - QMD was the Docker-era memory backend. It was removed from current OpenClaw and
   must not be restored: no `memory.backend: "qmd"` configuration, QMD CLI/indexes,
   GGUF model cache, session exports, or periodic QMD embedding cron were migrated.
-  The complete legacy QMD material remains preserved under `.openclaw_BAK`.
 - Native `memory-core` is the supported memory engine. Keep keyword/wiki retrieval
   as the baseline; choose a supported embedding provider separately if semantic
   recall is wanted later. Do not treat the retired QMD configuration as a migration
@@ -270,7 +274,8 @@ agent rather than copying Docker runtime state wholesale:
 
 1. Create agent ID `clawfred` (display/identity name `Clawfred`) with a native
    workspace at `~/.openclaw/workspace-clawfred`. Restore the legacy workspace
-   from `~/.openclaw_BAK/workspace-clawfred/`, including its agent instructions,
+   from the Docker-era `workspace-clawfred/` (in the since-removed backup),
+   including its agent instructions,
    identity, soul, user model, memory, skills, scripts, entities, exports, and
    avatar (`avatars/Cooking-Crab_as_Nutri-Consultant.png`). Review the nested Git
    repository deliberately rather than carrying its old runtime state implicitly.
@@ -353,8 +358,8 @@ fixed and the mount, manual archive, and scheduled archive were verified.
 
 The enabled `🦀 OpenClaw Nightly Backup` automation runs at `00:01` daily in
 `Europe/Berlin`. It invokes the official command with `--verify` and announces a
-concise success status in Discord `#system-status`. The historical custom tar
-script remains only under `.openclaw_BAK` and must not be restored.
+concise success status in Discord `#system-status`. Do not substitute a custom
+archive script for the official command.
 
 ```bash
 # Preview without writing.
@@ -399,27 +404,17 @@ embedding cron or the disabled one-off PR76 notification.
 
 ## Backup / history
 
-- Old Docker-era state: `/home/shelldon/.openclaw_BAK/` (config, credentials,
-  workspace, memory, skills, channels — telegram/discord setups live here).
-- Previous OpenClaw credential files: `/home/shelldon/.openclaw_BAK/credentials/`.
-  Inspect selectively; do not replace the fresh state wholesale.
-- Previous deployment secrets and service credentials: `/home/shelldon/.openclaw_BAK/.env`.
-  This is a `600` `shelldon`-owned copy of the former `/root/openclaw/.env`, kept
-  inside the old deployment backup. It contains provider/channel/service secrets
-  and is a source for selective setup only; the native OpenClaw service does not
-  load it automatically.
-- Original deployment files (docker-compose.yml, Dockerfile.gateway, original
-  `.env`): `/root/openclaw/`. The old image (`openclaw-local:2026.7.1-2`) was deleted.
+- The current backup is the native tarball
+  `/home/shelldon/openclaw-backup-local-test/2026-09-19T18-06-24.731+02-00-openclaw-backup.tar.gz`,
+  written by the OpenClaw backup command, payload rooted at
+  `.../payload/posix/home/shelldon/.openclaw/`. Inspect it selectively; never
+  restore it wholesale over fresh state.
 - This doc's install log: fresh `openclaw onboard` (non-interactive, auth skipped
   initially), then `opencode-go` auth + daemon install + `config set` hardening.
 
 ## Install recipe (how this was built)
 
 ```bash
-# as root: stop old world
-cd /root/openclaw && docker compose down
-docker rmi openclaw-local:2026.7.1-2
-mv /home/shelldon/.openclaw /home/shelldon/.openclaw_BAK
 loginctl enable-linger shelldon && systemctl start user@1000.service
 
 # as shelldon (cwd MUST be /home/shelldon, never /root — npm subprocesses

@@ -1,0 +1,24 @@
+{
+  "id": "vault-access-broker",
+  "name": "Vault Access Broker",
+  "description": "Retrieves an approved, use-only login from the Personal Vault Identity.",
+  "version": "0.1.0",
+  "configSchema": {
+    "type": "object",
+    "properties": {},
+    "additionalProperties": false
+  },
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "tools": [
+      "vault_fetch"
+    ]
+  },
+  "toolMetadata": {
+    "vault_fetch": {
+      "optional": true
+    }
+  }
+}
