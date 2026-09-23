@@ -27,3 +27,11 @@ The current builtin memory engine is usable with keyword/wiki search. Later, dec
 
 - Define the least-privilege sudo/group access that `shelldon` needs only when a
   future root-level task requires it; do not grant broad standing access by default.
+
+## Watch `/tmp/openclaw/` log growth
+
+- The gateway writes daily logs to `/tmp/openclaw/` (e.g. 76MB for 2026-09-23
+  alone). Unchecked, this is the next slow disk-fill after the plugin-build
+  temp issue (fixed via `ExecStartPre` wipe, ADR-0005).
+- Regularly check `du -sh /tmp/openclaw` and whether old daily logs are
+  rotated or pile up indefinitely; decide on retention/pruning if needed.
