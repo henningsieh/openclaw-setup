@@ -179,13 +179,28 @@ installed CLI is authoritative for this host.
 ```bash
 systemctl status openclaw-gateway.service
 curl --fail --silent --output /dev/null http://127.0.0.1:18789/
-sudo systemctl restart openclaw-gateway.service
 sudo journalctl -u openclaw-gateway.service --follow
 ```
 
 - The system manager owns the gateway unit, but `User=shelldon` keeps the
   gateway process unprivileged. This is required for systemd 255 to decrypt the
   Encrypted Bootstrap Credential Set; see ADR 0004.
+- Self-restart and temp lifecycle are governed by ADR 0005. The rules:
+  - Agent turns must NEVER run `sudo systemctl stop/restart` directly: the
+    blocking client deadlocks against the gateway's shutdown drain (which
+    waits on the requesting run) until the 330s timeout SIGKILLs everything,
+    and explicit `stop` disables auto-restart by design. `openclaw gateway
+    restart` refuses system-scope units and is not an alternative.
+  - The only agent self-restart command is the detached wrapper
+    `~/.local/bin/openclaw-gateway-restart-detached` (returns in ms; the
+    requesting session drops by design and recovery is verified in a new
+    turn).
+  - `openclaw-gateway-watchdog.timer` (user scope, every 3 min) restarts an
+    `inactive`/`failed` gateway, skips transitions in flight, and respects
+    the `~/.openclaw/.maintenance` guard for intentional downtime.
+  - `/etc/systemd/system/openclaw-gateway.service.d/30-tmp-clean.conf`
+    wipes `~/.openclaw/tmp` via `ExecStartPre` on every boot (root-owned,
+    installed once by the owner); no sweeper scripts or timers.
 - Persistence across logouts: `loginctl enable-linger shelldon` remains enabled
   for user-owned OpenClaw state, though the gateway itself no longer depends on
   the user manager.
@@ -268,6 +283,16 @@ Keep live credentials and runtime state out of Git. Before pushing, review `git 
 The Discord and Telegram channels are fully restored, validated, and connected.
 Discord is restricted to the configured allowlist of four channels and the owner;
 Telegram uses its restored allowlist. The current default agent is `shelldon`.
+
+### Completed cultivation agent
+
+The `kalle-kief` agent is implemented and working. It uses an isolated
+workspace/session store and `opencode-go/qwen3.8-flash`; its auth check passes
+with no missing providers. A real cultivation turn respected the 1.3–1.4 mS/cm
+no-runoff EC ceiling. A Discord round-trip succeeded for channel
+`1552230093500325888`, routing to `kalle-kief` and returning
+`CULTIVATION_DISCORD_OK`. Existing Shelldon Discord/Telegram routing remains
+intact.
 
 When Clawfred is deliberately restored, recreate the complete agent as a native
 agent rather than copying Docker runtime state wholesale:
