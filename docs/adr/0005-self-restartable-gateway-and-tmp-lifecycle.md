@@ -45,12 +45,14 @@ three stacked causes:
   skips transient states (`activating/deactivating/reloading`), and respects
   the `~/.openclaw/.maintenance` guard file for intentional downtime.
 - **Boot wipes temp via the service lifecycle, no sweepers:**
-  `/etc/systemd/system/openclaw-gateway.service.d/30-tmp-clean.conf`
-  runs `ExecStartPre=-/usr/bin/find ~/.openclaw/tmp -mindepth 1 -maxdepth 1
-  -exec rm -rf {} +`. At that point the old process is guaranteed dead, so
-  everything present is garbage by construction. Verified: 24 dirs before,
-  0 stale survivors after. Rejected alternative: periodic cleanup scripts —
-  lifecycle-coupled cleanup has no age math, no grace windows, no moving parts.
+  `/etc/systemd/system/openclaw-gateway.service.d/30-tmp-clean.conf` runs
+  two `ExecStartPre` finds on every boot: one over `~/.openclaw/tmp`, one
+  over `/tmp/openclaw-plugin-build-*` excluding `*.md` (a handoff document
+  lives under that name pattern and must survive). The second line exists
+  because plugin builds spawned from worker processes run with a scrubbed
+  environment (no `TMPDIR`), so `mkdtemp` falls back to system `/tmp` —
+  every boot sprays both locations. Root-owned strays are silently skipped.
+  Verified: 24 dirs before, 0 stale survivors after.
 - **No source edits, no new credentials, no sudoers changes.** Everything
   above uses the existing NOPASSWD verbs and shelldon-owned paths, except
   the single root-owned drop-in installed once by the owner.
