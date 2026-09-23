@@ -201,6 +201,18 @@ sudo journalctl -u openclaw-gateway.service --follow
   - `/etc/systemd/system/openclaw-gateway.service.d/30-tmp-clean.conf`
     wipes `~/.openclaw/tmp` via `ExecStartPre` on every boot (root-owned,
     installed once by the owner); no sweeper scripts or timers.
+- Implementation components (all shelldon-owned except the drop-in above):
+  - `~/.local/bin/openclaw-gateway-restart-detached` — the agent
+    self-restart command.
+  - `~/.local/bin/openclaw-gateway-watchdog` + user units
+    `~/.config/systemd/user/openclaw-gateway-watchdog.{service,timer}` —
+    checks every 3 min, restarts an `inactive`/`failed` gateway, skips
+    transitions in flight. Timer active; verify with
+    `systemctl --user list-timers | grep openclaw`.
+  - Operations: pause the watchdog for intentional downtime with
+    `touch ~/.openclaw/.maintenance` (remove the file afterwards).
+    Full removal, if ever wanted: `systemctl --user disable --now
+    openclaw-gateway-watchdog.timer` plus deleting the files above.
 - Persistence across logouts: `loginctl enable-linger shelldon` remains enabled
   for user-owned OpenClaw state, though the gateway itself no longer depends on
   the user manager.
