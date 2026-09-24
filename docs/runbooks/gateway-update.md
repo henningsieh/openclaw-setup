@@ -170,7 +170,10 @@ plugin:
    `allowBuilds: true` for the packages that need build scripts (for the Vault
    Access Broker: `@google/genai`, `esbuild`, `koffi`, `openclaw`, `protobufjs`,
    `tree-sitter-bash`). Placeholder/prompt values fail the install with
-   `ERR_PNPM_IGNORED_BUILDS`.
+   `ERR_PNPM_IGNORED_BUILDS`. A freshly published core release is also blocked by
+   pnpm's minimum-release-age gate; add the new version to
+   `minimumReleaseAgeExclude` in the same file (for the Vault Access Broker:
+   `openclaw@<version>` and `@openclaw/ai@<version>`).
 3. Install a **lean copy**, never the development source tree. Installing the
    source directory copies the whole tree and blows the installer's hardlink
    preflight:
