@@ -42,11 +42,37 @@ afterwards.** That is the procedure — not a workaround, and not optional.
    gateway later.
 5. **`openclaw doctor --fix` only with the gateway stopped.** A running
    gateway holds the state lease.
-6. **No agent session can complete this alone.** Stopping the gateway ends the
-   agent's own session. The operator runs the sequence; an agent may preflight
-   before and verify after.
+6. **The update window needs a detached chain.** Stopping the gateway ends
+   any agent session hosted by it, so an agent cannot run the sequence inline.
+   The sanctioned agent path is one `setsid` chain that runs
+   stop → update → doctor → start → wait-for-HTTP → re-arm the watchdog. It
+   survives the gateway stopping, and it always ends by starting the gateway
+   again, even when the update fails. A human at an SSH terminal may run the
+   same sequence in the foreground instead.
 
-## Procedure (operator, SSH terminal)
+## Procedure — agent path (detached chain)
+
+One `setsid` chain so it survives the gateway stopping. Absolute paths keep it
+independent of the launching shell:
+
+```bash
+LOG=/home/shelldon/.openclaw/logs/update-run-$(date +%Y%m%dT%H%M%S).log
+setsid /bin/bash -c '
+  /usr/bin/sudo -n /usr/bin/systemctl stop openclaw-gateway.service
+  until [ "$(/usr/bin/systemctl is-active openclaw-gateway.service)" = "inactive" ]; do sleep 5; done
+  /home/shelldon/.npm-global/bin/openclaw update --yes
+  /home/shelldon/.npm-global/bin/openclaw doctor --fix --non-interactive
+  /usr/bin/sudo -n /usr/bin/systemctl start openclaw-gateway.service
+  until /usr/bin/curl --fail --silent --output /dev/null http://127.0.0.1:18789/; do sleep 5; done
+  rm -f /home/shelldon/.openclaw/.maintenance
+' >"$LOG" 2>&1 </dev/null &
+```
+
+Invariants: the chain always ends by starting the gateway and re-arming the
+watchdog, even if the update fails; verify afterwards with the checklist below.
+Do not poll it in a loop.
+
+## Procedure — human path (foreground, SSH terminal)
 
 ```bash
 # 1. Pause the watchdog.
