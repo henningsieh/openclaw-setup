@@ -66,9 +66,10 @@ three stacked causes:
   unavailable; automatic service restart was skipped`. Running the updater
   with the gateway up fails activation with `agent-database-lease-active`
   (the running gateway holds the agent-database leases) and rolls back. The
-  operator stops the unit, runs the update, then starts it. See
-  `docs/runbooks/gateway-update.md`. No agent session can complete this
-  alone, because stopping the gateway ends its session.
+  operator stops the unit, runs the update, then starts it. For an agent, the
+  sanctioned path is one detached `setsid` chain (stop → update → doctor →
+  start → wait for HTTP → re-arm watchdog) that survives the session and
+  always restarts the gateway. See `docs/runbooks/gateway-update.md`.
 - Restarts return in seconds when shutdown is clean, and always recover via
   the watchdog when shutdown wedges (worst case ~6 min through the stop
   timeout, then start). "Gateway never comes back" is structurally closed.
