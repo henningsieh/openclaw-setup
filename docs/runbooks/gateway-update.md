@@ -78,5 +78,11 @@ rm ~/.openclaw/.maintenance
 - Gateway won't start: `journalctl -u openclaw-gateway.service -n 100`;
   common causes are config errors (doctor flags them) or a full disk
   (the boot hook cleans tmp, but check `df -h /`).
+- `/codex` commands fail with `Cannot reap registered Codex process <pid>`:
+  stale row in `plugin_state_entries` (`plugin_id='codex'`,
+  `namespace='app-server-processes'`). Verify both recorded PIDs are dead
+  (`ps -p <pid>`), back the row up, delete it, retry. Rows strand when the
+  gateway dies violently (SIGKILL skips recovery); orderly restarts clean
+  up correctly.
 - Watchdog suspected of interfering: check for the guard file; without it,
   the watchdog only touches `inactive`/`failed` units and skips transitions.
