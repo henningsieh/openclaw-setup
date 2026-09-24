@@ -162,8 +162,29 @@ plugin:
    core version.
 2. Rebuild from the plugin's own scripts — check that package.json's `scripts`
    (for the Vault Access Broker: `npm run plugin:build`, `npm run plugin:validate`).
-3. Reinstall the installed copy: `openclaw plugins install <id> --force`, or the
-   local install step used for that plugin.
+3. Regenerate metadata and install from a **packed artifact, not the source
+tree**: `npm run plugin:build` (which runs `tsc` plus `openclaw plugins build
+   --entry ./dist/index.js` — this is what creates the metadata doctor reports
+   as missing), then `npm pack`, then install the resulting `.tgz`.
+   Installing the plugin **directory** instead makes the installer copy the
+   whole tree, and a development `node_modules` blows its hardlink preflight:
+
+   ```
+   failed to copy plugin: FsSafeError: Source hardlink preflight exceeds 50000 entries
+   ```
+
+   The source's `files` field defines the shippable subset, so the artifact is
+   tiny (a few KB) while the source tree can hold tens of thousands of entries.
+   If the directory must be installed, prune dev dependencies first
+   (`pnpm install --prod`, or `npm prune --omit=dev`) so the tree stays under
+   the preflight limit.
+
+   ```bash
+   cd ~/.openclaw/plugins/<id>
+   npm run plugin:build     # tsc + `openclaw plugins build --entry ./dist/index.js`
+   npm pack                 # artifact contains only the `files` entries
+   openclaw plugins install ./<name>-<version>.tgz --force
+   ```
 4. Restart the gateway (agent: the detached wrapper; human: `sudo systemctl
    restart`) and confirm the plugin appears in the `http server listening
    (N plugins: …)` line.
@@ -202,6 +223,10 @@ rebuild it by hand.
   then re-run step 4.
 - **`managed-service` warning in the report:** expected on this host. It only
   means the updater did not touch the service; steps 2 and 6 cover that.
+- **`failed to copy plugin: FsSafeError: Source hardlink preflight exceeds
+  50000 entries`:** the plugin was installed from a source tree carrying a
+  development `node_modules`. Install the packed artifact instead, or prune dev
+  dependencies first (see "Local plugins and version bumps").
 - **Plugin skipped / `Plugin install incomplete: plugin metadata is missing`:**
   a path-installed local plugin is pinned to the old plugin API. Rebuild and
   reinstall it per "Local plugins and version bumps" above, then restart the
