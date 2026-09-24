@@ -141,17 +141,25 @@ Then handle local plugins — **this is part of completing the update**:
 
 1. Rerun the preflight local-plugin check above.
 2. For each `STALE` **local** plugin (e.g. `vault-access-broker`), rebuild it:
-   bump `openclaw.compat.pluginApi`, `openclaw.build.openclawVersion`,
-   `openclaw.build.pluginSdkVersion`, and `peerDependencies.openclaw` in
-   `~/.openclaw/plugins/<id>/package.json` to the new core version; rebuild with
-   that plugin's own scripts (`npm run plugin:build`, `npm run plugin:validate`);
-   then **regenerate metadata and install from a packed artifact, not the source
-   tree** — `npm run plugin:build` (runs `tsc` + `openclaw plugins build --entry
-   ./dist/index.js`, which creates the metadata doctor calls missing), `npm pack`,
-   then `openclaw plugins install ./<name>-<version>.tgz --force`. Installing the
-   plugin *directory* copies the whole tree and fails with `FsSafeError: Source
-   hardlink preflight exceeds 50000 entries` when a development `node_modules` is
-   present; prune dev dependencies first if you must install the directory.
+   bump **all five** version pins in `~/.openclaw/plugins/<id>/package.json` to
+   the new core version: `openclaw.compat.pluginApi`,
+   `openclaw.build.openclawVersion`, `openclaw.build.pluginSdkVersion`,
+   `peerDependencies.openclaw`, **and `devDependencies.openclaw`** (missing the
+   dev dependency makes the build resolve the stale local SDK and refuse the
+   state dir: `schema 18 vs 17`). Ensure `pnpm-workspace.yaml` sets
+   `allowBuilds: true` for the packages needing build scripts, or
+   `pnpm install` fails with `ERR_PNPM_IGNORED_BUILDS`. Then rebuild with the
+   plugin's own scripts (`pnpm install`, `npm run plugin:build`,
+   `npm run plugin:validate`).
+   Then **install a lean copy — never the development source tree**, which fails
+   with `FsSafeError: Source hardlink preflight exceeds 50000 entries` (~71k
+   entries / ~1 GB). Stage one and install that (the installer preserves the
+   symlink; a failed install rolls the previous copy back intact):
+   `cp -a dist openclaw.plugin.json README.md package.json /tmp/<id>-install/`,
+   `npm install --omit=dev` there,
+   `ln -sfn /home/shelldon/.npm-global/lib/node_modules/openclaw node_modules/openclaw`,
+   then `openclaw plugins install /tmp/<id>-install --force`, and delete the
+   staging directory afterwards.
 3. Restart the gateway with `~/.local/bin/openclaw-gateway-restart-detached`
    (never a blocking `systemctl` in your turn).
 4. Confirm the plugin is back in the `http server listening (N plugins: …)` line

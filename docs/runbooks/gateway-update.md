@@ -156,35 +156,51 @@ PY
 **Post-update (mandatory).** Rerun the same check. For every `STALE` **local**
 plugin:
 
-1. Bump the declaration in the source (`~/.openclaw/plugins/<id>/package.json`):
+1. Bump **all five** version pins in the source
+   (`~/.openclaw/plugins/<id>/package.json`) to the new core version:
    `openclaw.compat.pluginApi`, `openclaw.build.openclawVersion`,
-   `openclaw.build.pluginSdkVersion`, and `peerDependencies.openclaw` to the new
-   core version.
-2. Rebuild from the plugin's own scripts — check that package.json's `scripts`
-   (for the Vault Access Broker: `npm run plugin:build`, `npm run plugin:validate`).
-3. Regenerate metadata and install from a **packed artifact, not the source
-tree**: `npm run plugin:build` (which runs `tsc` plus `openclaw plugins build
-   --entry ./dist/index.js` — this is what creates the metadata doctor reports
-   as missing), then `npm pack`, then install the resulting `.tgz`.
-   Installing the plugin **directory** instead makes the installer copy the
-   whole tree, and a development `node_modules` blows its hardlink preflight:
+   `openclaw.build.pluginSdkVersion`, `peerDependencies.openclaw`, **and
+   `devDependencies.openclaw`**. Missing the dev dependency is the subtle one:
+   the build then resolves the *stale local SDK*, and the plugin refuses the
+   state directory (`schema 18 vs 17`) even though the manifest looks correct.
+2. Refresh dependencies and rebuild, using the plugin's own scripts
+   (`scripts` in that package.json; for the Vault Access Broker:
+   `pnpm install`, `npm run plugin:build`, `npm run plugin:validate`).
+   **pnpm workspace note:** the source's `pnpm-workspace.yaml` must set
+   `allowBuilds: true` for the packages that need build scripts (for the Vault
+   Access Broker: `@google/genai`, `esbuild`, `koffi`, `openclaw`, `protobufjs`,
+   `tree-sitter-bash`). Placeholder/prompt values fail the install with
+   `ERR_PNPM_IGNORED_BUILDS`.
+3. Install a **lean copy**, never the development source tree. Installing the
+   source directory copies the whole tree and blows the installer's hardlink
+   preflight:
 
    ```
    failed to copy plugin: FsSafeError: Source hardlink preflight exceeds 50000 entries
    ```
 
-   The source's `files` field defines the shippable subset, so the artifact is
-   tiny (a few KB) while the source tree can hold tens of thousands of entries.
-   If the directory must be installed, prune dev dependencies first
-   (`pnpm install --prod`, or `npm prune --omit=dev`) so the tree stays under
-   the preflight limit.
+   (A development `node_modules` is ~71k entries / ~1 GB. On such a failure the
+   installer rolls the previous copy back intact — no damage.)
+
+   **Verified route — stage a lean copy:**
 
    ```bash
+   rm -rf /tmp/vab-install && mkdir -p /tmp/vab-install
    cd ~/.openclaw/plugins/<id>
-   npm run plugin:build     # tsc + `openclaw plugins build --entry ./dist/index.js`
-   npm pack                 # artifact contains only the `files` entries
-   openclaw plugins install ./<name>-<version>.tgz --force
+   cp -a dist openclaw.plugin.json README.md package.json /tmp/vab-install/
+   cd /tmp/vab-install
+   npm install --omit=dev                      # production deps only (~1.5k entries)
+   ln -sfn /home/shelldon/.npm-global/lib/node_modules/openclaw node_modules/openclaw
+   openclaw plugins install /tmp/vab-install --force
    ```
+
+   The installer preserves the `node_modules/openclaw` symlink and the version
+   declarations. Clean the staging directory up afterwards.
+
+   **Alternative — packed artifact:** `npm run plugin:build`, `npm pack`, then
+   `openclaw plugins install ./<name>-<version>.tgz --force`. The source's
+   `files` field (`dist`, `openclaw.plugin.json`, `README.md`) keeps this to a
+   few KB.
 4. Restart the gateway (agent: the detached wrapper; human: `sudo systemctl
    restart`) and confirm the plugin appears in the `http server listening
    (N plugins: …)` line.
