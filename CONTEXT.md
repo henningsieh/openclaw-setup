@@ -213,10 +213,12 @@ sudo journalctl -u openclaw-gateway.service --follow
     `touch ~/.openclaw/.maintenance` (the alias `.maintainance` is honored
     too). Full removal, if ever wanted: `systemctl --user disable --now
     openclaw-gateway-watchdog.timer` plus deleting the files above.
-- Updates: full procedure lives in `docs/runbooks/gateway-update.md`
-  (coordinated `openclaw update` preferred; manual fallback with watchdog
-  guard; governance ADR 0005, upstream `install/updating.md`). Never stop
-  the service or run package installs from an agent turn.
+- Updates: full procedure lives in `docs/runbooks/gateway-update.md`.
+  This host's unit is system-scope, so the OpenClaw updater cannot manage it
+  (`Gateway service inspection is unavailable`); the operator must stop the
+  gateway, run `openclaw update --yes`, then start it. Never stop the service
+  from an agent turn, and never query OpenClaw's SQLite databases during an
+  update. Governance: ADR 0005; upstream `install/updating.md`.
 - Persistence across logouts: `loginctl enable-linger shelldon` remains enabled
   for user-owned OpenClaw state, though the gateway itself no longer depends on
   the user manager.

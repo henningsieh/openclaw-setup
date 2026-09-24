@@ -4,137 +4,109 @@ How to update the Shelldon OpenClaw gateway. Governance: ADR 0004 (system
 unit), ADR 0005 (self-restart, watchdog, tmp lifecycle). Upstream reference:
 `install/updating.md` (append `.md` per the repo URL rule).
 
-This runbook is written for **both** a human at an SSH terminal and an
-**agent turn**. Where the two differ, the difference is called out
-explicitly — do not assume a command is safe in a turn just because it is
-safe at a terminal.
+## Host constraint: stop the gateway first
+
+The gateway is a **system-scope systemd unit** (`/etc/systemd/system/`). The
+OpenClaw updater cannot inspect or manage such a unit and says so explicitly:
+
+```
+Warning: Gateway service inspection is unavailable; automatic service restart
+was skipped. Restart the Gateway you launched manually after the update.
+```
+
+Consequence, learned the hard way on 2026-09-24: with the gateway running, the
+updater skips the service stop, then its activation doctor step fails with
+`agent-database-lease-active` ("an agent database is in use") because the
+running gateway holds the agent-database leases. The run rolls back and the
+release is never applied.
+
+**Therefore: the operator stops the gateway before the update and starts it
+afterwards.** That is the procedure — not a workaround, and not optional.
 
 ## Iron rules
 
-1. **Never run the updater inline in an agent tool call.** Update steps run
-   up to `--timeout` seconds (default 1800) each, and validation alone
-   (canary boot) takes minutes; typical agent tool timeouts are ~90s. When
-   the tool call is aborted, the driver process is killed mid-phase and
-   leaves an **abandoned run row** (`status=running`, phase stuck). Agents
-   must launch detached and poll (Path A, agent variant).
+1. **Supported interfaces only.** Use `openclaw update`, `openclaw update
+   status`, `openclaw update repair`, `openclaw doctor`, `systemctl`, and
+   `curl`. **Never open, query, copy, or inspect OpenClaw's SQLite databases**
+   during an update: the CLI reports everything needed, and stray database
+   access is exactly the contention that fails activation.
 2. **Never stop or restart the service from an agent turn.** An in-turn
    `sudo systemctl stop/restart` deadlocks against the gateway's shutdown
-   drain until the 330s timeout SIGKILLs everything (ADR 0005). The only
-   agent-safe restart is `~/.local/bin/openclaw-gateway-restart-detached`.
-   A human at SSH may use `sudo systemctl` directly.
-3. **Never pass `--no-restart` for this installation.** It is a system unit
-   managed by systemd; with `--no-restart` the updater leaves the service
-   stale/stopped and you are tempted into an in-turn `systemctl restart`
-   (rule 2). Let the updater own stop/start and its notifications.
-4. **Pause the watchdog for the whole window.** `touch ~/.openclaw/.maintenance`
-   (alias `.maintainance` honored). Remove it only after verification.
-   A guard left behind means an unguarded dead gateway later.
+   drain until the stop timeout SIGKILLs everything (ADR 0005). Service
+   control happens in the operator's terminal.
+3. **No extra flags.** Run `openclaw update --yes`. Do not add `--no-restart`,
+   `--tag`, or channel overrides for a routine update.
+4. **Pause the watchdog** for the whole window:
+   `touch ~/.openclaw/.maintenance` (alias `.maintainance` honored). Remove it
+   only after verification — a guard left behind means an unguarded dead
+   gateway later.
 5. **`openclaw doctor --fix` only with the gateway stopped.** A running
-   gateway holds the state lease and doctor fails with contention.
+   gateway holds the state lease.
+6. **No agent session can complete this alone.** Stopping the gateway ends the
+   agent's own session. The operator runs the sequence; an agent may preflight
+   before and verify after.
 
-## Path A — coordinated update (default)
-
-Human at SSH:
-
-```bash
-openclaw update --dry-run     # preview planned actions, no writes
-openclaw update               # checks while serving, activates, verifies
-openclaw update status        # run report (--json for machine output)
-```
-
-Agent turn — same update, launched detached so a tool abort cannot kill it:
+## Procedure (operator, SSH terminal)
 
 ```bash
-touch ~/.openclaw/.maintenance
-LOG=~/.openclaw/logs/update-$(date +%Y%m%dT%H%M%S).log
-nohup openclaw update --yes >"$LOG" 2>&1 &
-echo "update launched detached; log=$LOG"
-```
-
-Then **poll to a terminal state** — never block on it, never re-launch it:
-
-```bash
-openclaw update status        # repeat every ~60s
-```
-
-Proceed to Verification once the report is `succeeded`/`failed`/
-`rolled-back`/`skipped`. If it reports abandoned state or reconciliation
-warnings, run `openclaw update repair`, then verify.
-
-Chat alternative: `/update` (requires `commands.restart` plus owner
-permissions; notices go to owner destinations only).
-
-## Detecting an abandoned run
-
-An update that "keeps running" with no process behind it is abandoned, not
-in flight. Check before waiting on anything:
-
-```bash
-# driver PID of the running update row (empty = no run row in progress)
-sqlite3 ~/.openclaw/state/openclaw.sqlite \
-  "SELECT json_extract(origin_json,'\$.driver.pid') FROM update_runs WHERE status='running';"
-ps -p <pid>    # gone => abandoned
-```
-
-Abandoned run → `openclaw update repair` (reconciles it), then re-run Path A.
-Do **not** wait for an abandoned run to finish; it never will.
-
-## Path B — manual fallback (recovery only, human at SSH)
-
-```bash
-# 0. Verified backup (see CONTEXT.md "Official OpenClaw backups").
-openclaw backup create --output /mnt/openclaw-backup --verify
-
 # 1. Pause the watchdog.
 touch ~/.openclaw/.maintenance
 
-# 2. Stop and wait for inactive.
+# 2. Stop the gateway and wait for inactive.
 sudo systemctl stop openclaw-gateway.service
 until [ "$(systemctl is-active openclaw-gateway.service)" = "inactive" ]; do sleep 5; done
 
-# 3. Update; repair only if the report demands it.
-openclaw update
-openclaw update repair   # only on abandoned-update / reconciliation reports
+# 3. Confirm the ground is clear (CLI + process view only).
+openclaw update status          # an unfinished run here => run `openclaw update repair --yes` first
+pgrep -af openclaw-update || echo "no updater running"
 
-# 4. Migrate with the gateway stopped.
+# 4. Update. Foreground is correct here; expect roughly 15-20 minutes.
+openclaw update --yes
+
+# 5. Doctor with the gateway still stopped (the updater already ran it; repeat
+#    only if the report asks for deferred checks).
 openclaw doctor --fix --non-interactive
 
-# 5. Start and wait for readiness (plugin load takes ~45s).
+# 6. Start and wait for readiness (plugin load takes ~45s).
 sudo systemctl start openclaw-gateway.service
 until curl --fail --silent --output /dev/null http://127.0.0.1:18789/; do sleep 5; done
-journalctl -u openclaw-gateway.service --since "-3 min" | grep "http server listening"
-# Expect the full plugin set incl. codex; compare the count with the previous boot.
 
-# 6. Re-arm the watchdog — never skip.
+# 7. Verify.
+openclaw --version                                    # expect the target release
+openclaw update status                                # terminal, succeeded
+openclaw gateway status --deep
+journalctl -u openclaw-gateway.service --since "-5 min" | grep "http server listening"
+# Expect the full plugin set including codex; compare with the previous boot.
+
+# 8. Re-arm the watchdog — never skip.
 rm ~/.openclaw/.maintenance
 ```
 
-## Verification
+## Verification checklist
 
-- `openclaw --version` shows the target version (updates can leave the old
-  version live if they fail before activation).
-- `openclaw gateway status --deep` — service active, probe reachable.
+- `openclaw --version` shows the target release.
+- Service `active`, HTTP 200 on `127.0.0.1:18789`.
+- `openclaw update status` reports the run terminal (`succeeded`).
 - Control UI loads via `https://ai.sieh.org/`; Discord/Telegram respond.
-- `openclaw update status` shows the run as terminal with the new version.
-- `ls ~/.openclaw/.maintenance` — the guard is gone.
+- Guard file gone; `systemctl --user list-timers | grep openclaw` shows the
+  watchdog armed.
 - The boot wiped `~/.openclaw/tmp` and `/tmp/openclaw-plugin-build-*`
   (ExecStartPre hook), so post-update debris self-cleans.
 
 ## Failure branches
 
-- **Aborted/killed mid-run** (agent tool timeout, session end): the run row
-  stays `running` with no live driver → `openclaw update repair`, re-run
-  Path A detached.
-- **Fails pre-activation:** previous package stays live; read the failure
-  report, resolve (often Node/npm perms or plugin availability), retry.
-- **Fails post-commit:** package rollback cannot undo migrated state —
-  finish with `openclaw doctor --fix` on the installed build, then
-  `openclaw gateway start` (upstream recovery procedure).
-- **Service left stopped** after a failed update: an already-stopped service
-  stays stopped until explicitly started. Start it, or let the watchdog do
-  it once the guard is removed.
+- **`doctor-failed` / `agent-database-lease-active`:** the gateway was still
+  running. It holds the agent-database leases. Stop it and re-run step 4.
+  The run rolls back on its own; the live release is untouched.
+- **Unfinished run in `openclaw update status`:** `openclaw update repair --yes`,
+  then re-run step 4.
+- **`managed-service` warning in the report:** expected on this host. It only
+  means the updater did not touch the service; steps 2 and 6 cover that.
+- **Failed after the package swap:** package rollback cannot undo migrated
+  state. Finish with `openclaw doctor --fix` on the installed build, then
+  start the service.
 - **Gateway won't start:** `journalctl -u openclaw-gateway.service -n 100`;
   common causes are config errors (doctor flags them) or a full disk
   (`df -h /`).
-- **Guard left behind:** the watchdog is paused; nothing heals a dead
-  gateway. Remove the guard as soon as the window closes.
+- **Installation considered unrecoverable:** the updater points at
+  `openclaw triage`. Treat that as a human decision, not an automatic step.
