@@ -15,13 +15,13 @@
     "README.md"
   ],
   "peerDependencies": {
-    "openclaw": "2026.9.5"
+    "openclaw": "2026.9.6"
   },
   "dependencies": {
     "typebox": "^1.1.38"
   },
   "devDependencies": {
-    "openclaw": "2026.9.5",
+    "openclaw": "2026.9.6",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"
   },
@@ -30,11 +30,11 @@
       "./dist/index.js"
     ],
     "compat": {
-      "pluginApi": "2026.9.5"
+      "pluginApi": "2026.9.6"
     },
     "build": {
-      "openclawVersion": "2026.9.5",
-      "pluginSdkVersion": "2026.9.5"
+      "openclawVersion": "2026.9.6",
+      "pluginSdkVersion": "2026.9.6"
     }
   }
 }
