@@ -210,9 +210,29 @@ sudo journalctl -u openclaw-gateway.service --follow
     transitions in flight. Timer active; verify with
     `systemctl --user list-timers | grep openclaw`.
   - Operations: pause the watchdog for intentional downtime with
-    `touch ~/.openclaw/.maintenance` (remove the file afterwards).
-    Full removal, if ever wanted: `systemctl --user disable --now
+    `touch ~/.openclaw/.maintenance` (the alias `.maintainance` is honored
+    too). Full removal, if ever wanted: `systemctl --user disable --now
     openclaw-gateway-watchdog.timer` plus deleting the files above.
+- Update runbook (upstream: `install/updating.md`; governance: ADR 0005).
+  Preferred is the coordinated updater, run OUTSIDE any gateway-hosted
+  shell (SSH terminal, never an agent turn — upstream forbids service stops
+  and `npm install -g` from chat shells):
+  `openclaw update --dry-run` to preview, `openclaw update` to run
+  (checks while serving, activates, verifies), `openclaw update status`
+  for the run report. Chat alternative: `/update` (needs `commands.restart`
+  plus owner permissions).
+  Manual fallback (recovery only), watchdog paused throughout:
+  verified `openclaw backup create --output /mnt/openclaw-backup --verify`
+  first; `touch ~/.openclaw/.maintenance`; `sudo systemctl stop
+  openclaw-gateway.service` and wait for `inactive`; `openclaw update`;
+  `openclaw update repair` only if abandoned state is reported;
+  `openclaw doctor --fix --non-interactive` (gateway MUST be stopped — it
+  holds the state lease otherwise); `sudo systemctl start
+  openclaw-gateway.service`; wait for HTTP 200 on `127.0.0.1:18789` and
+  21 plugins incl. `codex` in the logs; finally `rm
+  ~/.openclaw/.maintenance` to re-arm the watchdog — never skip this step.
+  Notes: an already-stopped service stays stopped until explicitly started;
+  the next boot wipes tmp via the hook, so post-update debris self-cleans.
 - Persistence across logouts: `loginctl enable-linger shelldon` remains enabled
   for user-owned OpenClaw state, though the gateway itself no longer depends on
   the user manager.
