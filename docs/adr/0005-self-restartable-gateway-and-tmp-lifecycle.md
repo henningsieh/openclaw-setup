@@ -60,6 +60,15 @@ three stacked causes:
 
 ## Consequences
 
+- **Updates on this host require the operator to stop the gateway first.**
+  The gateway is a system-scope systemd unit, which the OpenClaw updater
+  cannot inspect or manage; it reports `Gateway service inspection is
+  unavailable; automatic service restart was skipped`. Running the updater
+  with the gateway up fails activation with `agent-database-lease-active`
+  (the running gateway holds the agent-database leases) and rolls back. The
+  operator stops the unit, runs the update, then starts it. See
+  `docs/runbooks/gateway-update.md`. No agent session can complete this
+  alone, because stopping the gateway ends its session.
 - Restarts return in seconds when shutdown is clean, and always recover via
   the watchdog when shutdown wedges (worst case ~6 min through the stop
   timeout, then start). "Gateway never comes back" is structurally closed.
