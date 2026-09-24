@@ -55,6 +55,38 @@ openclaw update status
 pgrep -x openclaw-update || echo "no updater running"
 ```
 
+Also inventory the **path-installed local plugins** — a core bump silently
+skips any that are pinned to the old plugin API, and the update is not complete
+until they are rebuilt (see the runbook section "Local plugins and version
+bumps" for the exact script):
+
+```bash
+CORE=$(python3 -c "import json;print(json.load(open('/home/shelldon/.npm-global/lib/node_modules/openclaw/package.json'))['version'])")
+python3 - "$CORE" <<'PY'
+import json, glob, os, re, sys
+core = sys.argv[1]
+def tup(v): return tuple(int(x) for x in re.findall(r'\d+', v))
+def ok(decl):
+    if not decl: return False
+    decl = decl.strip()
+    for op in ('>=', '<=', '>', '<', '^', '~'):
+        if decl.startswith(op):
+            v = decl[len(op):].strip()
+            return tup(core) >= tup(v) if op in ('>=', '^', '~') else tup(core) <= tup(v)
+    return decl == core
+for p in sorted(glob.glob(os.path.expanduser('~/.openclaw/extensions/*/package.json'))):
+    d = json.load(open(p)); oc = d.get('openclaw') or {}
+    api = ((oc.get('compat') or {}).get('pluginApi')
+           or (oc.get('build') or {}).get('openclawVersion')
+           or (d.get('peerDependencies') or {}).get('openclaw'))
+    name = d.get('name') or os.path.basename(os.path.dirname(p))
+    print(f"{'OK   ' if ok(api) else 'STALE'} {name}: declares {api}, host {core}")
+PY
+```
+
+Record the result. Any `STALE` local plugin must be rebuilt in Step 4 — the
+updater cannot do it, because a rebuild needs the new core installed first.
+
 If an updater process is alive, **stop and report** — do not launch the chain.
 A previously *failed* run is fine; the chain replaces it.
 
@@ -104,6 +136,23 @@ ls -l ~/.openclaw/.maintenance 2>&1
 
 If the version did **not** change, report `openclaw update status` verbatim and
 stop — do not retry, do not improvise, do not start inspecting databases.
+
+Then handle local plugins — **this is part of completing the update**:
+
+1. Rerun the preflight local-plugin check above.
+2. For each `STALE` **local** plugin (e.g. `vault-access-broker`), rebuild it:
+   bump `openclaw.compat.pluginApi`, `openclaw.build.openclawVersion`,
+   `openclaw.build.pluginSdkVersion`, and `peerDependencies.openclaw` in
+   `~/.openclaw/plugins/<id>/package.json` to the new core version; rebuild with
+   that plugin's own scripts (`npm run plugin:build`, `npm run plugin:validate`);
+   reinstall with `openclaw plugins install <id> --force`.
+3. Restart the gateway with `~/.local/bin/openclaw-gateway-restart-detached`
+   (never a blocking `systemctl` in your turn).
+4. Confirm the plugin is back in the `http server listening (N plugins: …)` line
+   from `journalctl -u openclaw-gateway.service --since "-5 min"`.
+
+Official plugins that declare a `>=` range (e.g. `llama-cpp`) are **not**
+rebuilt — they wait for upstream's release and load normally.
 
 If the guard is somehow still present after a successful start, remove it:
 
