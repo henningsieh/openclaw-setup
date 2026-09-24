@@ -108,11 +108,85 @@ journalctl -u openclaw-gateway.service --since "-5 min" | grep "http server list
 rm ~/.openclaw/.maintenance
 ```
 
+## Local plugins and version bumps (mandatory check)
+
+Path-installed plugins (`~/.openclaw/extensions/*`, or entries in
+`plugins.load.paths`) declare the plugin API they were built against
+(`openclaw.compat.pluginApi` in their `package.json`). On a core version bump
+the host **skips** any plugin whose declaration does not cover the new
+version:
+
+```
+plugin requires plugin API 2026.9.5, but this host is 2026.9.6; skipping discovery
+```
+
+Doctor then reports `Plugin install incomplete: plugin metadata is missing`.
+**No updater can fix this.** Upstream treats path-installed copies as
+operator-managed, and the plugin must be rebuilt against the new SDK — which is
+only possible *after* the new core is installed. A core update is therefore not
+"complete" until every local plugin passes this check.
+
+**Pre-update (inventory, read-only).** Record which local plugins exist and
+what they declare, so the rebuild is planned for the same window:
+
+```bash
+CORE=$(python3 -c "import json;print(json.load(open('/home/shelldon/.npm-global/lib/node_modules/openclaw/package.json'))['version'])")
+python3 - "$CORE" <<'PY'
+import json, glob, os, re, sys
+core = sys.argv[1]
+def tup(v): return tuple(int(x) for x in re.findall(r'\d+', v))
+def ok(decl):
+    if not decl: return False
+    decl = decl.strip()
+    for op in ('>=', '<=', '>', '<', '^', '~'):
+        if decl.startswith(op):
+            v = decl[len(op):].strip()
+            return tup(core) >= tup(v) if op in ('>=', '^', '~') else tup(core) <= tup(v)
+    return decl == core
+for p in sorted(glob.glob(os.path.expanduser('~/.openclaw/extensions/*/package.json'))):
+    d = json.load(open(p)); oc = d.get('openclaw') or {}
+    api = ((oc.get('compat') or {}).get('pluginApi')
+           or (oc.get('build') or {}).get('openclawVersion')
+           or (d.get('peerDependencies') or {}).get('openclaw'))
+    name = d.get('name') or os.path.basename(os.path.dirname(p))
+    print(f"{'OK   ' if ok(api) else 'STALE'} {name}: declares {api}, host {core}")
+PY
+```
+
+**Post-update (mandatory).** Rerun the same check. For every `STALE` **local**
+plugin:
+
+1. Bump the declaration in the source (`~/.openclaw/plugins/<id>/package.json`):
+   `openclaw.compat.pluginApi`, `openclaw.build.openclawVersion`,
+   `openclaw.build.pluginSdkVersion`, and `peerDependencies.openclaw` to the new
+   core version.
+2. Rebuild from the plugin's own scripts — check that package.json's `scripts`
+   (for the Vault Access Broker: `npm run plugin:build`, `npm run plugin:validate`).
+3. Reinstall the installed copy: `openclaw plugins install <id> --force`, or the
+   local install step used for that plugin.
+4. Restart the gateway (agent: the detached wrapper; human: `sudo systemctl
+   restart`) and confirm the plugin appears in the `http server listening
+   (N plugins: …)` line.
+
+**Known local plugin:** `vault-access-broker` — source
+`~/.openclaw/plugins/vault-access-broker/`, installed copy
+`~/.openclaw/extensions/vault-access-broker/`. It must be rebuilt on **every**
+core version bump, otherwise the Vault Access Broker is offline and
+`vault_fetch` is unavailable to Shelldon.
+
+**Not a local plugin:** `llama-cpp` is an official/ClawHub plugin that declares
+`>=` a range and loads normally; it only waits for upstream's release. Do not
+rebuild it by hand.
+
 ## Verification checklist
 
 - `openclaw --version` shows the target release.
 - Service `active`, HTTP 200 on `127.0.0.1:18789`.
 - `openclaw update status` reports the run terminal (`succeeded`).
+- **Local plugin check reports `OK` for every path-installed plugin** (see the
+  section above), and `openclaw doctor` shows no plugin ERROR for them.
+- Every expected plugin appears in the gateway's plugin list, including
+  `vault-access-broker` when the Vault Access Broker is meant to be online.
 - Control UI loads via `https://ai.sieh.org/`; Discord/Telegram respond.
 - Guard file gone; `systemctl --user list-timers | grep openclaw` shows the
   watchdog armed.
@@ -128,6 +202,10 @@ rm ~/.openclaw/.maintenance
   then re-run step 4.
 - **`managed-service` warning in the report:** expected on this host. It only
   means the updater did not touch the service; steps 2 and 6 cover that.
+- **Plugin skipped / `Plugin install incomplete: plugin metadata is missing`:**
+  a path-installed local plugin is pinned to the old plugin API. Rebuild and
+  reinstall it per "Local plugins and version bumps" above, then restart the
+  gateway. This is expected work, not a failed update.
 - **Failed after the package swap:** package rollback cannot undo migrated
   state. Finish with `openclaw doctor --fix` on the installed build, then
   start the service.
