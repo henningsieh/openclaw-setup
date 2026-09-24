@@ -84,7 +84,7 @@ until [ "$(systemctl is-active openclaw-gateway.service)" = "inactive" ]; do sle
 
 # 3. Confirm the ground is clear (CLI + process view only).
 openclaw update status          # an unfinished run here => run `openclaw update repair --yes` first
-pgrep -af openclaw-update || echo "no updater running"
+pgrep -x openclaw-update || echo "no updater running"
 
 # 4. Update. Foreground is correct here; expect roughly 15-20 minutes.
 openclaw update --yes

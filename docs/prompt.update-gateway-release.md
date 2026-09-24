@@ -52,7 +52,7 @@ systemctl is-active openclaw-gateway.service
 curl --fail --silent --output /dev/null http://127.0.0.1:18789/ && echo "HTTP OK"
 openclaw --version
 openclaw update status
-pgrep -af openclaw-update || echo "no updater running"
+pgrep -x openclaw-update || echo "no updater running"
 ```
 
 If an updater process is alive, **stop and report** — do not launch the chain.
