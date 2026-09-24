@@ -145,7 +145,13 @@ Then handle local plugins — **this is part of completing the update**:
    `openclaw.build.pluginSdkVersion`, and `peerDependencies.openclaw` in
    `~/.openclaw/plugins/<id>/package.json` to the new core version; rebuild with
    that plugin's own scripts (`npm run plugin:build`, `npm run plugin:validate`);
-   reinstall with `openclaw plugins install <id> --force`.
+   then **regenerate metadata and install from a packed artifact, not the source
+   tree** — `npm run plugin:build` (runs `tsc` + `openclaw plugins build --entry
+   ./dist/index.js`, which creates the metadata doctor calls missing), `npm pack`,
+   then `openclaw plugins install ./<name>-<version>.tgz --force`. Installing the
+   plugin *directory* copies the whole tree and fails with `FsSafeError: Source
+   hardlink preflight exceeds 50000 entries` when a development `node_modules` is
+   present; prune dev dependencies first if you must install the directory.
 3. Restart the gateway with `~/.local/bin/openclaw-gateway-restart-detached`
    (never a blocking `systemctl` in your turn).
 4. Confirm the plugin is back in the `http server listening (N plugins: …)` line
