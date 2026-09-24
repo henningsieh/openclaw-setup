@@ -43,7 +43,8 @@ three stacked causes:
   `openclaw-gateway-watchdog.{service,timer}` (user manager, every 3 min)
   issues `sudo -n systemctl restart` when the unit is `inactive`/`failed`,
   skips transient states (`activating/deactivating/reloading`), and respects
-  the `~/.openclaw/.maintenance` guard file for intentional downtime.
+  the `~/.openclaw/.maintenance` guard file (alias `.maintainance` honored)
+  for intentional downtime.
 - **Boot wipes temp via the service lifecycle, no sweepers:**
   `/etc/systemd/system/openclaw-gateway.service.d/30-tmp-clean.conf` runs
   two `ExecStartPre` finds on every boot: one over `~/.openclaw/tmp`, one
