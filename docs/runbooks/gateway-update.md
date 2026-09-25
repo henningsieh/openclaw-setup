@@ -30,10 +30,7 @@ afterwards.** That is the procedure — not a workaround, and not optional.
    `curl`. **Never open, query, copy, or inspect OpenClaw's SQLite databases**
    during an update: the CLI reports everything needed, and stray database
    access is exactly the contention that fails activation.
-2. **Never stop or restart the service from an agent turn.** An in-turn
-   `sudo systemctl stop/restart` deadlocks against the gateway's shutdown
-   drain until the stop timeout SIGKILLs everything (ADR 0005). Service
-   control happens in the operator's terminal.
+2. **Never stop or restart the gateway from an agent turn — any mechanism.** Forbidden in-turn triggers: `sudo systemctl stop/restart`, `openclaw gateway restart` in ANY form (plain, `--safe`, `--force`, `--wait`, `--skip-deferral`), `SIGUSR2` / `kill -USR2` / `gateway.restart.safe` (in-process restart, same PID — this is what `--safe` does on core ≥ `2026.9.6`), any gateway restart tool/API call, and any Control UI restart button. Background: an in-turn `sudo systemctl stop/restart` deadlocks against the gateway's shutdown drain until the stop timeout SIGKILLs everything (ADR 0005); an in-process `SIGUSR2` restart bypasses systemd entirely and drops all sessions with ~90s outage (incident 2026-09-24 13:24 CEST — the turn claimed the "approved detached path" in plan text but sent SIGUSR2, PID unchanged). The ONLY agent restart paths are `~/.local/bin/openclaw-gateway-restart-detached` and the `setsid` update chain below. Service control otherwise happens in the operator's terminal. Verification is a PID change plus the systemd journal — plan prose proves nothing.
 3. **No extra flags.** Run `openclaw update --yes`. Do not add `--no-restart`,
    `--tag`, or channel overrides for a routine update.
 4. **Pause the watchdog** for the whole window:
