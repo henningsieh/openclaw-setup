@@ -1548,7 +1548,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'node run' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--commands','--pair','--host','--port','--context-path','--tls-fingerprint','--node-id','--display-name')
+                $valueOptions = @('--container','--profile','--log-level','--commands','--pair','--pair-if-needed','--host','--port','--context-path','--tls-fingerprint','--node-id','--display-name')
             }
             'node status' {
                 $commandPath = $candidatePath
@@ -1672,11 +1672,11 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'worktrees remove' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
+                $valueOptions = @('--container','--profile','--log-level','--exact-state')
             }
             'worktrees restore' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
+                $valueOptions = @('--container','--profile','--log-level','--recover-exact-state')
             }
             'worktrees gc' {
                 $commandPath = $candidatePath
@@ -5205,8 +5205,15 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 }
             }
 
+            if ($commandPath -eq 'node worker') {
+                $completions = @('--desktop-sharing','--no-desktop-sharing')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
             if ($commandPath -eq 'node run') {
-                $completions = @('--commands','--all-commands','--pair','--host','--port','--context-path','--tls','--no-tls','--tls-fingerprint','--node-id','--display-name','--share-installed-apps','--no-share-installed-apps')
+                $completions = @('--commands','--all-commands','--pair','--pair-if-needed','--host','--port','--context-path','--tls','--no-tls','--tls-fingerprint','--node-id','--display-name','--session-host','--share-installed-apps','--no-share-installed-apps')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -5395,14 +5402,14 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'worktrees remove') {
-                $completions = @('--force','--if-lossless','--json')
+                $completions = @('--force','--if-lossless','--exact-state','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees restore') {
-                $completions = @('--json')
+                $completions = @('--recover-exact-state','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }

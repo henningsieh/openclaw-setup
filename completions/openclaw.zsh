@@ -881,7 +881,7 @@ _openclaw_message_send() {
   _arguments -C \
     "(--message -m)"{--message,-m}"[Message body (required unless --media or --presentation is set)]:message:" \
     "(--target -t)"{--target,-t}"[Recipient/channel: E.164 for WhatsApp/Signal, Telegram chat id/@username, Discord/Slack/Mattermost <channelId|user:ID|channel:ID>, or iMessage handle/chat_id]:target:" \
-    "--media[Attach media (image/audio/video/document). Accepts local paths or URLs.]:media:" \
+    "--media[Attach media (image/audio/video/document). Accepts local paths or URLs. Repeat to attach multiple files.]:media:" \
     "--presentation[Shared presentation payload as JSON (text, context, dividers, charts, tables, buttons, selects)]:presentation:" \
     "--delivery[Shared delivery preferences as JSON]:delivery:" \
     "--pin[Request that the delivered message be pinned when supported]" \
@@ -2177,7 +2177,6 @@ _openclaw_gateway_status() {
 
 _openclaw_gateway_install() {
   _arguments -C \
-    "!--defer-activation[Updater service-load handoff]" \
     "--port[Gateway port]:port:" \
     "--runtime[Daemon runtime (node|bun). Default: node]:runtime:" \
     "--runtime-path[Pin an absolute Node/Bun executable path]:runtimePath:" \
@@ -2211,7 +2210,7 @@ _openclaw_gateway_restart() {
   _arguments -C \
     "!--update-executor[Private update executor]:updateExecutor:(check run)" \
     "--preserve-definition[Keep the native service definition]" \
-    "--force[Restart immediately without waiting for active gateway work]" \
+    "--force[Begin restart now; drain admitted work within the shutdown budget]" \
     "--safe[Request an OpenClaw-aware restart after active work drains (bounded wait; may force after the timeout expires)]" \
     "--skip-deferral[Bypass the safe-restart active-work deferral gate; close-stage reply drain still applies; requires --safe]" \
     "--wait[Wait duration before restart (ms, 10s, 5m; 0 waits indefinitely). For non-safe restarts (plain restart); not compatible with --force or --safe]:wait:" \
@@ -2455,7 +2454,6 @@ _openclaw_daemon_status() {
 
 _openclaw_daemon_install() {
   _arguments -C \
-    "!--defer-activation[Updater service-load handoff]" \
     "--port[Gateway port]:port:" \
     "--runtime[Daemon runtime (node|bun). Default: node]:runtime:" \
     "--runtime-path[Pin an absolute Node/Bun executable path]:runtimePath:" \
@@ -2489,7 +2487,7 @@ _openclaw_daemon_restart() {
   _arguments -C \
     "!--update-executor[Private update executor]:updateExecutor:(check run)" \
     "--preserve-definition[Keep the native service definition]" \
-    "--force[Restart immediately without waiting for active gateway work]" \
+    "--force[Begin restart now; drain admitted work within the shutdown budget]" \
     "--safe[Request an OpenClaw-aware restart after active work drains (bounded wait; may force after the timeout expires)]" \
     "--skip-deferral[Bypass the safe-restart active-work deferral gate; close-stage reply drain still applies; requires --safe]" \
     "--wait[Wait duration before restart (ms, 10s, 5m; 0 waits indefinitely). For non-safe restarts (plain restart); not compatible with --force or --safe]:wait:" \
@@ -4233,7 +4231,8 @@ _openclaw_users() {
 
 _openclaw_node_worker() {
   _arguments -C \
-    
+    "--desktop-sharing[Enable the app's desktop viewer capability]" \
+    "--no-desktop-sharing[Disable the app's desktop viewer capability]"
 }
 
 _openclaw_node_run() {
@@ -4241,6 +4240,7 @@ _openclaw_node_run() {
     "--commands[Advertise only these exact command ids (comma-separated; repeatable)]:commands:" \
     "--all-commands[Advertise the full default command surface and forget any saved --commands allowlist]" \
     "--pair[Pair with a setup code or oc-pair URL; explicit gateway flags take precedence]:pair:" \
+    "--pair-if-needed[Use the saved device token when available; otherwise pair with this setup code]:pairIfNeeded:" \
     "--host[Gateway host]:host:" \
     "--port[Gateway port]:port:" \
     "--context-path[Gateway WebSocket context path (e.g. /openclaw-gw)]:contextPath:" \
@@ -4249,7 +4249,12 @@ _openclaw_node_run() {
     "--tls-fingerprint[Expected TLS certificate fingerprint (sha256)]:tlsFingerprint:" \
     "--node-id[Override the generated node instance id]:nodeId:" \
     "--display-name[Override node display name]:displayName:" \
+    "--session-host[Host worker sessions for this foreground process]" \
     "!--ephemeral[]" \
+    "!--desktop-sharing[]" \
+    "!--no-desktop-sharing[]" \
+    "!--auth-from-env[]" \
+    "!--parent-stdin[]" \
     "--share-installed-apps[Share installed macOS applications with the Gateway]" \
     "--no-share-installed-apps[Disable installed application sharing]"
 }
@@ -4515,11 +4520,13 @@ _openclaw_worktrees_remove() {
   _arguments -C \
     "--force[Remove even if snapshot creation fails]" \
     "--if-lossless[Remove without force only when clean and published]" \
+    "--exact-state[Retire detached checkout using an owner-fenced exact-state JSON request]:exactState:" \
     "--json[Output JSON]"
 }
 
 _openclaw_worktrees_restore() {
   _arguments -C \
+    "--recover-exact-state[Reconcile a completed but unfinalized exact-state retirement using its original JSON request]:recoverExactState:" \
     "--json[Output JSON]"
 }
 

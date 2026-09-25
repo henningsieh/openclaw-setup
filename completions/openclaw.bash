@@ -2041,15 +2041,15 @@ _openclaw_completion() {
             ;;
           "node worker")
             command_path="${candidate_path}"
-            opts=""
+            opts="--desktop-sharing --no-desktop-sharing"
             value_options="--container --profile --log-level --commands"
             required_value_options="--container --profile --log-level --commands"
             ;;
           "node run")
             command_path="${candidate_path}"
-            opts="--commands --all-commands --pair --host --port --context-path --tls --no-tls --tls-fingerprint --node-id --display-name --share-installed-apps --no-share-installed-apps"
-            value_options="--container --profile --log-level --commands --pair --host --port --context-path --tls-fingerprint --node-id --display-name"
-            required_value_options="--container --profile --log-level --commands --pair --host --port --context-path --tls-fingerprint --node-id --display-name"
+            opts="--commands --all-commands --pair --pair-if-needed --host --port --context-path --tls --no-tls --tls-fingerprint --node-id --display-name --session-host --share-installed-apps --no-share-installed-apps"
+            value_options="--container --profile --log-level --commands --pair --pair-if-needed --host --port --context-path --tls-fingerprint --node-id --display-name"
+            required_value_options="--container --profile --log-level --commands --pair --pair-if-needed --host --port --context-path --tls-fingerprint --node-id --display-name"
             ;;
           "node status")
             command_path="${candidate_path}"
@@ -2227,15 +2227,15 @@ _openclaw_completion() {
             ;;
           "worktrees remove")
             command_path="${candidate_path}"
-            opts="--force --if-lossless --json"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
+            opts="--force --if-lossless --exact-state --json"
+            value_options="--container --profile --log-level --exact-state"
+            required_value_options="--container --profile --log-level --exact-state"
             ;;
           "worktrees restore")
             command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
+            opts="--recover-exact-state --json"
+            value_options="--container --profile --log-level --recover-exact-state"
+            required_value_options="--container --profile --log-level --recover-exact-state"
             ;;
           "worktrees gc")
             command_path="${candidate_path}"
