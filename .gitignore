@@ -28,8 +28,10 @@
 /wiki/
 
 # --- Live gateway configuration ---------------------------------------
-# Tracked config snapshots use env references; secrets remain in the ignored .env.
-# Automatic backups may retain pre-migration plaintext credentials.
+# `openclaw.json`, `openclaw.json.last-good`, and `openclaw.json.pre-update` are
+# tracked on purpose: their credential fields are env references and the values
+# stay in the ignored `.env`. Only automatic backups are ignored here; they may
+# retain pre-migration plaintext credentials.
 /openclaw.json.bak*
 
 # --- Installed packages and managed local provider assets --------------

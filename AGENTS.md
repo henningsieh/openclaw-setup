@@ -20,8 +20,12 @@ live in [`CONTEXT.md`](CONTEXT.md).
 - Before changing gateway configuration, providers, channels, reverse proxy,
   backups, automations, or security controls, read the relevant sections of
   `CONTEXT.md` and the applicable ADRs under `docs/adr/`.
-- Before committing or pushing, inspect `git status` and the staged diff. The
-  live `openclaw.json` and runtime state are intentionally ignored.
+- Before committing or pushing, inspect `git status` and the staged diff.
+  `openclaw.json`, `openclaw.json.last-good`, and `openclaw.json.pre-update` are
+  tracked config, so staged edits to them are committed as part of a change;
+  their credential fields are `${VAR}` references whose values stay in the
+  gitignored `.env`. Automatic `openclaw.json.bak*` backups and other runtime
+  state remain ignored.
 - New commits must follow [Conventional Commits 1.0.0](docs/agents/git-commits.md).
 
 ## Context routing
