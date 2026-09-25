@@ -22,6 +22,7 @@ live in [`CONTEXT.md`](CONTEXT.md).
   `CONTEXT.md` and the applicable ADRs under `docs/adr/`.
 - Before committing or pushing, inspect `git status` and the staged diff. The
   live `openclaw.json` and runtime state are intentionally ignored.
+- New commits must follow [Conventional Commits 1.0.0](docs/agents/git-commits.md).
 
 ## Context routing
 
