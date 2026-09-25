@@ -92,9 +92,10 @@ automations, and wiki. The complete Docker-era state remains preserved as backup
 
 ## Official documentation
 
-Index and reference pages, ordered to match how they're used below (onboarding →
-providers → gateway/secrets → channels → automation → concepts → security).
-Every link carries `.md` per the rule above; only the `llms.txt` index is exempt.
+Official OpenClaw index and reference pages, ordered to match how they're used
+below (onboarding → providers → gateway/secrets → channels → automation →
+concepts → security). Every OpenClaw docs page link carries `.md` per the rule
+above; only the `llms.txt` index is exempt.
 
 - **Documentation index (agents):** https://docs.openclaw.ai/llms.txt
 - **CLI reference:** https://docs.openclaw.ai/cli.md
@@ -110,6 +111,7 @@ Every link carries `.md` per the rule above; only the `llms.txt` index is exempt
   - https://docs.openclaw.ai/concepts/model-providers/official-provider-plugins.md
   - https://docs.openclaw.ai/gateway/config-agents/models.md
   - https://docs.openclaw.ai/providers/openai/setup.md
+  - https://docs.openclaw.ai/providers/opencode-go.md
   - https://docs.openclaw.ai/plugins/codex-harness.md
 
 **Gateway configuration & secrets**
@@ -151,6 +153,13 @@ Every link carries `.md` per the rule above; only the `llms.txt` index is exempt
 **Security**
   - https://docs.openclaw.ai/gateway/security.md
   - https://docs.openclaw.ai/gateway/security/secrets-and-storage.md
+
+## OpenCode Go subscription documentation
+
+OpenCode's official documentation for the Go subscription, including its model
+catalog, usage limits, and privacy policies:
+
+- https://opencode.ai/docs/en/go.md
 
 When a local command and a remembered procedure disagree, check the docs for
 OpenClaw `2026.9.5` behavior and verify with `openclaw <command> --help` as the
@@ -306,7 +315,10 @@ Telegram uses its restored allowlist. The current default agent is `shelldon`.
 
 The `kalle-kief` agent is implemented and working. It uses an isolated
 workspace/session store and `opencode-go/qwen3.8-flash`; its auth check passes
-with no missing providers. A real cultivation turn respected the 1.3–1.4 mS/cm
+with no missing providers. Its per-agent memory search enables session indexing
+(`experimental.sessionMemory: true`, sources `memory` and `sessions`); `memory`,
+`wiki`, `all`, and `sessions` corpus searches were verified for Kalle. A real
+cultivation turn respected the 1.3–1.4 mS/cm
 no-runoff EC ceiling. A Discord round-trip succeeded for channel
 `1552230093500325888`, routing to `kalle-kief` and returning
 `CULTIVATION_DISCORD_OK`. Existing Shelldon Discord/Telegram routing remains
@@ -358,6 +370,11 @@ agent rather than copying Docker runtime state wholesale:
 - Native credential profiles exist for OpenAI (OAuth), NVIDIA (API key), and
   OpenCode Go (API key), stored in the agent SQLite auth store rather than an
   environment file. NVIDIA is used by the Session Cleanup automation.
+- OpenCode Go is a separate paid subscription from OpenCode Zen; sharing the
+  OpenCode API key does not itself grant Go entitlement. A successful model
+  catalog listing is not an entitlement check. See the dedicated [OpenCode Go
+  subscription documentation](#opencode-go-subscription-documentation) and the
+  [OpenClaw OpenCode Go provider documentation](https://docs.openclaw.ai/providers/opencode-go.md).
 - The `codex` plugin is enabled and loaded. Use `openclaw models status` before
   changing provider or runtime configuration; it is the live authority for model
   routes and credential usability.
