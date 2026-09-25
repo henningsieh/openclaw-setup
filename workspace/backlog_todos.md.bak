@@ -35,21 +35,3 @@ The current builtin memory engine is usable with keyword/wiki search. Later, dec
   temp issue (fixed via `ExecStartPre` wipe, ADR-0005).
 - Regularly check `du -sh /tmp/openclaw` and whether old daily logs are
   rotated or pile up indefinitely; decide on retention/pruning if needed.
-
-## Set a retention policy for OpenClaw backups
-
-`Backup/OpenClaw` in Nextcloud holds ~130 daily `openclaw-backup.tar.gz` files,
-one per day back to June 2026, each 0.5–2.6 GB and growing (June ~0.6 GB →
-August ~2.6 GB). Nothing prunes them, so the folder grows without bound on the
-server.
-
-- On the Windows workstation these files are virtual (cloud placeholders) and
-  currently consume ~0 local disk, so this is a server-storage problem, not a
-  `C:` problem.
-- Decide and implement retention on the backup job itself (e.g. keep N daily and
-  M weekly), rather than pruning files in the Nextcloud tree by hand.
-- Deleting a file inside the synced Nextcloud folder propagates the deletion to
-  the server and all devices. That is the correct way to prune, but only once
-  retention is decided.
-- Note the trend: the backup payload roughly quadrupled between June and August
-  2026, so a fixed file count will still keep growing in total size.

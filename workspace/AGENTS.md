@@ -20,6 +20,15 @@ Read startup files again only when:
 
 When a task needs detailed, host-specific knowledge about this OpenClaw instance — such as its gateway, service, channels, providers, automations, backups, or deployment history — consult the upper-level [`~/.openclaw/AGENTS.md`](/home/shelldon/.openclaw/AGENTS.md) conditionally. Do not load it for ordinary workspace tasks that do not depend on this instance's setup.
 
+## Additional agent
+
+The completed `kalle-kief` agent uses an isolated workspace/session
+store and `opencode-go/qwen3.8-flash`. Auth has no missing providers. A real
+cultivation turn respected the 1.3–1.4 mS/cm no-runoff EC ceiling, and the
+Discord round-trip succeeded in channel `1552230093500325888` with
+`CULTIVATION_DISCORD_OK`. Existing Shelldon Discord/Telegram routing remains
+intact.
+
 ## Memory
 
 Use files for continuity across sessions:
