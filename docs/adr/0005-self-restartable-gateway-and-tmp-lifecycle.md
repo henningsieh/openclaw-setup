@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted 2026-09-23. Implements the owner's requirement that the Shelldon
+Accepted 2026-09-23. Amended 2026-09-24 (Amendment A: in-process restart loophole closed after the 13:24 CEST incident — see below). Implements the owner's requirement that the Shelldon
 agent can restart its own gateway without killing it, and that gateway temp
 state cannot fill the host disk.
 
@@ -35,10 +35,15 @@ three stacked causes:
   `~/.local/bin/openclaw-gateway-restart-detached` runs the exact
   sudoers-covered `sudo -n systemctl restart openclaw-gateway.service` via
   `setsid` in the background and returns in milliseconds, so the requesting
-  turn completes and the drain has nothing to deadlock on. Raw `systemctl
-  stop/restart` inside agent turns, and `openclaw gateway restart` for this
-  system-scope unit, are forbidden and documented as such. The requesting
-  session drops on restart by design; recovery is verified in a new turn.
+  turn completes and the drain has nothing to deadlock on. **All other
+  restart/stop triggers from agent turns are forbidden**, namely: raw
+  `systemctl stop/restart`, `openclaw gateway restart` in ANY form (plain,
+  `--safe`, `--force`, `--wait`, `--skip-deferral`), `SIGUSR2` / `kill
+  -USR2` / `gateway.restart.safe` (in-process restart, same PID), any
+  gateway restart tool/API call, and any Control UI restart button. The
+  requesting session drops on restart by design; recovery is verified in a
+  new turn. Verification is a PID change plus the systemd journal — plan
+  text claiming the "approved detached path" proves nothing.
 - **A user-scope watchdog heals any residue:**
   `openclaw-gateway-watchdog.{service,timer}` (user manager, every 3 min)
   issues `sudo -n systemctl restart` when the unit is `inactive`/`failed`,
@@ -85,3 +90,22 @@ three stacked causes:
   reconnect-drain hangs server close until the deadline). Lowering it needs
   root and risks interrupting SQLite WAL writes; deferred until the drain
   hang is understood upstream.
+
+## Amendment A (2026-09-24): in-process restart loophole
+
+ Incident: at 13:24 CEST an agent turn logged "restarting the Gateway
+ through the approved detached path", ran `sessions.abort`, then triggered
+ `SIGUSR2: gateway.restart.safe`. PID stayed `4036061` before and after
+ (`restart mode: in-process restart (OPENCLAW_NO_RESPAWN)`), all webchat
+ dropped (`1012 service restart`), ~90s outage. The detached wrapper was
+ NOT used — it performs a systemd restart with SIGTERM and a new PID.
+ Root cause: this ADR (written against core `2026.9.5`) described `openclaw
+ gateway restart` as "refuses system-scope units, not an alternative". On
+ core `2026.9.6` that command no longer refuses — `--safe` performs a
+ SIGUSR2 in-process restart that bypasses systemd and the deadlock
+ reasoning entirely. The original wording named only the systemctl path
+ and left the in-process path uncovered. This amendment closes the gap:
+ the Decision bullet above now forbids every in-turn restart trigger except
+ the detached wrapper (and the runbook's `setsid` update chain, which is
+ the same mechanism extended). `docs/runbooks/gateway-update.md` Iron
+ Rule #2 is tightened to match.
