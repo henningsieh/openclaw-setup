@@ -60,12 +60,6 @@ __pycache__/
 # agents/*/agent/workshop-skills/** is intentionally NOT ignored. Those
 # skill files are portable source and may be reviewed and committed.
 
-# --- Generated memory and Dreaming output ------------------------------
-# Private session excerpts, retrieval events, and generated reports/diaries.
-# Durable facts belong in workspace/MEMORY.md.
-/workspace/DREAMS.md
-/workspace/memory/
-
 # --- Secrets and key material ------------------------------------------
 /config-journal-fingerprint.key
 /.env
