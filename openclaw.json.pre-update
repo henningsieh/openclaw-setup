@@ -2,34 +2,24 @@
   "agents": {
     "defaults": {
       "authInheritance": {
-        "agentId": "main"
+        "agentId": "shelldon"
       },
       "workspace": "/home/shelldon/.openclaw/workspace",
       "model": {
-        "primary": "opencode-go/deepseek-v4.1-flash",
+        "primary": "opencode-go/qwen3.8-flash",
         "fallbacks": [
-          "opencode-go/muse-spark-1.3-contributor"
+          "opencode-go/deepseek-v4.1-flash"
         ]
       },
-      "models": {
-        "opencode-go/muse-spark-1.3-contributor": {},
-        "openai/gpt-5.6-luna": {},
-        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning": {
-          "alias": "[NVIDIA] Nemotron 3 Nano Omni 30B A3B Reasoning"
-        },
-        "nvidia/nemotron-3-super-120b-a12b": {
-          "alias": "[NVIDIA] Nemotron 3 Super 120B A12B"
-        },
-        "nvidia/nemotron-3-ultra-550b-a55b": {
-          "alias": "[NVIDIA] Nemotron 3 Ultra 550B A55B"
-        },
-        "opencode-go/deepseek-v4.1-flash": {}
-      },
-      "thinkingDefault": "high",
+      "thinkingDefault": "medium",
       "heartbeat": {
         "every": "0m"
+      },
+      "systemAgent": {
+        "agentId": "shelldon"
       }
     },
+    "ownership": "explicit",
     "entries": {
       "shelldon": {
         "name": "Shelldon",
@@ -42,10 +32,113 @@
         "models": {},
         "tools": {
           "alsoAllow": [
-            "vault-access-broker",
             "vault_fetch"
           ]
+        },
+        "heartbeat": {
+          "every": "30m",
+          "model": "nvidia/nemotron-3-super-120b-a12b",
+          "target": "discord",
+          "to": "1489587973715656786",
+          "isolatedSession": true,
+          "activeHours": {
+            "start": "06:30",
+            "end": "07:00",
+            "timezone": "Europe/Berlin"
+          },
+          "prompt": "[Morning Heartbeat] Once-daily morning check (fires on first tick inside the 06:30 Europe/Berlin window). Step 1 - health check: run openclaw status; check disk (df -h / and du -sh /tmp/openclaw), memory (free -m), gateway HTTP (curl -sf -o /dev/null http://127.0.0.1:18789/ && echo UP || echo DOWN), and failed or stuck automation runs in the last 24h (openclaw cron list --json). Step 2 - backlog: read /home/shelldon/.openclaw/workspace/backlog_todos.md and pick exactly ONE open item that is the best next step. Step 3 - reply in German with EXACTLY three lines and nothing else: line 1: Morgen, Human! ; line 2 starts with Status: followed by a one-sentence health result (healthy, or the concrete problems found); line 3 starts with Vorschlag: followed by the ONE chosen backlog item plus a few-word reason. No preamble, no greetings beyond line 1, no English, no explanation of the task, no extra lines. Never create or modify automation jobs from this turn. Do not reply NO_REPLY unless the health check itself completely failed; report partial failures instead."
         }
+      },
+      "kalle-kief": {
+        "name": "Kalle Kief",
+        "workspace": "/home/shelldon/.openclaw/workspace-kalle-kief",
+        "agentDir": "/home/shelldon/.openclaw/agents/kalle-kief/agent",
+        "identity": {
+          "name": "Kalle Kief",
+          "avatar": "avatars/Kalle-Kief.png",
+          "emoji": "👨‍🌾🌱🧮",
+          "theme": "Entspannter Hanf-Grower mit Taschenrechner, Lupe und trockenem Humor"
+        },
+        "skills": [
+          "1password",
+          "apple-notes",
+          "apple-reminders",
+          "bear-notes",
+          "blogwatcher",
+          "blucli",
+          "browser-automation",
+          "camsnap",
+          "canvas",
+          "claude-handoff",
+          "clawhub",
+          "coding-agent",
+          "control-ui",
+          "coolify",
+          "diagram-maker",
+          "discord",
+          "eightctl",
+          "find-skills",
+          "gemini",
+          "gh-issues",
+          "gifgrep",
+          "git-guardrails-claude-code",
+          "github",
+          "gog",
+          "goplaces",
+          "grill-me",
+          "grilling",
+          "handoff",
+          "healthcheck",
+          "himalaya",
+          "implement-spec",
+          "loop-me",
+          "mcporter",
+          "meme-maker",
+          "migrate-to-shoehorn",
+          "model-usage",
+          "nano-pdf",
+          "node-connect",
+          "node-inspect-debugger",
+          "notion",
+          "obsidian",
+          "obsidian-vault-maintainer",
+          "openai-whisper",
+          "openai-whisper-api",
+          "openhue",
+          "oracle",
+          "ordercli",
+          "peekaboo",
+          "pr",
+          "python-debugpy",
+          "retro",
+          "sag",
+          "scaffold-exercises",
+          "setup-pre-commit",
+          "setup-ts-deep-modules",
+          "sherpa-onnx-tts",
+          "skill-creator",
+          "songsee",
+          "sonoscli",
+          "spike",
+          "spotify-player",
+          "summarize",
+          "taskflow",
+          "taskflow-inbox-triage",
+          "teach",
+          "things-mac",
+          "tmux",
+          "to-questionnaire",
+          "trello",
+          "visualize",
+          "wait-what",
+          "weather",
+          "wiki-maintainer",
+          "writing-beats",
+          "writing-for-agents",
+          "writing-fragments",
+          "writing-shape",
+          "xurl"
+        ]
       }
     }
   },
@@ -57,14 +150,6 @@
             "enabled": false
           }
         }
-      },
-      "codex": {
-        "config": {
-          "sessionCatalog": {
-            "enabled": false
-          }
-        },
-        "enabled": true
       },
       "opencode-go": {
         "enabled": true
@@ -136,6 +221,14 @@
       },
       "vault-access-broker": {
         "enabled": true
+      },
+      "codex": {
+        "config": {
+          "sessionCatalog": {
+            "enabled": false
+          }
+        },
+        "enabled": true
       }
     }
   },
@@ -179,14 +272,10 @@
       "fetch": {
         "enabled": true
       }
-    },
-    "alsoAllow": [
-      "vault-access-broker",
-      "vault_fetch"
-    ]
+    }
   },
   "wizard": {
-    "lastRunAt": "2026-09-20T12:56:36.030Z",
+    "lastRunAt": "2026-09-21T07:07:46.221Z",
     "lastRunVersion": "2026.9.5",
     "lastRunCommand": "doctor",
     "lastRunMode": "local"
@@ -222,7 +311,8 @@
       },
       "streaming": {
         "mode": "partial"
-      }
+      },
+      "richMessages": true
     },
     "discord": {
       "enabled": true,
@@ -258,6 +348,12 @@
               ]
             },
             "1524758094079459418": {
+              "enabled": true,
+              "users": [
+                "400054493640916993"
+              ]
+            },
+            "1552230093500325888": {
               "enabled": true,
               "users": [
                 "400054493640916993"
@@ -367,15 +463,425 @@
       "opencode-go": {
         "models": [
           {
-            "id": "deepseek-v4.1-flash",
-            "name": "DeepSeek V4.1 Flash"
+            "id": "opencode-go/deepseek-v4-pro",
+            "name": "DeepSeek V4 Pro (New)",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
           },
           {
-            "id": "muse-spark-1.3-contributor",
-            "name": "Muse Spark 1.3 Contributor"
+            "id": "opencode-go/deepseek-v4-flash",
+            "name": "DeepSeek V4 Flash",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/deepseek-v4.1-flash",
+            "name": "DeepSeek V4.1 Flash",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/kimi-k2.6",
+            "name": "Kimi K2.6",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 262144,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/gpt-5.6-luna",
+            "name": "GPT-5.6 Luna",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1050000,
+            "contextTokens": 922000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/longcat-2.0",
+            "name": "LongCat-2.0",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/deepseek-v4-flash-vision-exp",
+            "name": "DeepSeek V4 Flash Vision Exp",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/qwen3.6-plus",
+            "name": "Qwen3.6 Plus",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/muse-spark-1.2-contributor",
+            "name": "Muse Spark 1.2 Contributor",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1048576,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/mimo-v2.6-pro",
+            "name": "MiMo-V2.6-Pro",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1048576,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/minimax-m2.7",
+            "name": "MiniMax-M2.7",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 204800,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/glm-5.2",
+            "name": "GLM-5.2",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/minimax-m3",
+            "name": "MiniMax-M3",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/kimi-k2.7-code",
+            "name": "Kimi K2.7 Code",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 262144,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/hy3",
+            "name": "Hy3",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 256000,
+            "contextTokens": 192000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/hy4-preview",
+            "name": "Hy4 preview",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 1024000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/glm-5.3-flash",
+            "name": "GLM-5.3-Flash",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/muse-spark-1.3-contributor",
+            "name": "Muse Spark 1.3 Contributor",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1048576,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/qwen3.8-flash",
+            "name": "Qwen3.8 Flash",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/mimo-v2.6-flash",
+            "name": "MiMo-V2.6-Flash",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1048576,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/glm-5.1",
+            "name": "GLM-5.1",
+            "input": [
+              "text"
+            ],
+            "contextWindow": 202752,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/qwen3.7-plus",
+            "name": "Qwen3.7 Plus",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/grok-4.7",
+            "name": "Grok 4.7",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 500000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/mimo-v2.5",
+            "name": "MiMo V2.5",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
+          },
+          {
+            "id": "opencode-go/space-bunny-free",
+            "name": "Space Bunny Free (stealth)",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
+            "reasoning": false,
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "maxTokens": 8192
           }
         ],
-        "api": "openai-completions",
         "baseUrl": "https://opencode.ai/zen/go/v1"
       }
     }
@@ -420,5 +926,138 @@
         }
       ]
     }
+  },
+  "skills": {
+    "entries": {
+      "1password": {
+        "enabled": false
+      },
+      "blogwatcher": {
+        "enabled": false
+      },
+      "blucli": {
+        "enabled": false
+      },
+      "camsnap": {
+        "enabled": false
+      },
+      "coding-agent": {
+        "enabled": false
+      },
+      "eightctl": {
+        "enabled": false
+      },
+      "gemini": {
+        "enabled": false
+      },
+      "gifgrep": {
+        "enabled": false
+      },
+      "gog": {
+        "enabled": false
+      },
+      "goplaces": {
+        "enabled": false
+      },
+      "himalaya": {
+        "enabled": false
+      },
+      "mcporter": {
+        "enabled": false
+      },
+      "model-usage": {
+        "enabled": false
+      },
+      "nano-pdf": {
+        "enabled": false
+      },
+      "obsidian": {
+        "enabled": false
+      },
+      "openai-whisper": {
+        "enabled": false
+      },
+      "openai-whisper-api": {
+        "enabled": false
+      },
+      "openhue": {
+        "enabled": false
+      },
+      "oracle": {
+        "enabled": false
+      },
+      "ordercli": {
+        "enabled": false
+      },
+      "sag": {
+        "enabled": false
+      },
+      "sherpa-onnx-tts": {
+        "enabled": false
+      },
+      "songsee": {
+        "enabled": false
+      },
+      "sonoscli": {
+        "enabled": false
+      },
+      "spotify-player": {
+        "enabled": false
+      },
+      "summarize": {
+        "enabled": false
+      },
+      "trello": {
+        "enabled": false
+      },
+      "xurl": {
+        "enabled": false
+      }
+    }
+  },
+  "mcp": {
+    "servers": {
+      "coolify": {
+        "url": "https://coolify.sieh.org/mcp",
+        "transport": "streamable-http",
+        "enabled": true,
+        "headers": {
+          "Authorization": "Bearer ${COOLIFY_API_TOKEN}"
+        },
+        "connectionTimeoutMs": 15000,
+        "requestTimeoutMs": 30000
+      }
+    }
+  },
+  "bindings": [
+    {
+      "agentId": "kalle-kief",
+      "comment": "Route #grow-log channel to the Kalle Kief agent",
+      "match": {
+        "channel": "discord",
+        "accountId": "default",
+        "peer": {
+          "kind": "channel",
+          "id": "1552230093500325888"
+        }
+      }
+    },
+    {
+      "agentId": "shelldon",
+      "match": {
+        "channel": "discord",
+        "accountId": "*"
+      }
+    },
+    {
+      "agentId": "shelldon",
+      "match": {
+        "channel": "telegram",
+        "accountId": "*"
+      }
+    }
+  ],
+  "talk": {
+    "agentId": "shelldon"
   }
 }
