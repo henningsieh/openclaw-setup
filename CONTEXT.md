@@ -440,6 +440,14 @@ Archives contain sensitive state and credentials. Keep the destination restricte
 to `shelldon`; never add archives to Git. `openclaw backup enable` is for
 versioned Git backups and is not used for these timestamped archives.
 
+## Immich
+
+The [Immich operating runbook](docs/runbooks/immich-operations.md) owns this
+host's storage paths, credential mapping and operation boundaries. Use the
+`immich-operations` skill for procedure and `entities/immich.md` for wiki
+discovery. The Google Photos migration is closed; its export is a backup, not a
+standing import queue.
+
 ## Current automations
 
 All schedules use `Europe/Berlin`; the native managed jobs without an explicit

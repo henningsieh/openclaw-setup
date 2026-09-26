@@ -56,6 +56,11 @@ __pycache__/
 # Track maintained Workshop skill source instead; never commit these links.
 /plugin-skills/
 
+# Skill Workshop proposal generations are database-backed runtime history.
+# Track applied skill source below, not staging/audit copies.
+/skill-workshop/proposals/
+/retired/skill-workshop-proposals/
+
 # --- Maintained skill source ------------------------------------------
 # agents/*/agent/workshop-skills/** is intentionally NOT ignored. Those
 # skill files are portable source and may be reviewed and committed.
