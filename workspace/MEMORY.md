@@ -20,6 +20,7 @@ current time/weather, and simple reasoning do not require a wiki search.
 - Grocy → `entities/grocy-coolify-service.md`
 - PatchMon → `entities/patchmon-service.md`
 - MailCow → `entities/mailcow-mail-server.md`
+- Immich — Fotocloud, Takeout, Fotoalben → `entities/immich.md`
 - Telegram bot and command-menu behaviour → `entities/telegram-bot.md`
 - NutriTrace / Nutriclaw → `entities/nutritrace-coolify-service.md`
 - Hetzner administration → `concepts/hetzner-hcloud-cli-administration.md`

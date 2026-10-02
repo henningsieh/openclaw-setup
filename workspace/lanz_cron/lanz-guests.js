@@ -84,6 +84,8 @@ function parseGuests(html) {
       const cleanLine = paraContent
         .replace(/<[^>]+>/g, '')
         .replace(/&nbsp;/g, ' ')
+        .replace(/\u00a0/g, ' ')
+        .replace(/\s+/g, ' ')
         .trim();
 
       if (!cleanLine) continue;
@@ -91,15 +93,28 @@ function parseGuests(html) {
       const commaIdx = cleanLine.indexOf(',');
       if (commaIdx !== -1) {
         const name = cleanLine.substring(0, commaIdx).trim();
-        const title = cleanLine.substring(commaIdx + 1).trim();
+        let title = cleanLine.substring(commaIdx + 1).trim();
+
+        // Since July 2026 each line is "Name, Role / Long description".
+        // The description is not metadata and used to blow past the length
+        // guard, which silently dropped every guest. Cut at the first slash
+        // and keep the role only. The separator is a slash followed by a
+        // non-breaking space, so match on the slash itself.
+        const slashIdx = title.indexOf('/');
+        if (slashIdx > 0) {
+          const role = title.substring(0, slashIdx).trim();
+          if (role.length > 0 && role.length < 120) {
+            title = role;
+          }
+        }
 
         const nameWords = name.split(/\s+/).filter(w => w.length > 0);
         const looksLikeName = nameWords.length >= 2 && nameWords.length <= 6 &&
                               nameWords.every(w => /^[A-ZÄÖÜ][A-Za-zäöüßÄÖÜ.-]*$/.test(w) || w === 'v.') &&
-                              name.length < 60 && title.length < 150;
+                              name.length < 60 && title.length > 0 && title.length < 120;
 
         if (looksLikeName) {
-          guests.push({ name, title, rawEntry: cleanLine });
+          guests.push({ name, title, rawEntry: `${name}, ${title}` });
           continue;
         }
       }
