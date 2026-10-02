@@ -147,6 +147,7 @@ export class BitwardenCli implements BitwardenCliBoundary {
         )).trim();
         if (!session) throw safeError("could not unlock the Personal Vault Identity");
       }
+      await this.command(["sync"], session, signal);
       const items = parseJson<VaultItem[]>(
         await this.command(["list", "items", "--search", itemName], session, signal),
         "could not read matching Vault Items",

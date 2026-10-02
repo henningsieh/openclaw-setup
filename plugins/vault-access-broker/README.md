@@ -20,10 +20,12 @@ approval routing, and the production validation checklist live in
 `docs/runbooks/vault-access-runtime.md`.
 
 The controlled CLI boundary configures the Vaultwarden endpoint,
-authenticates and unlocks only when needed, searches for a Vault Item by exact
-name before accepting one fallback candidate, and attempts to lock the vault in
-all outcomes. It returns only a username-and-password Credential Response. Tool
-result persistence replaces that response with a redaction marker, so it must
+authenticates and unlocks only when needed, synchronizes the CLI cache with
+`bw sync` before every lookup, searches for a Vault Item by exact name before
+accepting one fallback candidate, and attempts to lock the vault in all
+outcomes. A failed sync aborts retrieval instead of returning stale credentials.
+It returns only a username-and-password Credential Response. Tool result
+persistence replaces that response with a redaction marker, so it must
 be used for the downstream login and never repeated in chat.
 
 ## Test seam

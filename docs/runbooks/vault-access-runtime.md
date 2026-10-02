@@ -121,6 +121,19 @@ PATH=/usr/bin:/home/shelldon/.npm-global/bin:/usr/local/bin:/bin command -v bw
 This command must produce no output and exit nonzero. Do not invoke the
 private absolute CLI path from an agent shell.
 
+## Retrieval freshness
+
+Every approved `vault_fetch` runs `bw sync` after any required login/unlock and
+before `bw list items --search`. The commands use the same fetched session and
+abort signal. `bw list` searches the local cache, so syncing only at gateway
+startup would leave later Vaultwarden edits invisible. Synchronization is
+required on every retrieval, including repeated calls for the same Vault Item.
+
+If synchronization fails, retrieval stops without reading stale cached items.
+The existing `finally` block still attempts `bw lock` in every outcome. Lookup
+selection, login validation, owner approval, and result redaction are unchanged.
+See ADR 0002 for the freshness decision.
+
 ## Broker activation and tool policy
 
 The Vault Access Broker is installed from the credential-free Local Plugin
@@ -188,8 +201,21 @@ conversation:
 
 Denial, timeout, cancellation, or an unavailable approval route fails closed.
 
-Reload the broker without restarting the gateway after source or manifest
-edits:
+For source changes, rebuild and test the tracked distribution, then reinstall
+through the managed lifecycle. Source edits alone do not update the installed
+copy. Run from `/home/shelldon/.openclaw`:
+
+```bash
+(cd plugins/vault-access-broker && npm run build && npm test)
+openclaw plugins install ./plugins/vault-access-broker --force --accept-capabilities
+openclaw plugins inspect vault-access-broker --runtime --json
+```
+
+Inspection must report `status: "loaded"`, `diagnostics: []`, and the stable
+install path `/home/shelldon/.openclaw/extensions/vault-access-broker`, not a
+`.tmp` directory. Preserve the existing agent, approval, and channel settings.
+
+When no gateway restart is requested, reload the installed broker:
 
 ```bash
 openclaw plugins reload vault-access-broker --json
@@ -197,9 +223,40 @@ openclaw plugins inspect vault-access-broker --runtime --json
 curl --fail --silent --output /dev/null http://127.0.0.1:18789/
 ```
 
-The reload must report `restartRequired: false` with a new generation
-receipt, the inspection must still report the loaded optional tool, and the
-gateway health probe must succeed with uninterrupted uptime.
+The reload must report `restartRequired: false` with a new generation receipt,
+and the gateway health probe must succeed with uninterrupted uptime.
+
+### Gateway restart (ADR 0005)
+
+For an owner-requested gateway restart, use only the detached wrapper. Record
+the current PID and request time before invoking it. Check both
+`~/.openclaw/.maintenance` and its `.maintainance` alias: they disable watchdog
+recovery, not the wrapper. Preserve a pre-existing guard unless the owner has
+authorized ending that maintenance; remove only a guard created for your own
+completed maintenance. An ordinary restart needs no new guard, because the
+watchdog already skips transitions in flight.
+
+```bash
+systemctl show openclaw-gateway.service -p MainPID
+date --iso-8601=seconds
+~/.local/bin/openclaw-gateway-restart-detached
+```
+
+The requesting OpenClaw turn may drop. Verify recovery in a new turn: the PID
+must differ, the unit must be active/running, and the startup journal since the
+recorded request time must contain the non-secret runtime health line.
+
+```bash
+systemctl show openclaw-gateway.service -p MainPID -p ActiveState -p SubState
+sudo journalctl -u openclaw-gateway.service --since '<restart request time>' \
+  --grep 'vault-access-runtime healthy: bw=2026\.8\.0 .* credentials=3' --no-pager
+curl --fail --silent --output /dev/null http://127.0.0.1:18789/
+```
+
+Neither an issued wrapper message nor an HTTP response alone proves restart:
+require the new PID and the fresh journal line. Keep watchdog recovery enabled
+after completed maintenance. All agent-initiated gateway restarts in this
+runbook, including rollback, follow ADR 0005.
 
 ## Production validation checklist
 
@@ -221,14 +278,41 @@ Credential Response at any step.
    behaves the same way.
 5. Confirm the persisted tool result contains only the redaction marker
    `[Vault Access Broker Credential Response redacted]`.
-6. Confirm a non-authorized agent context and each excluded trigger class
-   (cron, heartbeat, background, subagent, unverified requester) are denied
-   without invoking the Bitwarden CLI.
+6. Confirm a non-authorized agent has no `vault_fetch` capability. For an
+   Authorized Agent, cron, heartbeat, background, subagent, and unverified
+   requester contexts still require one-time owner approval; no context may
+   invoke the Bitwarden CLI after denial or without approval.
 7. Confirm gateway health (`systemctl status`, local HTTP probe), a plugin
    reload receipt, and restart behavior without emitting bootstrap material.
    Confirm the only retrieval evidence is the normal OpenClaw
    approval/session record, which carries no credential values.
 8. Delete the disposable Vault Item from the vault.
+
+### Cache freshness regression
+
+After verifying the new gateway PID and startup health, have the owner edit the
+username of a non-sensitive disposable Vault Item in Vaultwarden and save it.
+Then trigger `vault_fetch` through an Authorized Agent with one-time Retrieval
+Approval and consume the response only for the downstream login. Confirm the
+updated login is used without printing either field. Repeat after another
+server-side edit to verify synchronization on every retrieval, not just the
+first call after startup. Prefer the disposable item over modifying a real
+login such as `linda-seeds`.
+
+Compare only cache file metadata immediately before and after each approved
+fetch:
+
+```bash
+stat -c 'cache modified=%y' \
+  /home/shelldon/.local/lib/openclaw/vault-access-broker/state/data.json
+```
+
+The timestamp should advance for each successful sync, but metadata alone does
+not prove the returned login is current; the downstream-use check is required.
+Do not read or print `data.json`, bypass `vault_fetch` with the private CLI, or
+repeat credentials in a test report. A Pi session without `vault_fetch` cannot
+complete this live check: hand it to the owner-approved OpenClaw turn and report
+it as pending rather than claiming production validation.
 
 ## Deliberate update and rollback
 
