@@ -36,7 +36,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'setup' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source','--remote-url','--remote-token','--remote-password','-m','--message')
+                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source','--remote-url','--remote-token','--remote-password','-m','--message')
             }
             'crestodian' {
                 $commandPath = $candidatePath
@@ -44,19 +44,19 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'onboard' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source')
+                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source')
             }
             'onboard recommendations' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source','--agent')
+                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source','--agent')
             }
             'onboard recommendations acknowledge' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source','--agent','--retry')
+                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source','--agent','--retry')
             }
             'onboard recommendations refresh' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source','--agent')
+                $valueOptions = @('--container','--profile','--log-level','--workspace','--agent-name','--reset-scope','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--daemon-runtime','--node-manager','--import-from','--import-source','--agent')
             }
             'configure' {
                 $commandPath = $candidatePath
@@ -553,58 +553,6 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             'sessions compact' {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--store','--active','--limit','--agent','--url','--token','--password','--timeout','--max-lines')
-            }
-            'tasks' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks list' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks audit' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status','--severity','--code','--limit')
-            }
-            'tasks maintenance' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks show' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks notify' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks cancel' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks retry' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks dismiss' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks flow' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks flow list' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks flow show' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
-            }
-            'tasks flow cancel' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--runtime','--status')
             }
             'acp' {
                 $commandPath = $candidatePath
@@ -1380,7 +1328,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'exec-policy show' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
+                $valueOptions = @('--container','--profile','--log-level','--agent','--session','--url','--port','--token','--password','--timeout')
             }
             'exec-policy preset' {
                 $commandPath = $candidatePath
@@ -1470,22 +1418,6 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--node','--max-age','--accuracy','--location-timeout','--invoke-timeout','--url','--token','--timeout')
             }
-            'nodes canvas' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'nodes canvas present' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--node','--target','--x','--y','--width','--height','--invoke-timeout','--url','--token','--timeout')
-            }
-            'nodes canvas hide' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--node','--invoke-timeout','--url','--token','--timeout')
-            }
-            'nodes canvas navigate' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--node','--invoke-timeout','--url','--token','--timeout')
-            }
             'devices' {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level')
@@ -1537,6 +1469,10 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             'users link-email' {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--to','--url','--token','--timeout')
+            }
+            'users merge' {
+                $commandPath = $candidatePath
+                $valueOptions = @('--container','--profile','--log-level','--into','--url','--token','--timeout')
             }
             'node' {
                 $commandPath = $candidatePath
@@ -1673,6 +1609,14 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             'worktrees remove' {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--exact-state')
+            }
+            'worktrees retire-snapshot' {
+                $commandPath = $candidatePath
+                $valueOptions = @('--container','--profile','--log-level','--expected-ref','--expected-oid','--removed-at','--retained-ref','--retained-oid')
+            }
+            'worktrees recover-removal' {
+                $commandPath = $candidatePath
+                $valueOptions = @('--container','--profile','--log-level','--snapshot')
             }
             'worktrees restore' {
                 $commandPath = $candidatePath
@@ -2328,31 +2272,35 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'update' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--channel','--tag','--timeout')
+                $valueOptions = @('--container','--profile','--log-level','--admission','--channel','--tag','--timeout')
+            }
+            'update admit' {
+                $commandPath = $candidatePath
+                $valueOptions = @('--container','--profile','--log-level','--admission','--channel','--tag','--timeout','--context')
             }
             'update cleanup' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--channel','--tag','--timeout')
+                $valueOptions = @('--container','--profile','--log-level','--admission','--channel','--tag','--timeout')
             }
             'update repair' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--tag','--channel','--timeout')
+                $valueOptions = @('--container','--profile','--log-level','--admission','--tag','--channel','--timeout')
             }
             'update finalize' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--tag','--channel','--timeout')
+                $valueOptions = @('--container','--profile','--log-level','--admission','--tag','--channel','--timeout')
             }
             'update migration-plan' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--channel','--tag','--timeout','--snapshot-home','--snapshot-config','--snapshot-state')
+                $valueOptions = @('--container','--profile','--log-level','--admission','--channel','--tag','--timeout','--snapshot-home','--snapshot-config','--snapshot-state')
             }
             'update wizard' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--channel','--tag','--timeout')
+                $valueOptions = @('--container','--profile','--log-level','--admission','--channel','--tag','--timeout')
             }
             'update status' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--channel','--tag','--timeout')
+                $valueOptions = @('--container','--profile','--log-level','--admission','--channel','--tag','--timeout')
             }
         }
     }
@@ -2699,7 +2647,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
     
     # Root command
     if ($commandPath -eq "") {
-         $completions = @('acp','agent','agents','approvals','exec-approvals','attach','audit','backup','channels','clawbot','completion','config','configure','connect','cron','automations','daemon','dashboard','database','devices','directory','dns','docs','doctor','exec-policy','fleet','gateway','health','hooks','infer','capability','logs','mcp','message','migrate','models','node','nodes','onboard','pairing','plugins','promos','proxy','qr','reset','resume','sandbox','secrets','security','sessions','setup','skills','status','system','tasks','telemetry','transcripts','triage','tui','terminal','chat','uninstall','update','users','webhooks','worker','worktrees','-V','--version','--container','--dev','--profile','--log-level','--no-color')
+         $completions = @('acp','agent','agents','approvals','exec-approvals','attach','audit','backup','channels','clawbot','completion','config','configure','connect','cron','automations','daemon','dashboard','database','devices','directory','dns','docs','doctor','exec-policy','fleet','gateway','health','hooks','infer','capability','logs','mcp','message','migrate','models','node','nodes','onboard','pairing','plugins','promos','proxy','qr','reset','resume','sandbox','secrets','security','sessions','setup','skills','status','system','telemetry','transcripts','triage','tui','terminal','chat','uninstall','update','users','webhooks','worker','worktrees','-V','--version','--container','--dev','--profile','--log-level','--no-color')
          $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
             [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
          }
@@ -2714,7 +2662,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'setup') {
-                $completions = @('--workspace','--agent-name','--team','--wizard','--baseline','--reset','--reset-scope','--non-interactive','--classic','--tui','--accept-risk','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--custom-image-input','--custom-text-input','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--tailscale','--install-daemon','--no-install-daemon','--skip-daemon','--daemon-runtime','--skip-channels','--skip-skills','--skip-bootstrap','--skip-search','--skip-health','--skip-ui','--suppress-gateway-token-output','--skip-hooks','--node-manager','--import-from','--import-source','--import-secrets','--remote-url','--remote-token','--remote-password','-m','--message','--yes','--json')
+                $completions = @('--workspace','--agent-name','--team','--wizard','--baseline','--reset','--reset-scope','--non-interactive','--classic','--tui','--accept-risk','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--custom-image-input','--custom-text-input','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--tailscale','--install-daemon','--no-install-daemon','--skip-daemon','--daemon-runtime','--skip-channels','--skip-skills','--skip-bootstrap','--skip-search','--skip-health','--skip-ui','--suppress-gateway-token-output','--skip-hooks','--node-manager','--import-from','--import-source','--import-secrets','--remote-url','--remote-token','--remote-password','-m','--message','--yes','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -2728,7 +2676,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'onboard') {
-                $completions = @('recommendations','--workspace','--agent-name','--team','--reset','--reset-scope','--non-interactive','--modern','--classic','--tui','--accept-risk','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--custom-image-input','--custom-text-input','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--install-daemon','--no-install-daemon','--skip-daemon','--daemon-runtime','--skip-channels','--skip-skills','--skip-bootstrap','--skip-search','--skip-health','--skip-ui','--suppress-gateway-token-output','--skip-hooks','--node-manager','--import-from','--import-source','--import-secrets','--json')
+                $completions = @('recommendations','--workspace','--agent-name','--team','--reset','--reset-scope','--non-interactive','--modern','--classic','--tui','--accept-risk','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--custom-image-input','--custom-text-input','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--install-daemon','--no-install-daemon','--skip-daemon','--daemon-runtime','--skip-channels','--skip-skills','--skip-bootstrap','--skip-search','--skip-health','--skip-ui','--suppress-gateway-token-output','--skip-hooks','--node-manager','--import-from','--import-source','--import-secrets','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -3590,62 +3538,6 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
 
             if ($commandPath -eq 'sessions compact') {
                 $completions = @('--agent','--url','--token','--password','--timeout','--json','--max-lines')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'tasks') {
-                $completions = @('audit','cancel','dismiss','flow','list','maintenance','notify','retry','show','--json','--runtime','--status')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'tasks list') {
-                $completions = @('--json','--runtime','--status')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'tasks audit') {
-                $completions = @('--json','--severity','--code','--limit')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'tasks maintenance') {
-                $completions = @('--json','--apply')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'tasks show') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'tasks flow') {
-                $completions = @('cancel','list','show','--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'tasks flow list') {
-                $completions = @('--json','--status')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'tasks flow show') {
-                $completions = @('--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -4919,7 +4811,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'exec-policy show') {
-                $completions = @('--json')
+                $completions = @('--agent','--session','--verbose','--json','--url','--port','--token','--password','--timeout','--expect-final')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -4940,7 +4832,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'nodes') {
-                $completions = @('approve','camera','canvas','describe','invoke','list','location','notify','pending','push','reject','remove','rename','screen','status')
+                $completions = @('approve','camera','describe','invoke','list','location','notify','pending','push','reject','remove','rename','screen','status')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -5079,34 +4971,6 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 }
             }
 
-            if ($commandPath -eq 'nodes canvas') {
-                $completions = @('hide','navigate','present')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'nodes canvas present') {
-                $completions = @('--node','--target','--x','--y','--width','--height','--invoke-timeout','--url','--token','--timeout','--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'nodes canvas hide') {
-                $completions = @('--node','--invoke-timeout','--url','--token','--timeout','--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'nodes canvas navigate') {
-                $completions = @('--node','--invoke-timeout','--url','--token','--timeout','--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
             if ($commandPath -eq 'devices') {
                 $completions = @('approve','clear','join-code','list','reject','remove','rename','revoke','rotate')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
@@ -5178,7 +5042,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'users') {
-                $completions = @('link-email','list')
+                $completions = @('link-email','list','merge')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -5193,6 +5057,13 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
 
             if ($commandPath -eq 'users link-email') {
                 $completions = @('--to','--url','--token','--timeout','--json')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'users merge') {
+                $completions = @('--into','--url','--token','--timeout','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -5381,7 +5252,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'worktrees') {
-                $completions = @('create','gc','list','remove','restore')
+                $completions = @('create','gc','list','recover-removal','remove','restore','retire-snapshot')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -5403,6 +5274,20 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
 
             if ($commandPath -eq 'worktrees remove') {
                 $completions = @('--force','--if-lossless','--exact-state','--json')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'worktrees retire-snapshot') {
+                $completions = @('--expected-ref','--expected-oid','--removed-at','--retained-ref','--retained-oid','--json')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'worktrees recover-removal') {
+                $completions = @('--snapshot','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -5934,7 +5819,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'plugins reload') {
-                $completions = @('--accept-capabilities','--json')
+                $completions = @('--accept-capabilities','--wait','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -5948,7 +5833,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'plugins install') {
-                $completions = @('-l','--link','--force','--pin','--accept-capabilities','--dangerously-force-unsafe-install','--acknowledge-install-policy-warning','--marketplace')
+                $completions = @('-l','--link','--force','--pin','--no-enable','--accept-capabilities','--dangerously-force-unsafe-install','--acknowledge-install-policy-warning','--marketplace')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -6536,7 +6421,14 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'update') {
-                $completions = @('cleanup','repair','status','wizard','--json','--no-restart','--dry-run','--channel','--tag','--timeout','--yes','--reapply-local-overrides','--accept-capabilities')
+                $completions = @('cleanup','repair','status','wizard','--json','--no-restart','--dry-run','--admission','--channel','--tag','--timeout','--yes','--reapply-local-overrides','--accept-capabilities')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'update admit') {
+                $completions = @('--context')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }

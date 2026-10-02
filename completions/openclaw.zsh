@@ -12,7 +12,7 @@ _openclaw_root_completion() {
     "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
     "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
     "--no-color[Disable ANSI colors]" \
-    "1: :_values 'command' 'acp[Run an ACP bridge backed by the Gateway]' 'agent[Run an agent turn via the Gateway (use --local for embedded)]' 'agents[Manage isolated agents (workspaces + auth + routing)]' 'approvals[Manage approval policy and pending requests]' 'exec-approvals[Manage approval policy and pending requests]' 'attach[Attach Claude Code to a gateway session with scoped MCP tools]' 'audit[Inspect activity records and exact-run identity context]' 'backup[Create, verify, and restore backup archives and SQLite snapshots]' 'channels[Manage connected chat channels and accounts]' 'clawbot[Legacy clawbot command aliases]' 'completion[Generate shell completion script]' 'config[Non-interactive config helpers (get/set/patch/unset/file/schema/validate). Run without subcommand for guided setup.]' 'configure[Interactive configuration for credentials, channels, gateway, and agent defaults]' 'connect[Connect this machine to an OpenClaw Gateway as a node]' 'cron[Manage automations (via Gateway)]' 'automations[Manage automations (via Gateway)]' 'daemon[Manage the Gateway service (launchd/systemd/schtasks)]' 'dashboard[Open the Control UI with your current token]' 'database[Inspect database schema compatibility and shared-state write ownership]' 'devices[Device pairing and auth tokens (for mobile app setup codes, use \`openclaw qr\` instead)]' 'directory[Lookup contact and group IDs (self, peers, groups) for supported chat channels]' 'dns[DNS helpers for wide-area discovery (Tailscale + CoreDNS)]' 'docs[Search the live OpenClaw docs]' 'doctor[Health checks + quick fixes for the gateway and channels]' 'exec-policy[Show or synchronize requested exec policy with host approvals]' 'fleet[Provision and manage isolated tenant cells (experimental)]' 'gateway[Run, inspect, and query the WebSocket Gateway]' 'health[Fetch health from the running gateway]' 'hooks[Manage internal agent hooks]' 'infer[Run provider-backed inference commands through a stable CLI surface]' 'capability[Run provider-backed inference commands through a stable CLI surface]' 'logs[Tail gateway file logs via RPC]' 'mcp[Manage OpenClaw mcp.servers config and channel bridge]' 'message[Send, read, and manage messages and channel actions]' 'migrate[Import state from another agent system]' 'models[Model discovery, scanning, and configuration]' 'node[Run and manage the headless node host service]' 'nodes[Manage gateway-owned nodes (pairing, status, invoke, and media)]' 'onboard[Guided setup for auth, models, Gateway, workspace, channels, and skills]' 'pairing[Secure DM pairing (approve inbound requests)]' 'plugins[Manage OpenClaw plugins and extensions]' 'promos[Discover and claim promotional model offers from ClawHub]' 'proxy[Run the OpenClaw debug proxy and inspect captured traffic]' 'qr[Generate a mobile pairing QR code and setup code]' 'reset[Reset local config/state (keeps the CLI installed)]' 'resume[Resume a recent Gateway session in the TUI]' 'sandbox[Manage sandbox containers (Docker-based agent isolation)]' 'secrets[Secrets runtime controls]' 'security[Audit local config and state for common security foot-guns]' 'sessions[List stored conversation sessions]' 'setup[Chat with OpenClaw; onboard when setup is incomplete]' 'skills[List and inspect available skills]' 'status[Show channel health and recent session recipients]' 'system[System tools (events, heartbeat, presence)]' 'tasks[Inspect durable background tasks and TaskFlow state]' 'telemetry[Inspect and manage anonymous usage telemetry]' 'transcripts[Inspect stored transcripts]' 'triage[Collect sanitized diagnostics and open a local coding agent for repair]' 'tui[Open a terminal UI connected to the Gateway]' 'terminal[Open a terminal UI connected to the Gateway]' 'chat[Open a terminal UI connected to the Gateway]' 'uninstall[Uninstall the gateway service + local data]' 'update[Update OpenClaw and inspect update channel status]' 'users[Manage durable user profiles and email aliases]' 'webhooks[Webhook helpers and integrations]' 'worker[Run the restricted cloud worker runtime]' 'worktrees[Create, inspect, restore, and clean up managed worktrees]'" \
+    "1: :_values 'command' 'acp[Run an ACP bridge backed by the Gateway]' 'agent[Run an agent turn via the Gateway (use --local for embedded)]' 'agents[Manage isolated agents (workspaces + auth + routing)]' 'approvals[Manage approval policy and pending requests]' 'exec-approvals[Manage approval policy and pending requests]' 'attach[Attach Claude Code to a gateway session with scoped MCP tools]' 'audit[Inspect activity records and exact-run identity context]' 'backup[Create, verify, and restore backup archives and SQLite snapshots]' 'channels[Manage connected chat channels and accounts]' 'clawbot[Legacy clawbot command aliases]' 'completion[Generate shell completion script]' 'config[Non-interactive config helpers (get/set/patch/unset/file/schema/validate). Run without subcommand for guided setup.]' 'configure[Interactive configuration for credentials, channels, gateway, and agent defaults]' 'connect[Connect this machine to an OpenClaw Gateway as a node]' 'cron[Manage automations (via Gateway)]' 'automations[Manage automations (via Gateway)]' 'daemon[Manage the Gateway service (launchd/systemd/schtasks)]' 'dashboard[Open the Control UI with your current token]' 'database[Inspect database schema compatibility and shared-state write ownership]' 'devices[Device pairing and auth tokens (for mobile app setup codes, use \`openclaw qr\` instead)]' 'directory[Lookup contact and group IDs (self, peers, groups) for supported chat channels]' 'dns[DNS helpers for wide-area discovery (Tailscale + CoreDNS)]' 'docs[Search the live OpenClaw docs]' 'doctor[Health checks + quick fixes for the gateway and channels]' 'exec-policy[Show or synchronize requested exec policy with host approvals]' 'fleet[Provision and manage isolated tenant cells (experimental)]' 'gateway[Run, inspect, and query the WebSocket Gateway]' 'health[Fetch health from the running gateway]' 'hooks[Manage internal agent hooks]' 'infer[Run provider-backed inference commands through a stable CLI surface]' 'capability[Run provider-backed inference commands through a stable CLI surface]' 'logs[Tail gateway file logs via RPC]' 'mcp[Manage OpenClaw mcp.servers config and channel bridge]' 'message[Send, read, and manage messages and channel actions]' 'migrate[Import state from another agent system]' 'models[Model discovery, scanning, and configuration]' 'node[Run and manage the headless node host service]' 'nodes[Manage gateway-owned nodes (pairing, status, invoke, and media)]' 'onboard[Guided setup for auth, models, Gateway, workspace, channels, and skills]' 'pairing[Secure DM pairing (approve inbound requests)]' 'plugins[Manage OpenClaw plugins and extensions]' 'promos[Discover and claim promotional model offers from ClawHub]' 'proxy[Run the OpenClaw debug proxy and inspect captured traffic]' 'qr[Generate a mobile pairing QR code and setup code]' 'reset[Reset local config/state (keeps the CLI installed)]' 'resume[Resume a recent Gateway session in the TUI]' 'sandbox[Manage sandbox containers (Docker-based agent isolation)]' 'secrets[Secrets runtime controls]' 'security[Audit local config and state for common security foot-guns]' 'sessions[List stored conversation sessions]' 'setup[Chat with OpenClaw; onboard when setup is incomplete]' 'skills[List and inspect available skills]' 'status[Show channel health and recent session recipients]' 'system[System tools (events, heartbeat, presence)]' 'telemetry[Inspect and manage anonymous usage telemetry]' 'transcripts[Inspect stored transcripts]' 'triage[Collect sanitized diagnostics and open a local coding agent for repair]' 'tui[Open a terminal UI connected to the Gateway]' 'terminal[Open a terminal UI connected to the Gateway]' 'chat[Open a terminal UI connected to the Gateway]' 'uninstall[Uninstall the gateway service + local data]' 'update[Update OpenClaw and inspect update channel status]' 'users[Manage durable user profiles and email aliases]' 'webhooks[Webhook helpers and integrations]' 'worker[Run the restricted cloud worker runtime]' 'worktrees[Create, inspect, restore, and clean up managed worktrees]'" \
     "*::arg:->args"
 
   case $state in
@@ -41,7 +41,6 @@ _openclaw_root_completion() {
         (status) _openclaw_status ;;
         (health) _openclaw_health ;;
         (sessions) _openclaw_sessions ;;
-        (tasks) _openclaw_tasks ;;
         (acp) _openclaw_acp ;;
         (gateway) _openclaw_gateway ;;
         (daemon) _openclaw_daemon ;;
@@ -110,7 +109,7 @@ _openclaw_setup() {
     "--accept-risk[Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)]" \
     "--flow[Onboard flow: quickstart|advanced|manual|import]:flow:" \
     "--mode[Onboard mode: local|remote]:mode:" \
-    "--auth-choice[Auth: custom-api-key|setup-token|token|apiKey|skip|alibaba-model-studio-api-key|anthropic-cli|arceeai-api-key|baseten-api-key|byteplus-api-key|cerebras-api-key|openai-device-code|openai|chutes|chutes-api-key|clawrouter-api-key|cloudflare-ai-gateway-api-key|zai-cn|qwen-api-key-cn|qwen-api-key|zai-coding-cn|zai-coding-global|cohere-api-key|comfy-cloud-api-key|copilot-proxy|deepinfra-api-key|deepseek-api-key|llama-cpp-existing-server|fal-api-key|featherless-api-key|fireworks-api-key|github-copilot|github-copilot-enterprise|zai-global|gmi-api-key|gemini-api-key|google-vertex-api-key|groq-api-key|huggingface-api-key|kilocode-api-key|kimi-code-api-key|litellm-api-key|lmstudio|longcat-api-key|llama-cpp|meta-api-key|microsoft-foundry-apikey|microsoft-foundry-entra|minimax-cn-api|minimax-global-api|minimax-cn-oauth|minimax-global-oauth|mistral-api-key|moonshot-api-key|moonshot-api-key-cn|novita-api-key|nvidia-api-key|ollama|ollama-cloud|openai-api-key|opencode-go|opencode-zen|arceeai-openrouter|openrouter-api-key|openrouter-oauth|pixverse-api-key|qianfan-api-key|qwen-token-plan-cn|qwen-token-plan|radius|radius-api-key|runway-api-key|sglang|qwen-standard-api-key-cn|qwen-standard-api-key|stepfun-standard-api-key-cn|stepfun-standard-api-key-intl|stepfun-plan-api-key-cn|stepfun-plan-api-key-intl|synthetic-api-key|tokenhub-api-key|tokenplan-api-key|together-api-key|venice-api-key|ai-gateway-api-key|vllm|volcengine-api-key|vydra-api-key|xai-api-key|xai-device-code|xai-oauth|xiaomi-api-key|xiaomi-token-plan-cn|xiaomi-token-plan-ams|xiaomi-token-plan-sgp|zai-api-key]:authChoice:" \
+    "--auth-choice[Auth: custom-api-key|setup-token|token|apiKey|skip|alibaba-model-studio-api-key|anthropic-cli|arceeai-api-key|baseten-api-key|byteplus-api-key|cerebras-api-key|chutes|chutes-api-key|clawrouter-api-key|cloudflare-ai-gateway-api-key|zai-cn|openai|openai-device-code|qwen-api-key-cn|qwen-api-key|zai-coding-cn|zai-coding-global|cohere-api-key|comfy-cloud-api-key|copilot-proxy|deepinfra-api-key|deepseek-api-key|llama-cpp-existing-server|fal-api-key|featherless-api-key|fireworks-api-key|github-copilot|github-copilot-enterprise|zai-global|gmi-api-key|gemini-api-key|google-vertex-api-key|groq-api-key|huggingface-api-key|kie-api-key|kilocode-api-key|kimi-code-api-key|litellm-api-key|lmstudio|longcat-api-key|llama-cpp|meta-api-key|microsoft-foundry-apikey|microsoft-foundry-entra|minimax-cn-api|minimax-global-api|minimax-cn-oauth|minimax-global-oauth|mistral-api-key|moonshot-api-key|moonshot-api-key-cn|novita-api-key|nvidia-api-key|ollama|ollama-cloud|openai-api-key|opencode-go|opencode-zen|arceeai-openrouter|openrouter-api-key|openrouter-oauth|pixverse-api-key|qianfan-api-key|qwen-token-plan-cn|qwen-token-plan|radius|radius-api-key|runway-api-key|sglang|openai-token-sharing|qwen-standard-api-key-cn|qwen-standard-api-key|stepfun-standard-api-key-cn|stepfun-standard-api-key-intl|stepfun-plan-api-key-cn|stepfun-plan-api-key-intl|synthetic-api-key|telnyx-api-key|tokenhub-api-key|tokenplan-api-key|together-api-key|venice-api-key|ai-gateway-api-key|vllm|volcengine-api-key|vydra-api-key|xai-api-key|xai-device-code|xai-oauth|xiaomi-api-key|xiaomi-token-plan-cn|xiaomi-token-plan-ams|xiaomi-token-plan-sgp|zai-api-key]:authChoice:" \
     "--token-provider[Token provider id (non-interactive; used with --auth-choice token)]:tokenProvider:" \
     "--token[Token value (non-interactive; used with --auth-choice token)]:token:" \
     "--token-profile-id[Auth profile id (non-interactive; default: <provider>:manual)]:tokenProfileId:" \
@@ -125,6 +124,7 @@ _openclaw_setup() {
     "--github-copilot-token[GitHub Copilot OAuth token]:githubCopilotToken:" \
     "--gemini-api-key[Gemini API key]:geminiApiKey:" \
     "--huggingface-api-key[Hugging Face API key (HF token)]:huggingfaceApiKey:" \
+    "--kie-api-key[Kie AI API key]:kieApiKey:" \
     "--litellm-api-key[LiteLLM API key]:litellmApiKey:" \
     "--lmstudio-api-key[LM Studio API key]:lmstudioApiKey:" \
     "--minimax-api-key[MiniMax API key]:minimaxApiKey:" \
@@ -170,6 +170,7 @@ _openclaw_setup() {
     "--moonshot-api-key[Moonshot API key]:moonshotApiKey:" \
     "--tokenhub-api-key[Tencent TokenHub API key]:tokenhubApiKey:" \
     "--tokenplan-api-key[Tencent TokenPlan API key]:tokenplanApiKey:" \
+    "--telnyx-api-key[Telnyx API key]:telnyxApiKey:" \
     "--venice-api-key[Venice API key]:veniceApiKey:" \
     "--ai-gateway-api-key[Vercel AI Gateway API key]:aiGatewayApiKey:" \
     "--vydra-api-key[Vydra API key]:vydraApiKey:" \
@@ -274,7 +275,7 @@ _openclaw_onboard() {
     "--accept-risk[Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)]" \
     "--flow[Onboard flow: quickstart|advanced|manual|import]:flow:" \
     "--mode[Onboard mode: local|remote]:mode:" \
-    "--auth-choice[Auth: custom-api-key|setup-token|token|apiKey|skip|alibaba-model-studio-api-key|anthropic-cli|arceeai-api-key|baseten-api-key|byteplus-api-key|cerebras-api-key|openai-device-code|openai|chutes|chutes-api-key|clawrouter-api-key|cloudflare-ai-gateway-api-key|zai-cn|qwen-api-key-cn|qwen-api-key|zai-coding-cn|zai-coding-global|cohere-api-key|comfy-cloud-api-key|copilot-proxy|deepinfra-api-key|deepseek-api-key|llama-cpp-existing-server|fal-api-key|featherless-api-key|fireworks-api-key|github-copilot|github-copilot-enterprise|zai-global|gmi-api-key|gemini-api-key|google-vertex-api-key|groq-api-key|huggingface-api-key|kilocode-api-key|kimi-code-api-key|litellm-api-key|lmstudio|longcat-api-key|llama-cpp|meta-api-key|microsoft-foundry-apikey|microsoft-foundry-entra|minimax-cn-api|minimax-global-api|minimax-cn-oauth|minimax-global-oauth|mistral-api-key|moonshot-api-key|moonshot-api-key-cn|novita-api-key|nvidia-api-key|ollama|ollama-cloud|openai-api-key|opencode-go|opencode-zen|arceeai-openrouter|openrouter-api-key|openrouter-oauth|pixverse-api-key|qianfan-api-key|qwen-token-plan-cn|qwen-token-plan|radius|radius-api-key|runway-api-key|sglang|qwen-standard-api-key-cn|qwen-standard-api-key|stepfun-standard-api-key-cn|stepfun-standard-api-key-intl|stepfun-plan-api-key-cn|stepfun-plan-api-key-intl|synthetic-api-key|tokenhub-api-key|tokenplan-api-key|together-api-key|venice-api-key|ai-gateway-api-key|vllm|volcengine-api-key|vydra-api-key|xai-api-key|xai-device-code|xai-oauth|xiaomi-api-key|xiaomi-token-plan-cn|xiaomi-token-plan-ams|xiaomi-token-plan-sgp|zai-api-key]:authChoice:" \
+    "--auth-choice[Auth: custom-api-key|setup-token|token|apiKey|skip|alibaba-model-studio-api-key|anthropic-cli|arceeai-api-key|baseten-api-key|byteplus-api-key|cerebras-api-key|chutes|chutes-api-key|clawrouter-api-key|cloudflare-ai-gateway-api-key|zai-cn|openai|openai-device-code|qwen-api-key-cn|qwen-api-key|zai-coding-cn|zai-coding-global|cohere-api-key|comfy-cloud-api-key|copilot-proxy|deepinfra-api-key|deepseek-api-key|llama-cpp-existing-server|fal-api-key|featherless-api-key|fireworks-api-key|github-copilot|github-copilot-enterprise|zai-global|gmi-api-key|gemini-api-key|google-vertex-api-key|groq-api-key|huggingface-api-key|kie-api-key|kilocode-api-key|kimi-code-api-key|litellm-api-key|lmstudio|longcat-api-key|llama-cpp|meta-api-key|microsoft-foundry-apikey|microsoft-foundry-entra|minimax-cn-api|minimax-global-api|minimax-cn-oauth|minimax-global-oauth|mistral-api-key|moonshot-api-key|moonshot-api-key-cn|novita-api-key|nvidia-api-key|ollama|ollama-cloud|openai-api-key|opencode-go|opencode-zen|arceeai-openrouter|openrouter-api-key|openrouter-oauth|pixverse-api-key|qianfan-api-key|qwen-token-plan-cn|qwen-token-plan|radius|radius-api-key|runway-api-key|sglang|openai-token-sharing|qwen-standard-api-key-cn|qwen-standard-api-key|stepfun-standard-api-key-cn|stepfun-standard-api-key-intl|stepfun-plan-api-key-cn|stepfun-plan-api-key-intl|synthetic-api-key|telnyx-api-key|tokenhub-api-key|tokenplan-api-key|together-api-key|venice-api-key|ai-gateway-api-key|vllm|volcengine-api-key|vydra-api-key|xai-api-key|xai-device-code|xai-oauth|xiaomi-api-key|xiaomi-token-plan-cn|xiaomi-token-plan-ams|xiaomi-token-plan-sgp|zai-api-key]:authChoice:" \
     "--token-provider[Token provider id (non-interactive; used with --auth-choice token)]:tokenProvider:" \
     "--token[Token value (non-interactive; used with --auth-choice token)]:token:" \
     "--token-profile-id[Auth profile id (non-interactive; default: <provider>:manual)]:tokenProfileId:" \
@@ -289,6 +290,7 @@ _openclaw_onboard() {
     "--github-copilot-token[GitHub Copilot OAuth token]:githubCopilotToken:" \
     "--gemini-api-key[Gemini API key]:geminiApiKey:" \
     "--huggingface-api-key[Hugging Face API key (HF token)]:huggingfaceApiKey:" \
+    "--kie-api-key[Kie AI API key]:kieApiKey:" \
     "--litellm-api-key[LiteLLM API key]:litellmApiKey:" \
     "--lmstudio-api-key[LM Studio API key]:lmstudioApiKey:" \
     "--minimax-api-key[MiniMax API key]:minimaxApiKey:" \
@@ -334,6 +336,7 @@ _openclaw_onboard() {
     "--moonshot-api-key[Moonshot API key]:moonshotApiKey:" \
     "--tokenhub-api-key[Tencent TokenHub API key]:tokenhubApiKey:" \
     "--tokenplan-api-key[Tencent TokenPlan API key]:tokenplanApiKey:" \
+    "--telnyx-api-key[Telnyx API key]:telnyxApiKey:" \
     "--venice-api-key[Venice API key]:veniceApiKey:" \
     "--ai-gateway-api-key[Vercel AI Gateway API key]:aiGatewayApiKey:" \
     "--vydra-api-key[Vydra API key]:vydraApiKey:" \
@@ -1986,116 +1989,6 @@ _openclaw_sessions() {
   esac
 }
 
-_openclaw_tasks_list() {
-  _arguments -C \
-    "--json[Output as JSON]" \
-    "--runtime[Filter by kind (subagent, acp, cron, cli)]:runtime:" \
-    "--status[Filter by status (queued, running, succeeded, failed, timed_out, cancelled, lost, blocked)]:status:"
-}
-
-_openclaw_tasks_audit() {
-  _arguments -C \
-    "--json[Output as JSON]" \
-    "--severity[Filter by severity (warn, error)]:severity:" \
-    "--code[Filter by finding code (stale_queued, stale_running, lost, delivery_failed, missing_cleanup, inconsistent_timestamps, restore_failed, stale_waiting, stale_blocked, cancel_stuck, missing_linked_tasks, blocked_task_missing)]:code:" \
-    "--limit[Limit displayed findings]:limit:"
-}
-
-_openclaw_tasks_maintenance() {
-  _arguments -C \
-    "--json[Output as JSON]" \
-    "--apply[Apply reconciliation, cleanup stamping, and pruning]"
-}
-
-_openclaw_tasks_show() {
-  _arguments -C \
-    "--json[Output as JSON]"
-}
-
-_openclaw_tasks_notify() {
-  _arguments -C \
-    
-}
-
-_openclaw_tasks_cancel() {
-  _arguments -C \
-    
-}
-
-_openclaw_tasks_retry() {
-  _arguments -C \
-    
-}
-
-_openclaw_tasks_dismiss() {
-  _arguments -C \
-    
-}
-
-_openclaw_tasks_flow_list() {
-  _arguments -C \
-    "--json[Output as JSON]" \
-    "--status[Filter by status (queued, running, waiting, blocked, succeeded, failed, cancelled, lost)]:status:"
-}
-
-_openclaw_tasks_flow_show() {
-  _arguments -C \
-    "--json[Output as JSON]"
-}
-
-_openclaw_tasks_flow_cancel() {
-  _arguments -C \
-    
-}
-
-_openclaw_tasks_flow() {
-  local -a commands
-  local -a options
-  
-  _arguments -C \
-    "--json[Output as JSON]" \
-    "1: :_values 'command' 'cancel[Cancel a running TaskFlow]' 'list[List tracked TaskFlows]' 'show[Show one TaskFlow by flow id or owner key]'" \
-    "*::arg:->args"
-
-  case $state in
-    (args)
-      case $line[1] in
-        (list) _openclaw_tasks_flow_list ;;
-        (show) _openclaw_tasks_flow_show ;;
-        (cancel) _openclaw_tasks_flow_cancel ;;
-      esac
-      ;;
-  esac
-}
-
-_openclaw_tasks() {
-  local -a commands
-  local -a options
-  
-  _arguments -C \
-    "--json[Output as JSON]" \
-    "--runtime[Filter by kind (subagent, acp, cron, cli)]:runtime:" \
-    "--status[Filter by status (queued, running, succeeded, failed, timed_out, cancelled, lost, blocked)]:status:" \
-    "1: :_values 'command' 'audit[Show stale or broken background tasks and TaskFlows]' 'cancel[Cancel a running background task]' 'dismiss[Dismiss delivery for up to 10 blocked subagent completions]' 'flow[Inspect durable TaskFlow state under tasks]' 'list[List tracked background tasks]' 'maintenance[Preview or apply tasks and TaskFlow maintenance]' 'notify[Set task notify policy]' 'retry[Retry delivery for up to 10 blocked subagent completions]' 'show[Show one background task by task id, run id, or session key]'" \
-    "*::arg:->args"
-
-  case $state in
-    (args)
-      case $line[1] in
-        (list) _openclaw_tasks_list ;;
-        (audit) _openclaw_tasks_audit ;;
-        (maintenance) _openclaw_tasks_maintenance ;;
-        (show) _openclaw_tasks_show ;;
-        (notify) _openclaw_tasks_notify ;;
-        (cancel) _openclaw_tasks_cancel ;;
-        (retry) _openclaw_tasks_retry ;;
-        (dismiss) _openclaw_tasks_dismiss ;;
-        (flow) _openclaw_tasks_flow ;;
-      esac
-      ;;
-  esac
-}
-
 _openclaw_acp_client() {
   _arguments -C \
     "--cwd[Working directory for the ACP session]:cwd:" \
@@ -3717,7 +3610,16 @@ _openclaw_approvals() {
 
 _openclaw_exec_policy_show() {
   _arguments -C \
-    "--json[Output as JSON]"
+    "--agent[Agent whose terminal tools to inspect (automatic for one agent)]:agent:" \
+    "--session[Fetch an existing session's tool preview from saved settings]:session:" \
+    "--verbose[Include policy sources and all command approval scopes]" \
+    "--json[Output as JSON]" \
+    "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
+    "--port[Local Gateway port]:port:" \
+    "--token[Gateway token (if required)]:token:" \
+    "--password[Gateway password (if required)]:password:" \
+    "--timeout[Timeout in ms]:timeout:" \
+    "--expect-final[Wait for final response (agent)]"
 }
 
 _openclaw_exec_policy_preset() {
@@ -3740,7 +3642,7 @@ _openclaw_exec_policy() {
   
   _arguments -C \
      \
-    "1: :_values 'command' 'preset[Apply a synchronized preset: \"yolo\", \"cautious\", or \"deny-all\"]' 'set[Synchronize local config and host approvals using explicit values]' 'show[Show the local config policy, host approvals, and effective merge]'" \
+    "1: :_values 'command' 'preset[Apply a synchronized preset: \"yolo\", \"cautious\", or \"deny-all\"]' 'set[Synchronize local config and host approvals using explicit values]' 'show[Explain terminal tool access and command approvals (offline unless --session)]'" \
     "*::arg:->args"
 
   case $state in
@@ -3988,68 +3890,13 @@ _openclaw_nodes_location() {
   esac
 }
 
-_openclaw_nodes_canvas_present() {
-  _arguments -C \
-    "--node[Node id, name, or IP]:node:" \
-    "--target[Target URL/path (optional)]:target:" \
-    "--x[Placement x coordinate]:x:" \
-    "--y[Placement y coordinate]:y:" \
-    "--width[Placement width]:width:" \
-    "--height[Placement height]:height:" \
-    "--invoke-timeout[Node invoke timeout in ms]:invokeTimeout:" \
-    "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
-    "--token[Gateway token (if required)]:token:" \
-    "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
-}
-
-_openclaw_nodes_canvas_hide() {
-  _arguments -C \
-    "--node[Node id, name, or IP]:node:" \
-    "--invoke-timeout[Node invoke timeout in ms]:invokeTimeout:" \
-    "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
-    "--token[Gateway token (if required)]:token:" \
-    "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
-}
-
-_openclaw_nodes_canvas_navigate() {
-  _arguments -C \
-    "--node[Node id, name, or IP]:node:" \
-    "--invoke-timeout[Node invoke timeout in ms]:invokeTimeout:" \
-    "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
-    "--token[Gateway token (if required)]:token:" \
-    "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
-}
-
-_openclaw_nodes_canvas() {
-  local -a commands
-  local -a options
-  
-  _arguments -C \
-     \
-    "1: :_values 'command' 'hide[Hide the canvas]' 'navigate[Navigate the canvas to a URL]' 'present[Show the canvas (optionally with a target URL/path)]'" \
-    "*::arg:->args"
-
-  case $state in
-    (args)
-      case $line[1] in
-        (present) _openclaw_nodes_canvas_present ;;
-        (hide) _openclaw_nodes_canvas_hide ;;
-        (navigate) _openclaw_nodes_canvas_navigate ;;
-      esac
-      ;;
-  esac
-}
-
 _openclaw_nodes() {
   local -a commands
   local -a options
   
   _arguments -C \
      \
-    "1: :_values 'command' 'approve[Approve a pending pairing request]' 'camera[Capture camera media from a paired node]' 'canvas[Present widget documents on a paired macOS panel]' 'describe[Describe a node (capabilities + supported invoke commands)]' 'invoke[Invoke a command on a paired node]' 'list[List pending and paired nodes]' 'location[Fetch location from a paired node]' 'notify[Send a local notification on a node]' 'pending[List pending pairing requests]' 'push[Send an APNs test push to an iOS node]' 'reject[Reject a pending pairing request]' 'remove[Remove a paired node entry]' 'rename[Rename a paired node (display name override)]' 'screen[Capture screen recordings from a paired node]' 'status[List known nodes with connection status and capabilities]'" \
+    "1: :_values 'command' 'approve[Approve a pending pairing request]' 'camera[Capture camera media from a paired node]' 'describe[Describe a node (capabilities + supported invoke commands)]' 'invoke[Invoke a command on a paired node]' 'list[List pending and paired nodes]' 'location[Fetch location from a paired node]' 'notify[Send a local notification on a node]' 'pending[List pending pairing requests]' 'push[Send an APNs test push to an iOS node]' 'reject[Reject a pending pairing request]' 'remove[Remove a paired node entry]' 'rename[Rename a paired node (display name override)]' 'screen[Capture screen recordings from a paired node]' 'status[List known nodes with connection status and capabilities]'" \
     "*::arg:->args"
 
   case $state in
@@ -4069,7 +3916,6 @@ _openclaw_nodes() {
         (camera) _openclaw_nodes_camera ;;
         (screen) _openclaw_nodes_screen ;;
         (location) _openclaw_nodes_location ;;
-        (canvas) _openclaw_nodes_canvas ;;
       esac
       ;;
   esac
@@ -4210,13 +4056,22 @@ _openclaw_users_link_email() {
     "--json[Output JSON]"
 }
 
+_openclaw_users_merge() {
+  _arguments -C \
+    "--into[Surviving profile id]:into:" \
+    "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
+    "--token[Gateway token (if required)]:token:" \
+    "--timeout[Timeout in ms]:timeout:" \
+    "--json[Output JSON]"
+}
+
 _openclaw_users() {
   local -a commands
   local -a options
   
   _arguments -C \
      \
-    "1: :_values 'command' 'link-email[Link an email alias to a user profile]' 'list[List durable user profiles]'" \
+    "1: :_values 'command' 'link-email[Link an email alias to a user profile]' 'list[List durable user profiles]' 'merge[Merge a duplicate user profile into a surviving profile]'" \
     "*::arg:->args"
 
   case $state in
@@ -4224,6 +4079,7 @@ _openclaw_users() {
       case $line[1] in
         (list) _openclaw_users_list ;;
         (link-email) _openclaw_users_link_email ;;
+        (merge) _openclaw_users_merge ;;
       esac
       ;;
   esac
@@ -4524,6 +4380,22 @@ _openclaw_worktrees_remove() {
     "--json[Output JSON]"
 }
 
+_openclaw_worktrees_retire_snapshot() {
+  _arguments -C \
+    "--expected-ref[Exact snapshot ref]:expectedRef:" \
+    "--expected-oid[Exact snapshot commit]:expectedOid:" \
+    "--removed-at[Exact recorded removal time]:removedAt:" \
+    "--retained-ref[Retained branch or remote-tracking source ref]:retainedRef:" \
+    "--retained-oid[Exact retained source commit]:retainedOid:" \
+    "--json[Output JSON]"
+}
+
+_openclaw_worktrees_recover_removal() {
+  _arguments -C \
+    "--snapshot[Expected pending snapshot commit]:snapshot:" \
+    "--json[Output JSON]"
+}
+
 _openclaw_worktrees_restore() {
   _arguments -C \
     "--recover-exact-state[Reconcile a completed but unfinalized exact-state retirement using its original JSON request]:recoverExactState:" \
@@ -4541,7 +4413,7 @@ _openclaw_worktrees() {
   
   _arguments -C \
      \
-    "1: :_values 'command' 'create[Create a managed worktree]' 'gc[Run managed worktree cleanup now]' 'list[List active and restorable managed worktrees]' 'remove[Snapshot and remove a managed worktree]' 'restore[Restore a managed worktree from its snapshot]'" \
+    "1: :_values 'command' 'create[Create a managed worktree]' 'gc[Run managed worktree cleanup now]' 'list[List active and restorable managed worktrees]' 'recover-removal[Resume interrupted removal from its original clean snapshot]' 'remove[Snapshot and remove a managed worktree]' 'restore[Restore a managed worktree from its snapshot]' 'retire-snapshot[Retire one removed snapshot whose source is retained elsewhere]'" \
     "*::arg:->args"
 
   case $state in
@@ -4550,6 +4422,8 @@ _openclaw_worktrees() {
         (list) _openclaw_worktrees_list ;;
         (create) _openclaw_worktrees_create ;;
         (remove) _openclaw_worktrees_remove ;;
+        (retire-snapshot) _openclaw_worktrees_retire_snapshot ;;
+        (recover-removal) _openclaw_worktrees_recover_removal ;;
         (restore) _openclaw_worktrees_restore ;;
         (gc) _openclaw_worktrees_gc ;;
       esac
@@ -5295,6 +5169,7 @@ _openclaw_plugins_disable() {
 _openclaw_plugins_reload() {
   _arguments -C \
     "--accept-capabilities[Accept changed declared capabilities]" \
+    "--wait[Wait for admitted work without a deadline; Ctrl-C cancels the wait]" \
     "--json[Print the applied runtime generation]"
 }
 
@@ -5311,6 +5186,7 @@ _openclaw_plugins_install() {
     "(--link -l)"{--link,-l}"[Link a local path instead of copying]" \
     "--force[Confirm non-ClawHub sources and overwrite an existing plugin or hook pack]" \
     "--pin[Record npm installs as exact resolved <name>@<version>]" \
+    "--no-enable[Preserve existing plugin enablement, allowlists, and denylists]" \
     "--accept-capabilities[Accept the plugin's declared capabilities]" \
     "--dangerously-force-unsafe-install[Deprecated no-op; security.installPolicy may still block]" \
     "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]" \
@@ -6337,6 +6213,11 @@ _openclaw_skills() {
   esac
 }
 
+_openclaw_update_admit() {
+  _arguments -C \
+    "--context[Absolute path to the private admission context]:context:"
+}
+
 _openclaw_update_cleanup() {
   _arguments -C \
     "--dry-run[Inspect recovery metadata without writes]" \
@@ -6376,7 +6257,7 @@ _openclaw_update_migration_plan() {
 _openclaw_update_wizard() {
   _arguments -C \
     "--accept-capabilities[Accept widened plugin capabilities]" \
-    "--timeout[Timeout for each update step in seconds (default: 1800)]:timeout:"
+    "--timeout[Set a per-step deadline in seconds]:timeout:"
 }
 
 _openclaw_update_status() {
@@ -6393,9 +6274,10 @@ _openclaw_update() {
     "--json[Output result as JSON]" \
     "--no-restart[Skip restarting the gateway service after a successful update]" \
     "--dry-run[Preview update actions without making changes]" \
+    "--admission[Select candidate or installed admission checks (default: auto)]:admission:" \
     "--channel[Persist update channel (git + npm)]:channel:" \
     "--tag[Override the package target for this update (dist-tag, version, or package spec)]:tag:" \
-    "--timeout[Timeout for each update step in seconds (default: 1800)]:timeout:" \
+    "--timeout[Set a per-step deadline in seconds]:timeout:" \
     "--yes[Skip confirmation prompts (non-interactive)]" \
     "--reapply-local-overrides[Replay trusted packaged dist edits when the target baseline is unchanged]" \
     "--accept-capabilities[Accept widened plugin capabilities]" \
@@ -6405,6 +6287,7 @@ _openclaw_update() {
   case $state in
     (args)
       case $line[1] in
+        (admit) _openclaw_update_admit ;;
         (cleanup) _openclaw_update_cleanup ;;
         (repair) _openclaw_update_repair ;;
         (finalize) _openclaw_update_finalize ;;

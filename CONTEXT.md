@@ -167,11 +167,11 @@ installed CLI is authoritative for this host.
 
 ## Layout (all owned by `shelldon`)
 
-- `~/.openclaw/.env` — the **single** environment-secrets file (mode `600`,
-  gitignored). Holds `HCLOUD_TOKEN`, `COOLIFY_API_TOKEN`, `OPENROUTER_API_KEY`,
-  `GEMINI_API_KEY`, `GROCY_API_KEY`. The gateway loads it into the process
-  environment at startup; config strings reference it as `${VAR}`. Never create a
-  second plaintext location for an environment secret.
+- `~/.openclaw/.env` — the **single** environment-secrets file (mode `600`, gitignored).
+  Holds `HCLOUD_TOKEN`, `COOLIFY_API_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`,
+  `GROCY_API_KEY`, `IMMICH_API_KEY`, `IMMICH_ADMIN_API_KEY`. The gateway loads it
+  into the process environment at startup; config strings reference it as `${VAR}`.
+  Never create a second plaintext location for an environment secret!
 - `~/.openclaw/openclaw.json` — tracked main config (mode `600`); credential fields
   use `${VAR}` references resolved from the ignored `.env` at gateway startup.
 - `~/.openclaw/workspace/` — agent workspace: restored `IDENTITY.md` + `USER.md`,
@@ -378,8 +378,16 @@ agent rather than copying Docker runtime state wholesale:
 - The `codex` plugin is enabled and loaded. Use `openclaw models status` before
   changing provider or runtime configuration; it is the live authority for model
   routes and credential usability.
-- `web_search` and `web_fetch` are enabled with DuckDuckGo as the key-free search
-  provider.
+- `web_search` and `web_fetch` are enabled. Web search runs through the bundled
+  Google plugin with Google Search grounding: `tools.web.search.provider: "gemini"`,
+  authenticated by `${GEMINI_API_KEY}` from the ignored `.env`.
+- `plugins.entries.google.config.webSearch.model` is pinned to `gemini-2.5-flash`.
+  OpenClaw's Gemini search default is `gemini-3.6-flash`, which is quota-exhausted
+  (HTTP 429) on this key, so the pin is load-bearing, not cosmetic. Do not remove it
+  without first confirming quota on the replacement model.
+- DuckDuckGo is no longer the search provider. It was retired because DuckDuckGo's
+  HTML endpoint served anti-bot challenges to this host, so `web_search` failed
+  intermittently. The `@openclaw/duckduckgo-plugin` entry remains enabled but unselected.
 - Legacy provider configuration was not copied wholesale from Docker; restore
   additional providers only through the current native setup flow.
 
