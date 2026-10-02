@@ -959,6 +959,10 @@
         {
           "channel": "telegram",
           "to": "<telegram-chat-id>"
+        },
+        {
+          "channel": "discord",
+          "to": "<discord-channel-id>"
         }
       ]
     }
