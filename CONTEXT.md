@@ -83,7 +83,7 @@ automations, and wiki. The complete Docker-era state remains preserved as backup
 | Item | Value |
 |---|---|
 | Host | `ubuntu-8gb-nbg` (195.201.42.226, Hetzner nbg1) |
-| OpenClaw version | 2026.9.5 (`ec9c1a1`) |
+| OpenClaw version | 2026.9.7 (`c074824`) |
 | Runtime | Native Node.js v24 (system `/usr/bin/node`), **not** Docker |
 | Service user | `shelldon` (uid 1000) — gateway never runs as root |
 | Public URL | `https://ai.sieh.org/` |
@@ -162,7 +162,7 @@ catalog, usage limits, and privacy policies:
 - https://opencode.ai/docs/en/go.md
 
 When a local command and a remembered procedure disagree, check the docs for
-OpenClaw `2026.9.5` behavior and verify with `openclaw <command> --help` as the
+OpenClaw `2026.9.7` behavior and verify with `openclaw <command> --help` as the
 installed CLI is authoritative for this host.
 
 ## Layout (all owned by `shelldon`)
@@ -250,7 +250,7 @@ sudo journalctl -u openclaw-gateway.service --follow
   `.env` at startup; its value must never enter Git. Telegram, Discord, and
   llama.cpp credential fields likewise use `${VAR}` references. The tracked config
   and retained snapshots contain references only, never credential values.
-- `gateway.trustedProxies`: `["127.0.0.1", "::1", "172.25.0.6"]` — the new gateway
+- `gateway.trustedProxies`: `["127.0.0.1", "::1", "172.25.0.3"]` — the new gateway
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
 - `gateway.controlUi.allowedOrigins`: `["https://ai.sieh.org"]`.
@@ -393,7 +393,7 @@ agent rather than copying Docker runtime state wholesale:
 - ⚠️ The generated `.conf` was edited directly + `nginx -s reload` because a plain
   container restart does not regenerate it from the DB. Editing host 34 in the NPM
   UI later regenerates from the DB — same value, harmless.
-- ⚠️ NPM's container IP (`172.25.0.6`) is pinned in `trustedProxies`. If the NPM
+- ⚠️ NPM's observed peer IP (`172.25.0.3`) is pinned in `trustedProxies`. If the NPM
   container is recreated with a different IP, update `gateway.trustedProxies`
   (`openclaw config set gateway.trustedProxies '["127.0.0.1", "::1", "<new-ip>"]'`)
   and restart the gateway.

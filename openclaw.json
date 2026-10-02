@@ -6,12 +6,13 @@
       },
       "workspace": "/home/shelldon/.openclaw/workspace",
       "model": {
-        "primary": "opencode-go/qwen3.8-flash",
+        "primary": "openai/gpt-6-luna",
         "fallbacks": [
+          "nvidia/nemotron-3-super-120b-a12b",
           "opencode-go/deepseek-v4.1-flash"
         ]
       },
-      "thinkingDefault": "medium",
+      "thinkingDefault": "high",
       "heartbeat": {
         "every": "0m"
       },
@@ -37,18 +38,19 @@
         },
         "heartbeat": {
           "every": "30m",
-          "model": "nvidia/nemotron-3-super-120b-a12b",
           "target": "discord",
           "to": "1489587973715656786",
           "isolatedSession": true,
           "activeHours": {
-            "start": "06:30",
-            "end": "07:00",
+            "start": "06:20",
+            "end": "06:45",
             "timezone": "Europe/Berlin"
           },
-          "prompt": "[Morning Heartbeat] Once-daily morning check (fires on first tick inside the 06:30 Europe/Berlin window). Step 1 - health check: run openclaw status; check disk (df -h / and du -sh /tmp/openclaw), memory (free -m), gateway HTTP (curl -sf -o /dev/null http://127.0.0.1:18789/ && echo UP || echo DOWN), and failed or stuck automation runs in the last 24h (openclaw cron list --json). Step 2 - backlog: read /home/shelldon/.openclaw/workspace/backlog_todos.md and pick exactly ONE open item that is the best next step. Step 3 - reply in German with EXACTLY three lines and nothing else: line 1: Morgen, Human! ; line 2 starts with Status: followed by a one-sentence health result (healthy, or the concrete problems found); line 3 starts with Vorschlag: followed by the ONE chosen backlog item plus a few-word reason. No preamble, no greetings beyond line 1, no English, no explanation of the task, no extra lines. Never create or modify automation jobs from this turn. Do not reply NO_REPLY unless the health check itself completely failed; report partial failures instead.",
-          "timeoutSeconds": 240
-        }
+          "prompt": "[Morning Heartbeat] Daily morning digest. Step 1 health: run ONE exec with this exact command: df -h / | tail -1; free -m | head -2; openclaw cron list --all | grep -c error. Step 2 backlog: read /home/shelldon/.openclaw/workspace/backlog_todos.md and pick exactly ONE open item that is the best next step. Step 3 reply in German with EXACTLY three lines and nothing else: line 1 Morgen, Human! ; line 2 Status: plus one sentence; line 3 Vorschlag: plus that ONE backlog item and a few-word reason. Never create or modify automation jobs. Do not reply NO_REPLY unless the health check itself completely failed.",
+          "timeoutSeconds": 360,
+          "model": "openai/gpt-6-luna"
+        },
+        "thinkingDefault": "high"
       },
       "kalle-kief": {
         "name": "Kalle Kief",
@@ -167,7 +169,7 @@
         "enabled": true
       },
       "duckduckgo": {
-        "enabled": true
+        "enabled": false
       },
       "telegram": {
         "enabled": true
@@ -239,6 +241,17 @@
         },
         "enabled": true
       },
+      "google": {
+        "config": {
+          "webSearch": {
+            "model": "gemini-2.5-flash"
+          }
+        },
+        "enabled": true
+      },
+      "browser": {
+        "enabled": true
+      },
       "vault-access-broker": {
         "enabled": true
       }
@@ -249,7 +262,7 @@
       "modelPolicyAllowlist": true,
       "utilityModelSeparation": true
     },
-    "lastTouchedVersion": "2026.9.6"
+    "lastTouchedVersion": "2026.9.7"
   },
   "gateway": {
     "mode": "local",
@@ -265,7 +278,7 @@
     "trustedProxies": [
       "127.0.0.1",
       "::1",
-      "172.25.0.6"
+      "172.25.0.3"
     ],
     "controlUi": {
       "allowedOrigins": [
@@ -277,7 +290,7 @@
     "profile": "full",
     "web": {
       "search": {
-        "provider": "duckduckgo",
+        "provider": "gemini",
         "enabled": true,
         "openaiCodex": {}
       },
@@ -287,8 +300,8 @@
     }
   },
   "wizard": {
-    "lastRunAt": "2026-09-24T09:31:28.270Z",
-    "lastRunVersion": "2026.9.6",
+    "lastRunAt": "2026-09-30T18:37:40.999Z",
+    "lastRunVersion": "2026.9.7",
     "lastRunCommand": "doctor",
     "lastRunMode": "local"
   },
@@ -1071,5 +1084,9 @@
   ],
   "talk": {
     "agentId": "shelldon"
+  },
+  "browser": {
+    "executablePath": "/home/shelldon/.local/opt/google-chrome/current/opt/google/chrome/chrome",
+    "noSandbox": true
   }
 }

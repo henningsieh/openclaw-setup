@@ -224,7 +224,32 @@ rebuild it by hand.
   section above), and `openclaw doctor` shows no plugin ERROR for them.
 - Every expected plugin appears in the gateway's plugin list, including
   `vault-access-broker` when the Vault Access Broker is meant to be online.
-- Control UI loads via `https://ai.sieh.org/`; Discord/Telegram respond.
+- Control UI loads via `https://ai.sieh.org/` in a real browser; a successful
+  local HTTP probe or `/healthz` is not sufficient. Verify the public `/`
+  response is HTTP 200 **and HTML containing
+  `data-openclaw-control-ui-build-id`**, then confirm the application renders
+  and the existing owner connection works. A JSON
+  `proxy_attribution_required` response is a failed update verification.
+- If public attribution fails, compare the exact peer in the gateway's
+  `observed unattributable proxy-shaped traffic from …` log with
+  `gateway.trustedProxies`. Verify that peer serves the configured NPM host
+  before correcting its single-IP entry. This does not establish that an
+  operator changed Nginx; do not change proxy settings or trust a subnet
+  merely to suppress the error.
+- `openclaw status --deep --json` reports Discord/Telegram connected, ready,
+  and without a last error; do not send unsolicited channel messages.
+- Verify the Vault Access Broker through the live Gateway (`plugins.inspect`,
+  `tools.catalog` for Shelldon), the optional tool and both typed hooks via
+  runtime inspection, and its controlled fake-CLI tests. Keep Retrieval
+  Approval and redaction in place. Maintenance is not permission to retrieve
+  an arbitrary Vault Item.
+- Measure generated plugin/runtime and compile caches before and after the
+  window (`du -sk` over all paths in one invocation, so shared hardlinks are
+  counted once). Existing boot cleanup remains responsible for temporary
+  captures. Remove obsolete, regenerable unnamespaced Node compile caches
+  only with the gateway stopped; preserve the current version-namespaced
+  cache. Never delete an active capture, npm runtime generation, or recovery
+  archive just to meet a disk target.
 - Guard file gone; `systemctl --user list-timers | grep openclaw` shows the
   watchdog armed.
 - The boot wiped `~/.openclaw/tmp` and `/tmp/openclaw-plugin-build-*`

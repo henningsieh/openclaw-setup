@@ -1,7 +1,7 @@
 # Vault Access Broker
 
 Credential-free Local Plugin Source for Shelldon's Vault Access Broker. It is a
-native OpenClaw managed-plugin package pinned to OpenClaw `2026.9.5`.
+native OpenClaw managed-plugin package pinned to OpenClaw `2026.9.7`.
 
 ## Capability and policy
 

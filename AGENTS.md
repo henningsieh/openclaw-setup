@@ -48,7 +48,7 @@ record the gap for domain modeling instead of inventing competing vocabulary.
 ## Instance anchors
 
 - Host: `ubuntu-8gb-nbg`; public gateway: `https://ai.sieh.org/`; gateway port:
-  `18789`; OpenClaw version: `2026.9.5`.
+  `18789`; OpenClaw version: `2026.9.7`.
 - Repository remote: `https://github.com/henningsieh/openclaw-setup.git`.
   Native work belongs on `native-setup`; remote `main` contains the Dockerized
   setup and remains untouched unless explicitly changed.
