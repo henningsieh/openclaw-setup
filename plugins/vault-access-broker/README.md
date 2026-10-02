@@ -9,11 +9,13 @@ The package owns one optional tool: `vault_fetch`. Optional metadata means the
 tool is not included in any agent's catalog merely because the plugin is
 installed; it requires an explicit allowlist entry in that agent's tool policy.
 
-`vault_fetch` is exposed only to Shelldon, requires a one-time owner Retrieval
-Approval on every invocation, and fails closed on denial, timeout, cancellation,
-or an unavailable approval route. A Credential Response is use-only and is
-replaced by a redaction marker on persistence, so it must never be repeated in
-chat.
+`vault_fetch` is exposed only to agents whose effective OpenClaw tool policy
+explicitly allowlists it. That agent tool policy is the single source of truth
+for capability authorization; the broker does not keep a second agent list.
+Every invocation requires a one-time owner Retrieval Approval and fails closed
+on denial, timeout, cancellation, or an unavailable approval route. A Credential
+Response is use-only and is replaced by a redaction marker on persistence, so it
+must never be repeated in chat.
 
 Domain vocabulary lives in `CONTEXT.md` (Vault Credential Access). Activation,
 approval routing, and the production validation checklist live in
