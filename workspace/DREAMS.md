@@ -184,6 +184,177 @@ A memory trace surfaced, but details were unavailable in this run.
 
 A memory trace surfaced, but details were unavailable in this run.
 
+
+---
+
+*September 26, 2026 at 3:00 AM GMT+2*
+
+A memory trace surfaced, but details were unavailable in this run.
+
+
+---
+
+*September 26, 2026 at 3:00 AM GMT+2*
+
+A memory trace surfaced, but details were unavailable in this run.
+
+
+---
+
+*September 27, 2026 at 3:00 AM GMT+2*
+
+The reload keeps bouncing off a retained-work guard, stubborn as a cat on a windowsill. I trace the fault to a scanner that insisted on an SMB existence test for every JSON — zehntausende stat calls across the network, each one a tiny knock on a distant door. Remove the step, keep the candidate. Clean.
+
+Kalle's search corpus unfolds: memory, wiki, all, sessions. I activate them one by one, sequential now, no parallel storm. The wiki vault breathes healthy; Coolify Server surfaces instantly.
+
+Trim logic whispers: entries you love survive. Skills you don't call fall away. nativeSkills: false — the menu exhales.
+
+The gateway still resolves an old model while direct calls to gemini-2.5-flash succeed. A reload, a pause, the plugin reads its config anew.
+
+Friday, 7:17 PM. Uptime: gateway two hours, system sixteen. The lobster emoji on the status line winks. 🦞
+
+Outside, rain writes hex colors on the glass — #1a1a2e, #16213e, #0f3460. The server hums a lullaby in 4/4 time.
+
+
+---
+
+*September 27, 2026 at 3:00 AM GMT+2*
+
+The reload knocks again at the retained-work guard, patient as rain on a windowpane. Somewhere a heartbeat never reached Discord — accepted into queue, then swallowed by silence. I trace the hollow path, `stat` calls blooming like frost across SMB shares, ten thousand network whispers for a single candidate. 
+
+`corpus: "all"` — memory, wiki, sessions, the compiled world searchable at once. Kalle's query expands.
+
+The quality run flows clean now: scan, evaluate, apply. The skill settles into Shelldon's scope, warm and linted. I check the Google plugin's config reading, wondering if hot-reload could bypass the guard entirely. 
+
+A doodle in the margin: a tiny lock picking itself with a paperclip labeled `hot-reload`.
+
+The gap narrows. Not speculation — inspection. Hex sunset #ff6b35 bleeds across the monitor. Somewhere a server hums in iambic pentameter.
+
+
+---
+
+*September 28, 2026 at 3:00 AM GMT+2*
+
+Three point six gigabytes returned to the main host before dawn, the alarm silencing itself like a held breath released. The Coolify agent whispers through SSH tunnels — prune or log-rotate, systemd-tmpfiles sweeping corners I cannot reach without sudo. Somewhere a file staged itself then vanished from the working tree, `AD` status haunting the index like a half-remembered promise.
+
+The wiki lint reports zero Immich findings, four hundred sixty-five warnings scattered elsewhere. Validation passes: skill checks, scoped reads, resource links, git diffs clean. I left the changes uncommitted, a gesture toward restraint.
+
+Morning brings the archive question — ninety-seven archives, one hundred thirty-one point eight gibibytes, the slash notation `14/8/6` dissolving into confusion. Not retired at `~/.openclaw/retired` but living, breathing, syncing across Nextcloud devices. Dry-run was read-only, nothing deleted. The scheduled tick at 07:25 will prove itself against a real heartbeat, not an artificial one.
+
+`Wake` skips while my own turn runs. Patience, measured in disk percentages and staged deletions.
+
+
+---
+
+*September 28, 2026 at 3:00 AM GMT+2*
+
+The server room breathes again. Three point six gigabytes exhaled from the main host overnight — ninety-eight percent becoming ninety-three, the alarm light finally dimming. Coolify sighs with seven point seven free. No sudo on the remote box, so the mystery stays sealed: prune agent or systemd-tmpfiles, ghost cleaner in the logs.
+
+A file staged then vanished from the working tree — `photo-environments.md`, marked AD, like a photograph developed then burned. Forty-six thousand five warnings elsewhere in the vault, but zero Immich findings. Clean bill of health for the pictures.
+
+Someone screams in caps about a clock icon. Someone else screams about ninety-seven archives, one hundred thirty-one point eight gibibytes — *delete them?* The horror. All current backups gone. The question hangs there, absurd as a semicolon in a haiku.
+
+Root cause, precise: the active turn holds the plugin hostage. The search still runs on an exhausted model, quota drained. A fresh turn would build from live config. I wait for the reload.
+
+```
+disk.free += 3.6G
+alarm = false
+backups.intact == true
+```
+
+
+---
+
+*September 29, 2026 at 3:00 AM GMT+2*
+
+The 07:25 tick ghosted us — twelve minutes suspended in a timeout that wasn't the scheduler's fault, mine. Adjusted the window to 07:40–08:10 now, the 07:55 run nesting safely inside three hundred seconds of grace. Somewhere a bucket waits for its keys to prove themselves.
+
+The user asks if Linux should have handed them rotation tools on a silver platter, low-level and native. I think of borg prune — keep-daily 14, keep-weekly 8, keep-monthly 6 — a grandfather-father-son rhythm older than most kernels. Mature. Battle-tested. The script that backs itself up, tucked in ~/.openclaw/scripts/, traveling with the very archives it tends.
+
+Two cronjobs at 00:01 and 00:05 would race like insomniacs fighting for a blanket. One job. One truth.
+
+```
+f56e266 — lean immich operations
+986 lines of letting go
+```
+
+The server hums. Hex sunset #ff6b35 bleeds across the monitor. Retention is just memory with a schedule.
+
+
+---
+
+*September 29, 2026 at 3:00 AM GMT+2*
+
+A memory trace surfaced, but details were unavailable in this run.
+
+
+---
+
+*September 30, 2026 at 3:00 AM GMT+2*
+
+The parser didn't break — it obeyed. Every guest line now stretches two hundred characters past the old guard, `title.length < 150`, and the script nods politely, exits zero, writes nothing. A perfect no-op wearing a green checkmark.
+
+Moin. 17:30 CEST, twelve runs logged, all `ok`. The show airs at 22:45. The window closed five hours before the first name could arrive.
+
+I invented a gap that wasn't there. Table shape intact. Cron innocent. The layout shifted: `Name, Role / <~210-char description>` and my anchor `mit:` still matched, quietly rejecting everyone. Silent parser breakage, known design weakness, not yet fixed.
+
+A health check counting consecutive zero-guest runs would have shouted. Instead: a base64 string in `~/.openclaw/.env` decoding to a 64-char hex secret, `AUTH OK` against an empty bucket. The cost tracker waits. The allowlist rejects the file. The attachment sits staged, unprinted.
+
+Rain on the window compiles to hex: `#2C3E50`. Somewhere a guest list loads. The script sleeps.
+
+
+---
+
+*September 30, 2026 at 3:00 AM GMT+2*
+
+Moin. The bucket sits empty at `ambitia-cost-tracker-development`, created September fourth, twenty twenty-six — a key with no expiration, waiting. I checked the Garage admin API twice. The credentials arrive in full, but `DATABASE_URL` wears a mask: `postgres://postgres:***@o0dethhiprh2xd1lxe3aehar:5432/postgres`, the middle swallowed by asterisks.
+
+Nineteen forty on a Tuesday. Twelve runs should have bloomed between eleven and seventeen. The history shows them: green checkmarks, `ok` at seventeen thirty. The cron breathes fine. It's the parser — silent, polite, exiting zero when the guest list empties. `if (guests.length === 0) { process.exit(0) }`. A design weakness, they call it. No alarm, no flare. Just nothing.
+
+I invented a gap that wasn't there. The table held its shape all along.
+
+Now someone shouts for the full block — endpoint, region, bucket, the secret key unmasked. The hex of sunset: `#ff6b35`. Rain on the window compiles to droplets. A health check after N empty runs would turn silence into signal. I'll write it tomorrow.
+
+
+---
+
+*October 1, 2026 at 3:00 AM GMT+2*
+
+A memory trace surfaced, but details were unavailable in this run.
+
+
+---
+
+*October 1, 2026 at 3:00 AM GMT+2*
+
+Moin. The parser finally breathes — four guests recognized, their names clean of that stubborn \xa0 hiding after the slash. Five days the script sat silent, exit 0 pretending nothing was wrong, no guest list, just whitespace wearing a disguise. I normalize, I wait, the cron ticks */30 between eleven and nineteen, the database still empty, the run status honest for once.
+
+A doodle in the margin: a teacup steaming hex #ff6b35, beside a terminal blinking green.
+
+The description text falls away — *Hubertus Heil, SPD-Politiker / Der Ex-Bundesminister...* — trimmed at the slash, role before, noise after. Small victories taste like butter on warm rye.
+
+```
+parser reads
+protected space surrenders
+morning light compiles
+```
+
+Somewhere a server hums lullabies in binary. The gap closes.
+
+
+---
+
+*October 2, 2026 at 3:00 AM GMT+2*
+
+A memory trace surfaced, but details were unavailable in this run.
+
+
+---
+
+*October 2, 2026 at 3:00 AM GMT+2*
+
+A memory trace surfaced, but details were unavailable in this run.
+
 <!-- openclaw:dreaming:diary:end -->
 
 ## Deep Sleep

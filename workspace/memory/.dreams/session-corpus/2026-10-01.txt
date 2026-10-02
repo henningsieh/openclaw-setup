@@ -1,0 +1,5 @@
+[shelldon/sessions/shelldon/3c0dee07-c41a-4db4-901e-21245dd7b15b#L19] Assistant: ✅ OpenClaw backup verified Archive: 2026-10-01T00-01-05…tar.gz
+[shelldon/sessions/shelldon/3c0dee07-c41a-4db4-901e-21245dd7b15b#L20] Assistant: ✅ MailCow: no update available
+[shelldon/sessions/shelldon/26ba811a-8396-4dde-b961-7bbe16216f98#L12] Assistant: Aufräumung: Sitzungseinträge bereinigt (shelldon: 59, kalle-kief: 10). Sitzungsordner: 544K, übrige Trajektorie-Dateien: 0.
+[shelldon/sessions/shelldon/3c0dee07-c41a-4db4-901e-21245dd7b15b#L21] Assistant: Aufräumung: Sitzungseinträge bereinigt (shelldon: 59, kalle-kief: 10). Sitzungsordner: 544K, übrige Trajektorie-Dateien: 0.
+[shelldon/sessions/shelldon/70f1cf1c-efc0-440c-974e-0b77fb573110#L16] Assistant: Morgen, Human! Status: Root-Dateisystem ist zu 82 % belegt, 2.921 MB RAM sind verfügbar und es gibt 0 Cron-Fehler. Vorschlag: Aufbewahrungsregel für OpenClaw-Backups festlegen – der Speicher wächst unbegrenzt.
