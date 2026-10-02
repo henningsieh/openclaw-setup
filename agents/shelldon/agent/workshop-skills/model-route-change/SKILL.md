@@ -10,6 +10,19 @@ description: "Change a default/fallback model route, fix a missing /models entry
    `agents.defaults.model` is the global route, and a per-agent `agents.entries.<id>.model` **wins
    over it**. Finish when you know the effective route *and* whether an override exists.
 
+   **When the user reports that a model "failed" or "didn't take effect", compare the models
+   actually pinned to the sessions before blaming the provider.** Every session carries its own
+   `model`, independent of the global route and of the other channels: `openclaw sessions list
+   --json --limit all | jq '[.sessions[] | {key, model}]'` (the payload is an object with a
+   `sessions` array, not a bare list). A failing session that still reports the *previous* model
+   means the switch never landed there — a session-selection problem, not a provider, credential,
+   or upstream fault, and the model under suspicion may be working fine on another session. Only
+   once the pins agree does a provider fault become the live hypothesis. Read the user's error text
+   verbatim too: a failed turn is frequently absent from both `sessions_history` and the greppable
+   gateway log tail, so when neither retains it, ask for the exact string instead of attributing a
+   cause. Finish when the session pins are known and a cause is either established or explicitly
+   left open pending the error text.
+
 2. **Validate the active provider catalog before selecting a fallback.** Run
    `openclaw models list --agent <id> --provider <provider> --json`; `--all` does not escape a
    provider's active static subset. A model named only in `agents.defaults.model.fallbacks` can
@@ -50,6 +63,20 @@ description: "Change a default/fallback model route, fix a missing /models entry
    `not in the local model catalog` warning is not proof that the route will work; run a direct probe
    before relying on it. Finish when `openclaw models fallbacks list --json` shows exactly the intended
    list and each model remains listed by its provider.
+
+   **Write every path of a multi-field change in one call, and confirm the provider id is current.**
+   Chained `openclaw config set <path> <value>` calls each re-read the file, so a concurrent writer
+   makes each link fail with `The config file changed while this command was writing (config changed
+   since last load), so nothing was changed` — observed three times in a row, losing the whole chain
+   including the links that would have succeeded. Build a JSON array of `{"path": …, "value": …}`
+   objects in a temp file and issue a single `openclaw config set --batch-file <file>`; verified to
+   report `Updated 3 config paths.` Also prefer that over replacing a whole subtree with a merged blob
+   (`config set agents "$(cat merged.json)"`), which rewrites the full file, emits harness noise, and
+   can be killed mid-run. A rejected model reference is a provider-id problem, not a routing one:
+   `Unknown model: openai-codex/gpt-6-luna. "openai-codex" is a legacy provider ID` means the id predates
+   the current format — take the provider from `openclaw models list` (`openai/gpt-6-luna`) and retry;
+   confirmed live afterwards when a session reported that model. Finish when the batch reports the
+   expected path count and a readback shows the intended values.
 
 4. **If changing a route, never point a per-agent override at a catalog-only model.**
    That write can fail with
