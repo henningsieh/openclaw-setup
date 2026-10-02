@@ -57,7 +57,7 @@ describe("vault-access-broker", () => {
     expect(loadVaultFetchTool(entry, {})).toMatchObject({ options: { optional: true } });
   });
 
-  it("requires one-time approval for every Shelldon vault fetch", () => {
+  it("requires one-time approval for every vault fetch", () => {
     const hooks: Array<{ name: string; hook: Hook }> = [];
     entry.register({
       registerTool: vi.fn(),
@@ -79,7 +79,7 @@ describe("vault-access-broker", () => {
     });
   });
 
-  it("requires approval regardless of Shelldon session or requester context", () => {
+  it("requires approval regardless of agent, session, or requester context", () => {
     const hooks: Array<{ name: string; hook: Hook }> = [];
     entry.register({ registerTool: vi.fn(), on: (name: string, hook: Hook) => hooks.push({ name, hook }) } as never);
     const beforeFetch = hooks.find(({ name }) => name === "before_tool_call")?.hook;
@@ -91,6 +91,7 @@ describe("vault-access-broker", () => {
       { agentId: "shelldon", sessionKey: "cron:shelldon:job" },
       { agentId: "shelldon", sessionKey: "heartbeat:shelldon" },
       { agentId: "shelldon", sessionKey: "agent:shelldon:background:job" },
+      { agentId: "kalle-kief", sessionKey: "agent:kalle-kief:discord:grow-log" },
       {
         agentId: "shelldon",
         requester: { channel: "telegram", senderId: "any-user", senderIsOwner: false },
@@ -100,12 +101,14 @@ describe("vault-access-broker", () => {
     }
   });
 
-  it("blocks vault fetches for agents other than Shelldon", () => {
+  it("does not maintain a duplicate agent allowlist in the broker hook", () => {
     const hooks: Array<{ name: string; hook: Hook }> = [];
     entry.register({ registerTool: vi.fn(), on: (name: string, hook: Hook) => hooks.push({ name, hook }) } as never);
     const beforeFetch = hooks.find(({ name }) => name === "before_tool_call")?.hook;
 
-    expect(beforeFetch?.({ toolName: "vault_fetch", params: {} }, { agentId: "another-agent" })).toMatchObject({ block: true });
+    expect(beforeFetch?.({ toolName: "vault_fetch", params: {} }, { agentId: "kalle-kief" })).toMatchObject({
+      requireApproval: { allowedDecisions: ["allow-once", "deny"] },
+    });
   });
 
   it("uses exact-name lookup before a single fallback and returns only a login pair", async () => {

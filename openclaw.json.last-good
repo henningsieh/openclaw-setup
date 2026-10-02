@@ -152,6 +152,11 @@
               "sessions"
             ]
           }
+        },
+        "tools": {
+          "alsoAllow": [
+            "vault_fetch"
+          ]
         }
       }
     }
@@ -337,7 +342,10 @@
       "streaming": {
         "mode": "partial"
       },
-      "richMessages": true
+      "richMessages": true,
+      "execApprovals": {
+        "enabled": "auto"
+      }
     },
     "discord": {
       "enabled": true,
@@ -388,7 +396,13 @@
         }
       },
       "ackReaction": "👀",
-      "ackReactionScope": "all"
+      "ackReactionScope": "all",
+      "execApprovals": {
+        "enabled": "auto",
+        "approvers": [
+          "400054493640916993"
+        ]
+      }
     }
   },
   "ui": {
@@ -941,9 +955,6 @@
     "plugin": {
       "enabled": true,
       "mode": "targets",
-      "agentFilter": [
-        "shelldon"
-      ],
       "targets": [
         {
           "channel": "telegram",

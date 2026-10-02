@@ -20,7 +20,7 @@ The owner's existing Vaultwarden account, whose complete password vault is avail
 _Avoid_: service account, dedicated agent account
 
 **Authorized Agent**:
-An OpenClaw agent explicitly permitted to use the Vault Access Broker. Shelldon is the sole Authorized Agent initially.
+An OpenClaw agent explicitly permitted by the owner to use the Vault Access Broker. Shelldon and Kalle Kief are currently authorized.
 _Avoid_: default agent, trusted agent
 
 **Credential Response**:

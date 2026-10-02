@@ -4,7 +4,6 @@ import { Type } from "typebox";
 import { defineToolPlugin } from "openclaw/plugin-sdk/tool-plugin";
 import { jsonResult } from "openclaw/plugin-sdk/tool-results";
 const VAULT_FETCH_TOOL_NAME = "vault_fetch";
-const SHELLDON_AGENT_ID = "shelldon";
 const REDACTED_RESULT = "[Vault Access Broker Credential Response redacted]";
 export const VaultFetchParameters = Type.Object({
     itemName: Type.String({
@@ -141,9 +140,6 @@ function createRuntimeBitwardenCli() {
     }
     return new BitwardenCli(runBitwardenCommand, { bwBin, serverUrl, credentialDirectory });
 }
-function isShelldonTurn(context) {
-    return context.agentId === SHELLDON_AGENT_ID;
-}
 export function redactVaultFetchResult(message) {
     const record = message;
     const { details: _details, ...withoutDetails } = record;
@@ -184,9 +180,6 @@ export function createVaultAccessBrokerPlugin(cli = createRuntimeBitwardenCli())
         api.on("before_tool_call", (event, context) => {
             if (event.toolName !== VAULT_FETCH_TOOL_NAME)
                 return;
-            if (!isShelldonTurn(context)) {
-                return { block: true, blockReason: "Vault Access Broker is available only to Shelldon." };
-            }
             return {
                 requireApproval: {
                     title: "Retrieve login credential",

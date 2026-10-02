@@ -156,8 +156,10 @@ skills, or dangerous configuration flags. The runtime inspection must report
 `optional: true`, and exactly the `before_tool_call` and
 `tool_result_persist` typed hooks.
 
-Shelldon is the sole Authorized Agent. The grant lives only in Shelldon's
-agent-specific tool policy:
+Shelldon and Kalle Kief are the currently authorized agents. Capability
+authorization has one source of truth: each authorized agent's effective,
+agent-specific OpenClaw tool policy. Do not add a parallel agent list in the
+broker implementation or `approvals.plugin.agentFilter`.
 
 ```bash
 openclaw config patch --stdin <<'EOF'
@@ -168,6 +170,11 @@ openclaw config patch --stdin <<'EOF'
         tools: {
           alsoAllow: ["vault_fetch"]
         }
+      },
+      "kalle-kief": {
+        tools: {
+          alsoAllow: ["vault_fetch"]
+        }
       }
     }
   }
@@ -175,16 +182,15 @@ openclaw config patch --stdin <<'EOF'
 EOF
 ```
 
-The explicit entry is load-bearing, not decorative: the gateway resolves an
-optional plugin tool into an agent catalog only when the effective allowlist
-names the tool (or its plugin id) for that agent. No other agent entry may
-carry `vault_fetch`, the plugin id, or `group:plugins` for this purpose, and
-a future agent receives broker access only through its own explicit entry.
-The broker's own factory and approval gates additionally refuse every
-non-Shelldon agent at runtime. Every Shelldon invocation, regardless of
-requester, channel, or session type, requires a one-time Retrieval Approval.
-Route those approvals to the owner rather than relying on the originating
-conversation:
+Each explicit entry is load-bearing: the gateway resolves an optional plugin
+tool into an agent catalog only when the effective allowlist names the tool
+(or its plugin id) for that agent. No other agent entry may carry `vault_fetch`,
+the plugin id, or `group:plugins` for this purpose; a future agent receives
+access only through its own explicit entry. The broker hook requires one-time
+Retrieval Approval on every invocation, regardless of agent, requester,
+channel, or session type. Route approvals to the owner rather than relying on
+the originating conversation. Omit `agentFilter` so it does not duplicate the
+capability ACL:
 
 ```json5
 {
@@ -192,7 +198,6 @@ conversation:
     plugin: {
       enabled: true,
       mode: "targets",
-      agentFilter: ["shelldon"],
       targets: [{ channel: "telegram", to: "<owner-telegram-user-id>" }]
     }
   }
