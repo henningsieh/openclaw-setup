@@ -45,6 +45,15 @@ description: "Dispose of a plaintext secret file — dotenv dump or credential b
    `shred -u -z -n 3 <file>` and confirm no residue remains for that filename. Finish when the file
    is gone and the routed keys still read back.
 
+   `shred` is a local-filesystem tool. On a network mount (SMB/CIFS, NFS) or a snapshot-backed
+   share it overwrites the live copy and unlinks it, but a pre-deletion snapshot may still hold the
+   old version — `shred` is then *not* a guarantee, and complete removal additionally needs snapshot
+   pruning on the storage side. Check the filesystem before reporting a shred as irreversible
+   (`findmnt -T <path>` or `stat -f -c %T <path>`): even on a local filesystem, SSD wear leveling,
+   copy-on-write, journaling, and snapshots can leave recoverable copies. On a network or
+   snapshot-backed target say plainly that only the live copy was retired. Never let a
+   later user believe a value is unrecoverable when it is not.
+
 8. **Audit for the rest, then report.** Run `openclaw secrets audit` to surface remaining plaintext
    exposures and backup copies; report them along with any un-routed dead or identifier keys
    instead of silently expanding scope.
