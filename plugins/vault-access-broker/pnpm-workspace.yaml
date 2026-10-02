@@ -8,3 +8,5 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - '@openclaw/ai@2026.9.6'
   - openclaw@2026.9.6
+  - '@openclaw/ai@2026.9.7'
+  - openclaw@2026.9.7
