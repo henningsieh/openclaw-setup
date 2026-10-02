@@ -50,7 +50,7 @@
           "timeoutSeconds": 360,
           "model": "openai/gpt-6-luna"
         },
-        "thinkingDefault": "medium"
+        "thinkingDefault": "high"
       },
       "kalle-kief": {
         "name": "Kalle Kief",
@@ -241,15 +241,19 @@
         },
         "enabled": true
       },
-      "vault-access-broker": {
-        "enabled": true
-      },
       "google": {
         "config": {
           "webSearch": {
             "model": "gemini-2.5-flash"
           }
-        }
+        },
+        "enabled": true
+      },
+      "browser": {
+        "enabled": true
+      },
+      "vault-access-broker": {
+        "enabled": true
       }
     }
   },
@@ -258,7 +262,7 @@
       "modelPolicyAllowlist": true,
       "utilityModelSeparation": true
     },
-    "lastTouchedVersion": "2026.9.6"
+    "lastTouchedVersion": "2026.9.7"
   },
   "gateway": {
     "mode": "local",
@@ -274,7 +278,7 @@
     "trustedProxies": [
       "127.0.0.1",
       "::1",
-      "172.25.0.6"
+      "172.25.0.3"
     ],
     "controlUi": {
       "allowedOrigins": [
@@ -296,8 +300,8 @@
     }
   },
   "wizard": {
-    "lastRunAt": "2026-09-24T09:31:28.270Z",
-    "lastRunVersion": "2026.9.6",
+    "lastRunAt": "2026-09-30T18:37:40.999Z",
+    "lastRunVersion": "2026.9.7",
     "lastRunCommand": "doctor",
     "lastRunMode": "local"
   },

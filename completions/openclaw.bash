@@ -57,7 +57,7 @@ _openclaw_completion() {
     done
     cur="${words[cword]}"
     word_prefix="${words[cword+1]}"
-    opts="acp agent agents approvals exec-approvals attach audit backup channels clawbot completion config configure connect cron automations daemon dashboard database devices directory dns docs doctor exec-policy fleet gateway health hooks infer capability logs mcp message migrate models node nodes onboard pairing plugins promos proxy qr reset resume sandbox secrets security sessions setup skills status system tasks telemetry transcripts triage tui terminal chat uninstall update users webhooks worker worktrees -V --version --container --dev --profile --log-level --no-color"
+    opts="acp agent agents approvals exec-approvals attach audit backup channels clawbot completion config configure connect cron automations daemon dashboard database devices directory dns docs doctor exec-policy fleet gateway health hooks infer capability logs mcp message migrate models node nodes onboard pairing plugins promos proxy qr reset resume sandbox secrets security sessions setup skills status system telemetry transcripts triage tui terminal chat uninstall update users webhooks worker worktrees -V --version --container --dev --profile --log-level --no-color"
     value_options="--container --profile --log-level"
     required_value_options="--container --profile --log-level"
     command_path=""
@@ -97,9 +97,9 @@ _openclaw_completion() {
             ;;
           "setup")
             command_path="${candidate_path}"
-            opts="--workspace --agent-name --team --wizard --baseline --reset --reset-scope --non-interactive --classic --tui --accept-risk --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --custom-image-input --custom-text-input --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --tailscale --install-daemon --no-install-daemon --skip-daemon --daemon-runtime --skip-channels --skip-skills --skip-bootstrap --skip-search --skip-health --skip-ui --suppress-gateway-token-output --skip-hooks --node-manager --import-from --import-source --import-secrets --remote-url --remote-token --remote-password -m --message --yes --json"
-            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --tailscale --daemon-runtime --node-manager --import-from --import-source --remote-url --remote-token --remote-password -m --message"
-            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --tailscale --daemon-runtime --node-manager --import-from --import-source --remote-url --remote-token --remote-password -m --message"
+            opts="--workspace --agent-name --team --wizard --baseline --reset --reset-scope --non-interactive --classic --tui --accept-risk --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --custom-image-input --custom-text-input --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --tailscale --install-daemon --no-install-daemon --skip-daemon --daemon-runtime --skip-channels --skip-skills --skip-bootstrap --skip-search --skip-health --skip-ui --suppress-gateway-token-output --skip-hooks --node-manager --import-from --import-source --import-secrets --remote-url --remote-token --remote-password -m --message --yes --json"
+            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --tailscale --daemon-runtime --node-manager --import-from --import-source --remote-url --remote-token --remote-password -m --message"
+            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --tailscale --daemon-runtime --node-manager --import-from --import-source --remote-url --remote-token --remote-password -m --message"
             ;;
           "crestodian")
             command_path="${candidate_path}"
@@ -109,27 +109,27 @@ _openclaw_completion() {
             ;;
           "onboard")
             command_path="${candidate_path}"
-            opts="recommendations --workspace --agent-name --team --reset --reset-scope --non-interactive --modern --classic --tui --accept-risk --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --custom-image-input --custom-text-input --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --install-daemon --no-install-daemon --skip-daemon --daemon-runtime --skip-channels --skip-skills --skip-bootstrap --skip-search --skip-health --skip-ui --suppress-gateway-token-output --skip-hooks --node-manager --import-from --import-source --import-secrets --json"
-            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source"
-            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source"
+            opts="recommendations --workspace --agent-name --team --reset --reset-scope --non-interactive --modern --classic --tui --accept-risk --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --custom-image-input --custom-text-input --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --install-daemon --no-install-daemon --skip-daemon --daemon-runtime --skip-channels --skip-skills --skip-bootstrap --skip-search --skip-health --skip-ui --suppress-gateway-token-output --skip-hooks --node-manager --import-from --import-source --import-secrets --json"
+            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source"
+            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source"
             ;;
           "onboard recommendations")
             command_path="${candidate_path}"
             opts="acknowledge refresh --agent --json"
-            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent"
-            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent"
+            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent"
+            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent"
             ;;
           "onboard recommendations acknowledge")
             command_path="${candidate_path}"
             opts="--agent --retry"
-            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent --retry"
-            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent --retry"
+            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent --retry"
+            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent --retry"
             ;;
           "onboard recommendations refresh")
             command_path="${candidate_path}"
             opts="--agent"
-            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent"
-            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent"
+            value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent"
+            required_value_options="--container --profile --log-level --workspace --agent-name --reset-scope --flow --mode --auth-choice --token-provider --token --token-profile-id --token-expires-in --secret-input-mode --cloudflare-ai-gateway-account-id --cloudflare-ai-gateway-gateway-id --alibaba-model-studio-api-key --anthropic-api-key --clawrouter-api-key --fal-api-key --github-copilot-token --gemini-api-key --huggingface-api-key --kie-api-key --litellm-api-key --lmstudio-api-key --minimax-api-key --nvidia-api-key --ollama-cloud-api-key --openai-api-key --opencode-go-api-key --openrouter-api-key --runway-api-key --together-api-key --xai-api-key --llama-server-api-key --opencode-zen-api-key --arceeai-api-key --baseten-api-key --byteplus-api-key --cerebras-api-key --chutes-api-key --cohere-api-key --cloudflare-ai-gateway-api-key --comfy-api-key --deepinfra-api-key --deepseek-api-key --featherless-api-key --gmi-api-key --longcat-api-key --meta-api-key --mistral-api-key --novita-api-key --groq-api-key --kilocode-api-key --kimi-code-api-key --pixverse-api-key --qianfan-api-key --modelstudio-standard-api-key-cn --modelstudio-standard-api-key --modelstudio-api-key-cn --modelstudio-api-key --qwen-token-plan-api-key --qwen-token-plan-api-key-cn --radius-api-key --fireworks-api-key --moonshot-api-key --tokenhub-api-key --tokenplan-api-key --telnyx-api-key --venice-api-key --ai-gateway-api-key --vydra-api-key --xiaomi-api-key --xiaomi-token-plan-api-key --zai-api-key --synthetic-api-key --volcengine-api-key --stepfun-api-key --custom-base-url --custom-api-key --custom-model-id --custom-provider-id --custom-compatibility --gateway-port --gateway-bind --gateway-auth --gateway-token --gateway-token-ref-env --gateway-password --remote-url --remote-token --remote-password --tailscale --daemon-runtime --node-manager --import-from --import-source --agent"
             ;;
           "configure")
             command_path="${candidate_path}"
@@ -874,84 +874,6 @@ _openclaw_completion() {
             opts="--agent --url --token --password --timeout --json --max-lines"
             value_options="--container --profile --log-level --store --active --limit --agent --url --token --password --timeout --max-lines"
             required_value_options="--container --profile --log-level --store --active --limit --agent --url --token --password --timeout --max-lines"
-            ;;
-          "tasks")
-            command_path="${candidate_path}"
-            opts="audit cancel dismiss flow list maintenance notify retry show --json --runtime --status"
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks list")
-            command_path="${candidate_path}"
-            opts="--json --runtime --status"
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks audit")
-            command_path="${candidate_path}"
-            opts="--json --severity --code --limit"
-            value_options="--container --profile --log-level --runtime --status --severity --code --limit"
-            required_value_options="--container --profile --log-level --runtime --status --severity --code --limit"
-            ;;
-          "tasks maintenance")
-            command_path="${candidate_path}"
-            opts="--json --apply"
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks show")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks notify")
-            command_path="${candidate_path}"
-            opts=""
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks cancel")
-            command_path="${candidate_path}"
-            opts=""
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks retry")
-            command_path="${candidate_path}"
-            opts=""
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks dismiss")
-            command_path="${candidate_path}"
-            opts=""
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks flow")
-            command_path="${candidate_path}"
-            opts="cancel list show --json"
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks flow list")
-            command_path="${candidate_path}"
-            opts="--json --status"
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks flow show")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
-            ;;
-          "tasks flow cancel")
-            command_path="${candidate_path}"
-            opts=""
-            value_options="--container --profile --log-level --runtime --status"
-            required_value_options="--container --profile --log-level --runtime --status"
             ;;
           "acp")
             command_path="${candidate_path}"
@@ -1795,9 +1717,9 @@ _openclaw_completion() {
             ;;
           "exec-policy show")
             command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
+            opts="--agent --session --verbose --json --url --port --token --password --timeout --expect-final"
+            value_options="--container --profile --log-level --agent --session --url --port --token --password --timeout"
+            required_value_options="--container --profile --log-level --agent --session --url --port --token --password --timeout"
             ;;
           "exec-policy preset")
             command_path="${candidate_path}"
@@ -1813,7 +1735,7 @@ _openclaw_completion() {
             ;;
           "nodes")
             command_path="${candidate_path}"
-            opts="approve camera canvas describe invoke list location notify pending push reject remove rename screen status"
+            opts="approve camera describe invoke list location notify pending push reject remove rename screen status"
             value_options="--container --profile --log-level"
             required_value_options="--container --profile --log-level"
             ;;
@@ -1931,30 +1853,6 @@ _openclaw_completion() {
             value_options="--container --profile --log-level --node --max-age --accuracy --location-timeout --invoke-timeout --url --token --timeout"
             required_value_options="--container --profile --log-level --node --max-age --accuracy --location-timeout --invoke-timeout --url --token --timeout"
             ;;
-          "nodes canvas")
-            command_path="${candidate_path}"
-            opts="hide navigate present"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
-          "nodes canvas present")
-            command_path="${candidate_path}"
-            opts="--node --target --x --y --width --height --invoke-timeout --url --token --timeout --json"
-            value_options="--container --profile --log-level --node --target --x --y --width --height --invoke-timeout --url --token --timeout"
-            required_value_options="--container --profile --log-level --node --target --x --y --width --height --invoke-timeout --url --token --timeout"
-            ;;
-          "nodes canvas hide")
-            command_path="${candidate_path}"
-            opts="--node --invoke-timeout --url --token --timeout --json"
-            value_options="--container --profile --log-level --node --invoke-timeout --url --token --timeout"
-            required_value_options="--container --profile --log-level --node --invoke-timeout --url --token --timeout"
-            ;;
-          "nodes canvas navigate")
-            command_path="${candidate_path}"
-            opts="--node --invoke-timeout --url --token --timeout --json"
-            value_options="--container --profile --log-level --node --invoke-timeout --url --token --timeout"
-            required_value_options="--container --profile --log-level --node --invoke-timeout --url --token --timeout"
-            ;;
           "devices")
             command_path="${candidate_path}"
             opts="approve clear join-code list reject remove rename revoke rotate"
@@ -2017,7 +1915,7 @@ _openclaw_completion() {
             ;;
           "users")
             command_path="${candidate_path}"
-            opts="link-email list"
+            opts="link-email list merge"
             value_options="--container --profile --log-level"
             required_value_options="--container --profile --log-level"
             ;;
@@ -2032,6 +1930,12 @@ _openclaw_completion() {
             opts="--to --url --token --timeout --json"
             value_options="--container --profile --log-level --to --url --token --timeout"
             required_value_options="--container --profile --log-level --to --url --token --timeout"
+            ;;
+          "users merge")
+            command_path="${candidate_path}"
+            opts="--into --url --token --timeout --json"
+            value_options="--container --profile --log-level --into --url --token --timeout"
+            required_value_options="--container --profile --log-level --into --url --token --timeout"
             ;;
           "node")
             command_path="${candidate_path}"
@@ -2209,7 +2113,7 @@ _openclaw_completion() {
             ;;
           "worktrees")
             command_path="${candidate_path}"
-            opts="create gc list remove restore"
+            opts="create gc list recover-removal remove restore retire-snapshot"
             value_options="--container --profile --log-level"
             required_value_options="--container --profile --log-level"
             ;;
@@ -2230,6 +2134,18 @@ _openclaw_completion() {
             opts="--force --if-lossless --exact-state --json"
             value_options="--container --profile --log-level --exact-state"
             required_value_options="--container --profile --log-level --exact-state"
+            ;;
+          "worktrees retire-snapshot")
+            command_path="${candidate_path}"
+            opts="--expected-ref --expected-oid --removed-at --retained-ref --retained-oid --json"
+            value_options="--container --profile --log-level --expected-ref --expected-oid --removed-at --retained-ref --retained-oid"
+            required_value_options="--container --profile --log-level --expected-ref --expected-oid --removed-at --retained-ref --retained-oid"
+            ;;
+          "worktrees recover-removal")
+            command_path="${candidate_path}"
+            opts="--snapshot --json"
+            value_options="--container --profile --log-level --snapshot"
+            required_value_options="--container --profile --log-level --snapshot"
             ;;
           "worktrees restore")
             command_path="${candidate_path}"
@@ -2563,7 +2479,7 @@ _openclaw_completion() {
             ;;
           "plugins reload")
             command_path="${candidate_path}"
-            opts="--accept-capabilities --json"
+            opts="--accept-capabilities --wait --json"
             value_options="--container --profile --log-level"
             required_value_options="--container --profile --log-level"
             ;;
@@ -2575,7 +2491,7 @@ _openclaw_completion() {
             ;;
           "plugins install")
             command_path="${candidate_path}"
-            opts="-l --link --force --pin --accept-capabilities --dangerously-force-unsafe-install --acknowledge-install-policy-warning --marketplace"
+            opts="-l --link --force --pin --no-enable --accept-capabilities --dangerously-force-unsafe-install --acknowledge-install-policy-warning --marketplace"
             value_options="--container --profile --log-level --marketplace"
             required_value_options="--container --profile --log-level --marketplace"
             ;;
@@ -3079,45 +2995,51 @@ _openclaw_completion() {
             ;;
           "update")
             command_path="${candidate_path}"
-            opts="cleanup repair status wizard --json --no-restart --dry-run --channel --tag --timeout --yes --reapply-local-overrides --accept-capabilities"
-            value_options="--container --profile --log-level --channel --tag --timeout"
-            required_value_options="--container --profile --log-level --channel --tag --timeout"
+            opts="cleanup repair status wizard --json --no-restart --dry-run --admission --channel --tag --timeout --yes --reapply-local-overrides --accept-capabilities"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            ;;
+          "update admit")
+            command_path="${candidate_path}"
+            opts="--context"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout --context"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout --context"
             ;;
           "update cleanup")
             command_path="${candidate_path}"
             opts="--dry-run --json --yes"
-            value_options="--container --profile --log-level --channel --tag --timeout"
-            required_value_options="--container --profile --log-level --channel --tag --timeout"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout"
             ;;
           "update repair")
             command_path="${candidate_path}"
             opts="--json --channel --timeout --yes --accept-capabilities --no-restart"
-            value_options="--container --profile --log-level --tag --channel --timeout"
-            required_value_options="--container --profile --log-level --tag --channel --timeout"
+            value_options="--container --profile --log-level --admission --tag --channel --timeout"
+            required_value_options="--container --profile --log-level --admission --tag --channel --timeout"
             ;;
           "update finalize")
             command_path="${candidate_path}"
             opts="--json --channel --timeout --yes --accept-capabilities --no-restart"
-            value_options="--container --profile --log-level --tag --channel --timeout"
-            required_value_options="--container --profile --log-level --tag --channel --timeout"
+            value_options="--container --profile --log-level --admission --tag --channel --timeout"
+            required_value_options="--container --profile --log-level --admission --tag --channel --timeout"
             ;;
           "update migration-plan")
             command_path="${candidate_path}"
             opts="--snapshot-home --snapshot-config --snapshot-state --dry-run --json"
-            value_options="--container --profile --log-level --channel --tag --timeout --snapshot-home --snapshot-config --snapshot-state"
-            required_value_options="--container --profile --log-level --channel --tag --timeout --snapshot-home --snapshot-config --snapshot-state"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout --snapshot-home --snapshot-config --snapshot-state"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout --snapshot-home --snapshot-config --snapshot-state"
             ;;
           "update wizard")
             command_path="${candidate_path}"
             opts="--accept-capabilities --timeout"
-            value_options="--container --profile --log-level --channel --tag --timeout"
-            required_value_options="--container --profile --log-level --channel --tag --timeout"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout"
             ;;
           "update status")
             command_path="${candidate_path}"
             opts="--json --timeout"
-            value_options="--container --profile --log-level --channel --tag --timeout"
-            required_value_options="--container --profile --log-level --channel --tag --timeout"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout"
             ;;
         esac
     done
