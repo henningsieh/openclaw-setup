@@ -65,4 +65,26 @@ Weitere Linda-Angebote mit Teilüberschneidung:
 - [Apple Fritter — Elev8 Seeds](https://www.linda-seeds.com/en/buy-feminized-marijuana-seeds/hybrid/extremely-high-content-of-thc/large-yield/apple-fritter-elev8-seeds): gleiche Marke wie das Ziel, aber andere Linie (Sour Apple × Animal Cookies) und Apfelgebäck/Erde/Vanille statt Banane.
 - [Banana Punch — Linda Seeds](https://www.linda-seeds.com/en/buy-feminized-marijuana-seeds/hybrid/extremely-high-content-of-thc/large-yield/banana-punch-linda-seeds): Banana OG × Purple Punch und Banane/Ananas laut Linda; daher nur dann interessant, wenn Banane wichtiger ist als die restliche A&B-Linie.
 
-Die Produktseiten ließen sich am Recherchetag abrufen; das ist kein verlässlicher Nachweis des aktuellen Lagerbestands. Auf der Kannabia-Seite wurden 4,25 € (statt 8,50 €) angezeigt, auf der Linda-eigenen Banana-Punch-Seite 3,50 €; der extrahierte Text zeigte jeweils keine Packungsgröße, daher keine Stückpreise ableiten.
+Die Produktseiten ließen sich am Recherchetag abrufen; das ist kein verlässlicher Nachweis des aktuellen Lagerbestands. Beim ersten reinen Text-Extractor-Lauf waren Variantenmengen unsichtbar; die spätere Browser-DOM-Prüfung hat auf diesen Seiten je einen aktuell ausgewählten 1er bzw. 3er samt Preis offengelegt (siehe Live-Preisprüfung unten).
+
+## Live-Preisprüfung der Rechercheangebote (25.09.2026)
+
+Die Preise unten wurden erneut direkt aus den gerenderten Produktseiten im Browser ausgelesen. Bei Mr. Hanf standen Packungsgröße, Variantenpreis und Bestell-/Lagerstatus gemeinsam auf der jeweiligen Seite. Bei Linda Seeds wurde die vorausgewählte Packungsvariante gegen den angezeigten Seitenpreis geprüft. EUR/Seed = Packungspreis ÷ Samenanzahl; Versand ist nicht enthalten. Händlerpreise und Bestandslabels sind Momentaufnahmen, keine Preisgarantie.
+
+| Datenbankeintrag | Händlerangebot (Preis ÷ Samen) | €/Seed |
+|---|---|---:|
+| Apples and Bananas S1 — Elev8 Seeds | [Mr. Hanf](https://mr-hanf.de/samen-shop/weitere-kategorien/usa-genetik/apples-and-bananas-s1): 3 für 39,99 €; 6 für 89,99 € | 13,33 €; 15,00 € |
+| Apples and Bananas — Elev8 Seeds (Linda; ohne S1-Zusatz) | [Linda Seeds](https://www.linda-seeds.com/en/buy-feminized-marijuana-seeds/sativa/extremely-high-content-of-thc/large-yield/apples-and-bananas-elev8-seeds): vorausgewählte 3er-Packung 51,90 € | 17,30 € |
+| Apple and Bananas — Kannabia Seeds | [Linda Seeds](https://www.linda-seeds.com/en/buy-feminized-marijuana-seeds/hybrid/extremely-high-content-of-thc/large-yield/apple-and-bananas-kannabia-seeds): vorausgewählter 1er 4,25 € (Sale, statt 8,50 €) | 4,25 € |
+| Apple Bananas — 00 Seeds Bank | [Linda Seeds](https://www.linda-seeds.com/en/buy-feminized-marijuana-seeds/hybrid/extremely-high-content-of-thc/large-yield/apple-bananas-00-seeds-bank): vorausgewählter 1er 5,50 € | 5,50 € |
+| Banana Brawler — Royal Queen Seeds | [Mr. Hanf](https://mr-hanf.de/samen-shop/feminisierte-samen/banana-brawler): 1 für 12,00 €; 3 für 29,00 €; 5 für 44,00 €; 10 für 80,00 € | 12,00 €; 9,67 €; 8,80 €; 8,00 € |
+| Apple Fritter — Elev8 Seeds | [Linda Seeds](https://www.linda-seeds.com/en/buy-feminized-marijuana-seeds/hybrid/extremely-high-content-of-thc/large-yield/apple-fritter-elev8-seeds): Seite zeigte „from 49,50 EUR“, aber auch „Item currently not available“ | nicht als kaufbares Angebot geführt |
+| Banana Punch — Barney’s Farm | [Mr. Hanf](https://mr-hanf.de/samen-shop/banana-punch-barneys-farm): 3 für 31,15 €; 5 für 44,26 €; 10 für 76,50 €. 1er für 11,49 € war ausverkauft. | 10,38 €; 8,85 €; 7,65 € |
+| Banana Punch — Linda Seeds | [Linda Seeds](https://www.linda-seeds.com/en/buy-feminized-marijuana-seeds/hybrid/extremely-high-content-of-thc/large-yield/banana-punch-linda-seeds): vorausgewählter 1er 3,50 € | 3,50 € |
+| Banana Purp — Medical Seeds | [Mr. Hanf](https://mr-hanf.de/samen-shop/weitere-kategorien/medizinische-samen/banana-purp): 3 für 22,99 €; 5 für 38,00 €; 10 für 75,00 € | 7,66 €; 7,60 €; 7,50 € |
+| Fat Banana — Royal Queen Seeds | [Mr. Hanf](https://mr-hanf.de/samen-shop/sortenvielfalt/thc-reiche-sorten/fat-banana): 1 für 9,50 €; 3 für 25,00 €; 5 für 37,50 €; 10 für 70,00 € | 9,50 €; 8,33 €; 7,50 €; 7,00 € |
+| Orbital Banana F1 — Royal Queen Seeds | [Mr. Hanf](https://mr-hanf.de/en/seed-shop/variety-diversity/f1-cannabis-varieties/orbital-banana-f1): 1 für 15,50 €; 3 für 38,00 €; 5 für 57,00 €; 10 für 105,00 € | 15,50 €; 12,67 €; 11,40 €; 10,50 € |
+
+**Aus der bepreisten Vergleichstabelle ausgeschlossen:** *Apples & Bananas — Cookies*: für diesen DB-Eintrag ließ sich kein exaktes, passendes Händlerangebot mit Preis und Packungsgröße verifizieren; ein ähnlich benanntes Kannabia-Produkt ist ein anderer Züchtereintrag. Apple Fritter ist wegen der expliziten Nichtverfügbarkeit ebenfalls nicht als aktueller Kaufpreis gelistet. Der ältere Anhangspreis für Orbital Banana F1 (3: 30,40 €) bleibt als historische Nutzerangabe in der Datenbank erhalten und wurde nicht als Live-Preis verwendet.
+
+Die live geprüften Angebote sind als `candidate_offers`-Zeilen mit eigenen `source_catalog`-Belegen in Migration `005_live_offer_prices_2026-09-25.sql` gespeichert; ältere Anhangsangaben bleiben zur Herkunftsklärung erhalten und werden nicht mit den Live-Angeboten verwechselt.
