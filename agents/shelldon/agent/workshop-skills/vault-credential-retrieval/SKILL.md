@@ -9,7 +9,7 @@ description: "Asked for a login, credential, or authentication: call vault_fetch
 
 2. **Call `vault_fetch` with that item name.** Pass `itemName` exactly as the Vault Item is named. Finish when the call returns a Credential Response with `username` and `password`, or a `Vault Access Broker:` error.
 
-3. **Treat the approval prompt as the owner's decision.** Every Shelldon call raises a one-time Retrieval Approval titled `Retrieve login credential` (allow-once / deny) routed to the owner, regardless of requester, channel, or session type. Finish when it is approved once; a deny, timeout, cancellation, or unavailable approval route ends the attempt failed — report it and stop, with no CLI fallback.
+3. **Treat the approval prompt as the owner's decision.** Every Authorized Agent call raises a one-time Retrieval Approval titled `Retrieve login credential` (allow-once / deny) routed to the owner, regardless of requester, channel, or session type. Finish when it is approved once; a deny, timeout, cancellation, or unavailable approval route ends the attempt failed — report it and stop, with no CLI fallback.
 
 4. **Consume the credential in the same turn.** Use the returned username and password to complete the downstream login immediately. Finish when the login completes; the persisted tool result keeps only `[Vault Access Broker Credential Response redacted]`, so a later turn cannot recover the values.
 
@@ -23,4 +23,4 @@ description: "Asked for a login, credential, or authentication: call vault_fetch
 
 Verification: confirm the downstream service accepted the credential, that no reply, progress line, or message contains the username or password, that the persisted tool message shows only the redaction marker, and that exactly one approval appears in the session record. The marker appears for refusals too, so never report a fetch as successful from the marker alone — confirm the downstream login actually worked.
 
-Reference: `vault_fetch` (snake_case) is the tool name; `vault-fetch` is only the legacy script name. The parameter is `itemName`; the lookup prefers an exact name match and accepts a suggested candidate only when it is the sole match.
+Reference: `vault_fetch` (snake_case) is the tool name; `vault-fetch` is only the legacy script name. The parameter is `itemName`; the broker synchronizes its CLI cache before every lookup, prefers an exact name match, and accepts a suggested candidate only when it is the sole match. A failed synchronization ends retrieval without using stale cached credentials.

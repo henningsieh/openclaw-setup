@@ -2,26 +2,25 @@
 
 Read this only when a `vault_fetch` call returns no usable credential.
 
-1. **The guard is a code check, not a config policy.** `before_tool_call` in
-   `plugins/vault-access-broker/src/index.ts` runs `isShelldonTurn`, which is
-   exactly `context.agentId === "shelldon"`. Any other agent is blocked with
-   `Vault Access Broker is available only to Shelldon.` No config flag widens
-   it; report the agent mismatch instead of hunting for one. Shelldon turns are
-   never blocked by sender, channel, or session type.
+1. **The capability grant is the agent's tool policy.** Shelldon and Kalle Kief
+   are the Authorized Agents under ADR 0001. Each needs an explicit effective
+   `vault_fetch` allowlist entry. The broker has no duplicate hard-coded agent
+   guard, and `approvals.plugin.agentFilter` is not a capability ACL. Report a
+   missing grant instead of widening policy or bypassing approval.
 
-2. **A Shelldon call always needs the approval, not a special turn.** Every
-   `vault_fetch` call from Shelldon requests a one-time `Retrieve login
-   credential` approval (allow-once / deny) regardless of requester, channel, or
-   session type, including cron, heartbeat, background, and subagent turns. A
-   missing, denied, timed-out, or unavailable approval route fails closed; do
-   not retry around it or substitute the CLI.
+2. **Every call needs approval, not a special turn.** Every `vault_fetch` call
+   requests a one-time `Retrieve login credential` approval (allow-once / deny)
+   regardless of requester, channel, or session type, including cron,
+   heartbeat, background, and subagent turns. A missing, denied, timed-out, or
+   unavailable approval route fails closed; do not retry around it or
+   substitute the CLI.
 
-3. **Confirm the tool is granted to the agent at all.** Exposure comes from
-   `agents.entries.shelldon.tools.alsoAllow` listing `vault_fetch`. The optional
-   tool is absent from the agent catalog until that entry exists, and a rendered
-   tool list can omit optional plugin tools — call the tool rather than
-   concluding availability from a list. Finish when the grant is present or you
-   have reported it missing.
+3. **Confirm the tool is granted to the requesting agent.** Check that agent's
+   effective tool policy, normally
+   `agents.entries.<agent-id>.tools.alsoAllow: ["vault_fetch"]`. The optional
+   tool is absent from the agent catalog until explicitly allowed, and a
+   rendered tool list can omit optional plugin tools. Finish when the grant is
+   present or you have reported it missing.
 
 4. **`Vault Access Broker: is not provisioned` is a runtime problem.** The
    gateway process is missing `CREDENTIALS_DIRECTORY`,
@@ -35,6 +34,11 @@ Read this only when a `vault_fetch` call returns no usable credential.
    alone never proves a fetch succeeded. Confirm the downstream login actually
    worked instead.
 
-6. **Finish** when the named login is retrieved for the downstream use, or when
-   you have reported the specific unmet condition from steps 1-4 instead of
-   retrying blindly.
+6. **A failed sync is not a lookup result.** Before every lookup the broker
+   runs `bw sync`; a CLI failure ends retrieval and still attempts the final
+   lock. Report the failure without reading `state/data.json`, returning stale
+   cached values, or invoking the private CLI. Runtime verification belongs in
+   `docs/runbooks/vault-access-runtime.md`.
+
+7. **Finish** when the named login is retrieved for the downstream use, or when
+   you have reported the specific unmet condition instead of retrying blindly.

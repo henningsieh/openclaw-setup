@@ -137,10 +137,55 @@ describe("vault-access-broker", () => {
     expect(calls).toEqual([
       ["status", "--raw"],
       ["unlock", "--passwordfile", "/credentials/vault_master_password", "--raw"],
+      ["sync"],
       ["list", "items", "--search", "Example"],
       ["lock"],
     ]);
-    expect(sessions.slice(2)).toEqual(["session-token", "session-token"]);
+    expect(sessions.slice(2)).toEqual(["session-token", "session-token", "session-token"]);
+  });
+
+  it("synchronizes before every lookup and returns updated server credentials", async () => {
+    const calls: string[][] = [];
+    const syncSessions: Array<string | undefined> = [];
+    let cachedLogin = { username: "cached-user", password: "cached-password" };
+    let serverLogin = { username: "current-user", password: "current-password" };
+    const runner: BitwardenCommandRunner = async ({ args, environment }) => {
+      calls.push(args);
+      if (args[0] === "status") return '{"status":"locked","serverUrl":"https://vault.example"}';
+      if (args[0] === "unlock") return "session-token";
+      if (args[0] === "sync") {
+        syncSessions.push(environment?.BW_SESSION);
+        cachedLogin = { ...serverLogin };
+      }
+      if (args[0] === "list") {
+        return JSON.stringify([{ name: "Example", type: 1, login: cachedLogin }]);
+      }
+      return "";
+    };
+    const cli = new BitwardenCli(runner, {
+      bwBin: "/private/bw",
+      serverUrl: "https://vault.example",
+      credentialDirectory: "/credentials",
+    });
+
+    await expect(cli.fetchLogin("Example")).resolves.toEqual({
+      username: "current-user",
+      password: "current-password",
+    });
+    serverLogin = { username: "updated-user", password: "updated-password" };
+    await expect(cli.fetchLogin("Example")).resolves.toEqual({
+      username: "updated-user",
+      password: "updated-password",
+    });
+    const expectedFetch = [
+      ["status", "--raw"],
+      ["unlock", "--passwordfile", "/credentials/vault_master_password", "--raw"],
+      ["sync"],
+      ["list", "items", "--search", "Example"],
+      ["lock"],
+    ];
+    expect(calls).toEqual([...expectedFetch, ...expectedFetch]);
+    expect(syncSessions).toEqual(["session-token", "session-token"]);
   });
 
   it("configures and authenticates only when the CLI status requires it", async () => {
@@ -160,7 +205,31 @@ describe("vault-access-broker", () => {
 
     await cli.fetchLogin("Example");
 
-    expect(calls.map((args) => args[0])).toEqual(["status", "config", "login", "unlock", "list", "lock"]);
+    expect(calls.map((args) => args[0])).toEqual(["status", "config", "login", "unlock", "sync", "list", "lock"]);
+  });
+
+  it("rejects a failed sync without reading stale items and still locks the vault", async () => {
+    const calls: string[][] = [];
+    const runner: BitwardenCommandRunner = async ({ args }) => {
+      calls.push(args);
+      if (args[0] === "status") return '{"status":"locked","serverUrl":"https://vault.example"}';
+      if (args[0] === "unlock") return "session-token";
+      if (args[0] === "sync") throw new Error("sync failed");
+      return "";
+    };
+    const cli = new BitwardenCli(runner, {
+      bwBin: "/private/bw",
+      serverUrl: "https://vault.example",
+      credentialDirectory: "/credentials",
+    });
+
+    await expect(cli.fetchLogin("Example")).rejects.toThrow("sync failed");
+    expect(calls).toEqual([
+      ["status", "--raw"],
+      ["unlock", "--passwordfile", "/credentials/vault_master_password", "--raw"],
+      ["sync"],
+      ["lock"],
+    ]);
   });
 
   it("accepts exactly one Lookup Fallback candidate", async () => {
