@@ -6,7 +6,8 @@
   "packageManager": "pnpm@12.6.0",
   "scripts": {
     "prepare": "husky",
-    "lint:commit": "commitlint"
+    "lint:commit": "commitlint",
+    "test:gateway-update": "python3 -m unittest discover -s tests -v"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.3",

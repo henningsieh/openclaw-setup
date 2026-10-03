@@ -267,7 +267,7 @@
       "modelPolicyAllowlist": true,
       "utilityModelSeparation": true
     },
-    "lastTouchedVersion": "2026.9.7"
+    "lastTouchedVersion": "2026.9.8"
   },
   "gateway": {
     "mode": "local",

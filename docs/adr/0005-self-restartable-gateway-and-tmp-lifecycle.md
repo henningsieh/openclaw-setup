@@ -72,9 +72,11 @@ three stacked causes:
   with the gateway up fails activation with `agent-database-lease-active`
   (the running gateway holds the agent-database leases) and rolls back. The
   operator stops the unit, runs the update, then starts it. For an agent, the
-  sanctioned path is one detached `setsid` chain (stop → update → doctor →
-  start → wait for HTTP → re-arm watchdog) that survives the session and
-  always restarts the gateway. See `docs/runbooks/gateway-update.md`.
+  sanctioned path is the tracked `scripts/gateway-update.sh` lifecycle,
+  launching one detached `setsid` session (stop → update → local-plugin
+  rebuild/test/install → final Doctor → start → verify → owner confirmation
+  → re-arm watchdog). It attempts service recovery on failure; recovery is
+  not success. See `docs/runbooks/gateway-update.md`.
 - Restarts return in seconds when shutdown is clean, and always recover via
   the watchdog when shutdown wedges (worst case ~6 min through the stop
   timeout, then start). "Gateway never comes back" is structurally closed.
@@ -91,6 +93,28 @@ three stacked causes:
   root and risks interrupting SQLite WAL writes; deferred until the drain
   hang is understood upstream.
 
+## Amendment B (2026-10-03): persisted update lifecycle
+
+The one-off update chain is replaced by tracked `scripts/gateway-update.sh`.
+Its Bash entry point delegates lifecycle bookkeeping to a Python standard-library
+module. `start_new_session=True` invokes the native `setsid` mechanism; it is
+not an inline stop/restart loophole. `start` returns without waiting on the
+service drain, while the worker holds the inherited lifecycle lock.
+
+The script refuses competing maintenance and existing guards, records a unique
+run identity, rebuilds the local broker after core replacement, and requires
+final Doctor completion before normal activation. Its recovery path attempts
+service startup even on failure and explicitly preserves the failed result.
+Automatic checks end in `awaiting-confirmation`; `finish` requires owner UI
+confirmation and removes only that run's guard, with watchdog verification.
+Private receipts/guards stay outside Git. The operational interface and failure
+branches have one source of truth in `docs/runbooks/gateway-update.md`.
+
+The 2026.9.8 maintenance window exceeded earlier timings. No ETA is guaranteed;
+external Pi sessions monitor through startup rather than ending after launch.
+This does not add a new restart trigger, change watchdog scheduling, weaken
+Vault Retrieval Approval, or replace boot temp cleanup.
+
 ## Amendment A (2026-09-24): in-process restart loophole
 
  Incident: at 13:24 CEST an agent turn logged "restarting the Gateway
@@ -106,6 +130,6 @@ three stacked causes:
  reasoning entirely. The original wording named only the systemctl path
  and left the in-process path uncovered. This amendment closes the gap:
  the Decision bullet above now forbids every in-turn restart trigger except
- the detached wrapper (and the runbook's `setsid` update chain, which is
- the same mechanism extended). `docs/runbooks/gateway-update.md` Iron
- Rule #2 is tightened to match.
+ the detached restart wrapper (and the tracked update lifecycle, which is
+ the same detached mechanism extended). The runbook's service-control
+ guardrails match this restriction.
