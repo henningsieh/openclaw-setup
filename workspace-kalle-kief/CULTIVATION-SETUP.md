@@ -2,7 +2,7 @@
 
 ## Current grow — plants & hardware
 - **3 plants / 3 seeds**, 3 pots à **9 liter** each
-  - 2× Linda Seeds — Gorilla Skittlez
+  - 2× Linda Seeds — Gorilla Zkittlez
   - 1× Elev8 Seeds — Apples and Bananas
 - **Tent:** 90 cm × 90 cm
 - **LED:** Lumatek ATS 200W (200W model) — 460 µmol/s PPF @ 2,3 µmol/J

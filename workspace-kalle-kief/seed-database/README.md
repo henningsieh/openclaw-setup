@@ -14,6 +14,8 @@ Private SQLite-Datenbank für Sorten, einzelne Seeds und ihre Datenherkunft.
 
 - `cultivars`: eine Zeile pro benannter Sorte/Produkt. Züchterangaben sind ausdrücklich „claimed“/Herstellerangaben.
 - `seed_units`: eine Zeile pro konkreter Seed-Einheit, inklusive Inventar-, Keimungs- und Grow-Verlauf.
+- `seed_units.purchase_item_id`: optionale Rückverknüpfung auf die Bestellposition, aus der eine Einheit stammt.
+- `purchase_orders` und `purchase_order_items`: bestellte/ankommende Mengen, getrennt vom physischen Bestand; Seeds werden erst nach bestätigtem Eingang als `seed_units` angelegt.
 - `seed_research_candidates` und `candidate_offers`: Alternativen in der Recherche und dazugehörige Shop-Angebote. Das sind **keine** Seeds im eigenen Bestand.
 - `grow_runs`: Grow-Zuordnung und bekannte Grow-Eckdaten.
 - `source_catalog` und `field_evidence`: Quelle und Beleg/Notiz pro eingetragenem Feld.
@@ -52,6 +54,17 @@ FROM seed_research_candidates AS c
 LEFT JOIN candidate_offers AS o USING (candidate_id)
 WHERE c.candidate_role = 'alternative'
 ORDER BY c.product_name, o.pack_size_seeds;
+```
+
+Offene Bestellungen und Mengen:
+
+```sql
+SELECT p.supplier_order_ref, p.ordered_on, p.payment_status, p.receipt_status,
+       c.breeder_as_recorded, c.cultivar_name_as_recorded, i.quantity, i.item_kind
+FROM purchase_orders AS p
+JOIN purchase_order_items AS i USING (purchase_id)
+JOIN cultivars AS c USING (cultivar_id)
+ORDER BY p.ordered_on, i.purchase_item_id;
 ```
 
 Mit `sqlite3 seed-registry.sqlite3` lässt sich die Datenbank interaktiv öffnen. Für spätere Änderungen nur neue Einträge ergänzen; `initial-data.sql` nicht erneut auf die bereits befüllte Datenbank anwenden.
