@@ -10,3 +10,5 @@ minimumReleaseAgeExclude:
   - openclaw@2026.9.6
   - '@openclaw/ai@2026.9.7'
   - openclaw@2026.9.7
+  - '@openclaw/ai@2026.9.8'
+  - openclaw@2026.9.8
