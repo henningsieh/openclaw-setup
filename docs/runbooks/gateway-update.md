@@ -9,6 +9,52 @@ stale local plugins → final Doctor → start → verify → re-arm watchdog**.
 Version output alone is not completion; the Vault Access Broker and public UI
 must work too.
 
+## Routine update: stay on this path
+
+Use the procedure below. Use a failure branch only when a current step fails
+or the CLI reports a condition that prevents the next step.
+
+1. **Prepare.** Read the release notes. Check the installed version and
+   `openclaw update status` once. Check for another updater or Doctor, existing
+   maintenance guards, disk space, and the execution context. Record the local
+   plugin inventory and cache sizes. Plan the Vault Access Broker rebuild.
+2. **Run one maintenance chain.** Stop → update → rebuild/test/install local
+   plugins → final Doctor → start. Use the detached agent path below, with its
+   service recovery trap. Do not start a second maintenance process.
+3. **Verify after startup.** Use the checklist below. Public UI and live Gateway
+   checks belong here, not before the update.
+4. **Finish.** Remove the guard created for this window only after verification
+   passes. Confirm the watchdog is armed. Report any check that remains pending;
+   do not call the update complete while a required check is pending.
+
+### Do not turn routine checks into fault diagnosis
+
+- **A fresh browser can show the Gateway token login page.** This is normal.
+  It does not contain the owner's existing signed-in session. It is not proof
+  of an authentication or proxy fault. Do not search for credentials, inspect
+  secret environment files, or change authentication to connect this browser.
+  Check public HTML and rendering after startup. If the existing owner
+  connection is not available to the agent, ask the owner to confirm it and
+  report that check as pending.
+- **An old update notice is not a new update failure.** Record notices from
+  terminal runs. Do not add repair or Doctor runs only to clear their warnings.
+  A notice that maintenance was skipped while the gateway was running explains
+  the stopped-gateway requirement; the new window still needs its final Doctor.
+  Use `update repair` when the current CLI requires recovery or the current
+  update has unfinished work, with the gateway stopped.
+- **Service inspection can be unavailable on this host.** A warning about the
+  system unit, or a permission error for
+  `/etc/openclaw/vault-access-broker.env`, does not justify reading the
+  Encrypted Bootstrap Credential Set or changing permissions. The explicit systemd stop/start steps manage this service.
+- **A core bump requires a Vault Access Broker rebuild, not a credential test.**
+  Run the controlled fake-CLI tests and the post-start runtime checks. Preserve
+  Retrieval Approval and redaction. Do not retrieve a real Vault Item, create a
+  disposable Vault Item, or run the separate owner-approved login test merely
+  to verify a version-pin rebuild.
+
+Keep progress messages short: name the current step, its result, and the next
+step. If a step fails, give the exact error before investigating that branch.
+
 ## Host constraint: stop the gateway first
 
 The gateway is a **system-scope systemd unit** (`/etc/systemd/system/`). The
@@ -123,7 +169,7 @@ until [ "$(systemctl is-active openclaw-gateway.service)" = "inactive" ]; do sle
 # 3. Confirm the ground is clear (CLI + process view only).
 # If another updater/Doctor is running, wait for it; do not launch a competitor.
 pgrep -af 'openclaw.*(update|doctor)' || true
-openclaw update status          # repair an actual unfinished run while stopped
+openclaw update status          # use repair only for required recovery/unfinished work
 
 # 4. Update. Allow long execution; no short wrapper timeout.
 openclaw update --yes           # on failure, follow its recovery advice first
@@ -149,8 +195,10 @@ openclaw gateway status --deep
 journalctl -u openclaw-gateway.service --since "-5 min" | grep "http server listening"
 # Expect the full plugin set including codex; compare with the previous boot.
 
-# 8. Re-arm the watchdog — never skip.
+# Complete the full verification checklist below, not only these CLI probes.
+# 8. After verification passes, remove this window's guard and re-arm the watchdog.
 rm ~/.openclaw/.maintenance
+systemctl --user list-timers | grep openclaw
 ```
 
 ## Local plugins and version bumps (mandatory check)
@@ -210,7 +258,9 @@ plugin:
    state directory (`schema 18 vs 17`) even though the manifest looks correct.
 2. Refresh dependencies and rebuild, using the plugin's own scripts
    (`scripts` in that package.json; for the Vault Access Broker:
-   `pnpm install`, `npm run plugin:build`, `npm run plugin:validate`).
+   `pnpm install`, `npm test`, `npm run plugin:build`,
+   `npm run plugin:validate`). `npm test` uses the controlled fake Bitwarden CLI;
+   it does not use the Personal Vault Identity.
    **pnpm workspace note:** the source's `pnpm-workspace.yaml` must set
    `allowBuilds: true` for the packages that need build scripts (for the Vault
    Access Broker: `@google/genai`, `esbuild`, `koffi`, `openclaw`, `protobufjs`,
@@ -249,8 +299,9 @@ plugin:
    `openclaw plugins install ./<name>-<version>.tgz --force`. The source's
    `files` field (`dist`, `openclaw.plugin.json`, `README.md`) keeps this to a
    few KB.
-4. Restart the gateway (agent: the detached wrapper; human: `sudo systemctl
-   restart`) and confirm the plugin appears in the `http server listening
+4. Continue with the final Doctor and start steps in the same maintenance
+   chain. Do not add a separate restart during the update. After startup,
+   confirm the plugin appears in the `http server listening
    (N plugins: …)` line.
 
 **Known local plugin:** `vault-access-broker` — source
@@ -282,7 +333,10 @@ rebuild it by hand.
   local HTTP probe or `/healthz` is not sufficient. Verify the public `/`
   response is HTTP 200 **and HTML containing
   `data-openclaw-control-ui-build-id`**, then confirm the application renders
-  and the existing owner connection works. A JSON
+  and the existing owner connection works. A fresh browser's token login page
+  can prove rendering, but not the existing owner connection. If that connection
+  is not available to the agent, request owner confirmation and leave that check
+  pending; do not retrieve a token or change authentication. A JSON
   `proxy_attribution_required` response is a failed update verification.
 - If public attribution fails, compare the exact peer in the gateway's
   `observed unattributable proxy-shaped traffic from …` log with
@@ -295,8 +349,10 @@ rebuild it by hand.
 - Verify the Vault Access Broker through the live Gateway (`plugins.inspect`,
   `tools.catalog` for Shelldon), the optional tool and both typed hooks via
   runtime inspection, and its controlled fake-CLI tests. Keep Retrieval
-  Approval and redaction in place. Maintenance is not permission to retrieve
-  an arbitrary Vault Item.
+  Approval and redaction in place. These are runtime registration checks, not
+  `vault_fetch` invocations. A version-pin rebuild does not require the separate
+  disposable-Vault-Item login test in `vault-access-runtime.md`. Maintenance is
+  not permission to retrieve an arbitrary Vault Item.
 - Measure generated plugin/runtime and compile caches before and after the
   window (`du -sk` over all paths in one invocation, so shared hardlinks are
   counted once). Existing boot cleanup remains responsible for temporary
