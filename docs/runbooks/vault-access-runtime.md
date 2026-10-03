@@ -136,13 +136,22 @@ See ADR 0002 for the freshness decision.
 
 ## Broker activation and tool policy
 
-The Vault Access Broker is installed from the credential-free Local Plugin
-Source through OpenClaw's managed plugin lifecycle. The install copies the
-source into the managed plugin root and records provenance; it never uses
-`--link` or a bare `plugins.load.paths` entry.
+The Vault Access Broker is installed from a lean artifact built from the
+credential-free Local Plugin Source through OpenClaw's managed plugin lifecycle.
+The install records provenance; it never uses `--link` or a bare
+`plugins.load.paths` entry. Do not install the development tree and its large
+`node_modules` directory.
+
+Core-version maintenance uses `scripts/gateway-update.sh` and
+[gateway-update.md](gateway-update.md): all SDK pins, controlled tests, lean
+installation, and final Doctor occur while the gateway is stopped. Version-pin
+maintenance requires registration checks, not the separate disposable-Vault-Item
+login test below.
+
+For initial activation, first install the built lean artifact per that runbook,
+then enable and inspect it:
 
 ```bash
-openclaw plugins install ./plugins/vault-access-broker --force --accept-capabilities
 openclaw plugins enable vault-access-broker --accept-capabilities
 openclaw plugins inspect vault-access-broker --runtime --json
 ```
@@ -206,13 +215,19 @@ capability ACL:
 
 Denial, timeout, cancellation, or an unavailable approval route fails closed.
 
-For source changes, rebuild and test the tracked distribution, then reinstall
-through the managed lifecycle. Source edits alone do not update the installed
-copy. Run from `/home/shelldon/.openclaw`:
+For source changes without a core bump, rebuild/test and pack a lean artifact,
+then reinstall through the managed lifecycle. Source edits alone do not update
+the installed copy. Run from `/home/shelldon/.openclaw` (the temporary directory
+contains no credentials):
 
 ```bash
-(cd plugins/vault-access-broker && npm run build && npm test)
-openclaw plugins install ./plugins/vault-access-broker --force --accept-capabilities
+(
+  set -e
+  stage=$(mktemp -d)
+  trap 'rm -rf -- "$stage"' EXIT
+  artifact=$(cd plugins/vault-access-broker && npm run build >&2 && npm test >&2 && npm pack --silent --pack-destination "$stage")
+  openclaw plugins install "$stage/$artifact" --force --accept-capabilities
+)
 openclaw plugins inspect vault-access-broker --runtime --json
 ```
 

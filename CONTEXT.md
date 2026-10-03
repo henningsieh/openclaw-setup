@@ -83,7 +83,7 @@ automations, and wiki. The complete Docker-era state remains preserved as backup
 | Item | Value |
 |---|---|
 | Host | `ubuntu-8gb-nbg` (195.201.42.226, Hetzner nbg1) |
-| OpenClaw version | 2026.9.7 (`c074824`) |
+| OpenClaw version | 2026.9.8 (`fc23bc8`) |
 | Runtime | Native Node.js v24 (system `/usr/bin/node`), **not** Docker |
 | Service user | `shelldon` (uid 1000) — gateway never runs as root |
 | Public URL | `https://ai.sieh.org/` |
@@ -162,7 +162,7 @@ catalog, usage limits, and privacy policies:
 - https://opencode.ai/docs/en/go.md
 
 When a local command and a remembered procedure disagree, check the docs for
-OpenClaw `2026.9.7` behavior and verify with `openclaw <command> --help` as the
+OpenClaw `2026.9.8` behavior and verify with `openclaw <command> --help` as the
 installed CLI is authoritative for this host.
 
 ## Layout (all owned by `shelldon`)
@@ -222,12 +222,16 @@ sudo journalctl -u openclaw-gateway.service --follow
     `touch ~/.openclaw/.maintenance` (the alias `.maintainance` is honored
     too). Full removal, if ever wanted: `systemctl --user disable --now
     openclaw-gateway-watchdog.timer` plus deleting the files above.
-- Updates: full procedure lives in `docs/runbooks/gateway-update.md`.
-  This host's unit is system-scope, so the OpenClaw updater cannot manage it
-  (`Gateway service inspection is unavailable`); the operator must stop the
-  gateway, run `openclaw update --yes`, then start it. Never stop the service
-  from an agent turn, and never query OpenClaw's SQLite databases during an
-  update. Governance: ADR 0005; upstream `install/updating.md`.
+- Updates: use the tracked `scripts/gateway-update.sh` lifecycle (`plan`,
+  `start`, `status`, `finish`), governed by `docs/runbooks/gateway-update.md`
+  and ADR 0005. The system-scope unit still requires explicit service control;
+  the script performs it in one detached session, including the Vault Access
+  Broker rebuild and stopped-gateway final Doctor. Private run receipts live
+  under ignored `logs/gateway-updates/`. Automatic verification leaves the run
+  awaiting owner UI confirmation; `finish` removes only its own guard and
+  confirms watchdog recovery. External Pi monitors through startup; no ETA
+  is guaranteed. Never query OpenClaw databases or perform inline agent
+  stop/restart. Upstream: `install/updating.md`.
 - Persistence across logouts: `loginctl enable-linger shelldon` remains enabled
   for user-owned OpenClaw state, though the gateway itself no longer depends on
   the user manager.

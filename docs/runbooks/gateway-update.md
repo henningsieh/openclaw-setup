@@ -1,404 +1,254 @@
 # Gateway Update Runbook
 
-How to update the Shelldon OpenClaw gateway. Governance: ADR 0004 (system
-unit), ADR 0005 (self-restart, watchdog, tmp lifecycle). Upstream reference:
-`install/updating.md` (append `.md` per the repo URL rule).
+Governance: ADR 0004 (system unit), ADR 0005 (detached service control, watchdog,
+boot temp cleanup). Upstream: https://docs.openclaw.ai/install/updating.md.
 
-Complete one maintenance window in this order: **stop → update → rebuild/install
-stale local plugins → final Doctor → start → verify → re-arm watchdog**.
-Version output alone is not completion; the Vault Access Broker and public UI
-must work too.
+The supported entry point is the tracked **`scripts/gateway-update.sh`**. It
+owns one maintenance window:
 
-## Routine update: stay on this path
+**stop → update → broker rebuild/test/install → final Doctor → start → automatic
+verification → owner UI confirmation → remove owned guard / watchdog recovery**.
 
-Use the procedure below. Use a failure branch only when a current step fails
-or the CLI reports a condition that prevents the next step.
+An installed version or recovered service alone is not a completed update.
 
-1. **Prepare.** Read the release notes. Check the installed version and
-   `openclaw update status` once. Check for another updater or Doctor, existing
-   maintenance guards, disk space, and the execution context. Record the local
-   plugin inventory and cache sizes. Plan the Vault Access Broker rebuild.
-2. **Run one maintenance chain.** Stop → update → rebuild/test/install local
-   plugins → final Doctor → start. Use the detached agent path below, with its
-   service recovery trap. Do not start a second maintenance process.
-3. **Verify after startup.** Use the checklist below. Public UI and live Gateway
-   checks belong here, not before the update.
-4. **Finish.** Remove the guard created for this window only after verification
-   passes. Confirm the watchdog is armed. Report any check that remains pending;
-   do not call the update complete while a required check is pending.
+## Routine procedure
 
-### Do not turn routine checks into fault diagnosis
+Run as the native gateway owner from the setup repository. The entry point uses
+Bash and Python 3's standard library; no additional Python packages are needed.
+It discovers the owning home, repository and executables. Deliberate host
+settings (system unit, watchdog, public/local URLs) live together in `Host` in
+`scripts/gateway_update.py`; this is a native-host procedure, not a fleet updater.
+No release number is embedded in the workflow.
 
-- **A fresh browser can show the Gateway token login page.** This is normal.
-  It does not contain the owner's existing signed-in session. It is not proof
-  of an authentication or proxy fault. Do not search for credentials, inspect
-  secret environment files, or change authentication to connect this browser.
-  Check public HTML and rendering after startup. If the existing owner
-  connection is not available to the agent, ask the owner to confirm it and
-  report that check as pending.
-- **An old update notice is not a new update failure.** Record notices from
-  terminal runs. Do not add repair or Doctor runs only to clear their warnings.
-  A notice that maintenance was skipped while the gateway was running explains
-  the stopped-gateway requirement; the new window still needs its final Doctor.
-  Use `update repair` when the current CLI requires recovery or the current
-  update has unfinished work, with the gateway stopped.
-- **Service inspection can be unavailable on this host.** A warning about the
-  system unit, or a permission error for
-  `/etc/openclaw/vault-access-broker.env`, does not justify reading the
-  Encrypted Bootstrap Credential Set or changing permissions. The explicit systemd stop/start steps manage this service.
-- **A core bump requires a Vault Access Broker rebuild, not a credential test.**
-  Run the controlled fake-CLI tests and the post-start runtime checks. Preserve
-  Retrieval Approval and redaction. Do not retrieve a real Vault Item, create a
-  disposable Vault Item, or run the separate owner-approved login test merely
-  to verify a version-pin rebuild.
+### 1. Prepare
 
-Keep progress messages short: name the current step, its result, and the next
-step. If a step fails, give the exact error before investigating that branch.
-
-## Host constraint: stop the gateway first
-
-The gateway is a **system-scope systemd unit** (`/etc/systemd/system/`). The
-OpenClaw updater cannot inspect or manage such a unit and says so explicitly:
-
-```
-Warning: Gateway service inspection is unavailable; automatic service restart
-was skipped. Restart the Gateway you launched manually after the update.
-```
-
-Consequence, learned the hard way on 2026-09-24: with the gateway running, the
-updater skips the service stop, then its activation doctor step fails with
-`agent-database-lease-active` ("an agent database is in use") because the
-running gateway holds the agent-database leases. The run rolls back and the
-release is never applied.
-
-**Therefore: the operator stops the gateway before the update and starts it
-afterwards.** That is the procedure — not a workaround, and not optional.
-
-## Iron rules
-
-1. **Supported interfaces only.** Use `openclaw update`, `openclaw update
-   status`, `openclaw update repair`, `openclaw doctor`, `systemctl`, and
-   `curl`. **Never open, query, copy, or inspect OpenClaw's SQLite databases**
-   during an update: the CLI reports everything needed, and stray database
-   access is exactly the contention that fails activation. Use official docs
-   and CLI reports; routine updates do not require inspecting or patching
-   installed OpenClaw source.
-2. **Never stop or restart the gateway from an agent turn — any mechanism.** Forbidden in-turn triggers: `sudo systemctl stop/restart`, `openclaw gateway restart` in ANY form (plain, `--safe`, `--force`, `--wait`, `--skip-deferral`), `SIGUSR2` / `kill -USR2` / `gateway.restart.safe` (in-process restart, same PID — this is what `--safe` does on core ≥ `2026.9.6`), any gateway restart tool/API call, and any Control UI restart button. Background: an in-turn `sudo systemctl stop/restart` deadlocks against the gateway's shutdown drain until the stop timeout SIGKILLs everything (ADR 0005); an in-process `SIGUSR2` restart bypasses systemd entirely and drops all sessions with ~90s outage (incident 2026-09-24 13:24 CEST — the turn claimed the "approved detached path" in plan text but sent SIGUSR2, PID unchanged). The ONLY agent restart paths are `~/.local/bin/openclaw-gateway-restart-detached` and the `setsid` update chain below. Service control otherwise happens in the operator's terminal. Verification is a PID change plus the systemd journal — plan prose proves nothing.
-3. **No extra flags.** Run `openclaw update --yes`. Do not add `--no-restart`,
-   `--tag`, or channel overrides for a routine update.
-4. **Pause the watchdog** for the whole window:
-   `touch ~/.openclaw/.maintenance` (alias `.maintainance` honored). Remove it
-   only after verification — a guard left behind means an unguarded dead
-   gateway later.
-5. **`openclaw doctor --fix --non-interactive` only with the gateway stopped.**
-   A running gateway holds the state lease; `--non-interactive` removes prompts,
-   not locks. The same stopped-gateway requirement applies to `update repair`
-   when it runs maintenance. While online, use `doctor --lint --non-interactive`.
-6. **The update window needs a detached chain.** Stopping the gateway ends
-   any agent session hosted by it, so an agent cannot run the sequence inline.
-   The sanctioned agent path is one `setsid` chain that runs
-   stop → update → local-plugin rebuild → final Doctor → start → verify →
-   re-arm the watchdog. Arrange an exit trap that attempts to start the gateway
-   even if an earlier step fails; recovery is not update success. A human at an
-   independent SSH terminal may run the sequence in the foreground instead.
-   An external Pi session is not a gateway-hosted turn; establish the actual
-   execution context rather than assuming stopping OpenClaw ends that session.
-
-## Keep calm during long steps
-
-This is a weak/resource-constrained host sharing 8 GB RAM with other services.
-Budget generously: the 2026.9.7 update took about 31 minutes and a separate
-full Doctor took about 18 minutes. These are observations, not deadlines or
-proof that hardware explains every delay. Plugin rebuilds add time.
-
-**Keep calm while progress continues.** Do not add a 10–15-minute shell timeout,
-press Ctrl-C merely because a step is slow, launch a second Doctor, or repeat
-repair to chase historical warnings. Configure the execution harness to allow
-long steps. Check process existence, log timestamps/recent redacted lines, and
-host resources when needed; continued activity is progress, not completion.
-Avoid ten-minute blocking `tail --pid` waits that leave the owner uninformed.
-Give brief progress updates without polling OpenClaw state in a tight loop.
-
-`[sqlite/transaction] slow …` reports a duration threshold exceeded, not by
-itself corruption. A nonzero exit, skipped migration, or lost maintenance lease
-needs investigation. Wait for **`Doctor complete` and exit 0** before accepting
-the final Doctor run; an interrupted/killed run does not qualify.
-
-## Procedure — agent path (detached chain)
-
-One `setsid` chain so it survives the gateway stopping. Absolute paths keep it
-independent of the launching shell. This is a **template**: insert the planned
-local-plugin rebuild/install commands at the marked point before launching it;
-for this host, the Vault Access Broker rebuild is mandatory on a core bump:
+Read the target release notes, this runbook and ADR 0005. Establish the execution
+context: an external Pi session survives gateway downtime; a gateway-hosted
+agent turn does not. Run:
 
 ```bash
-LOG=/home/shelldon/.openclaw/logs/update-run-$(date +%Y%m%dT%H%M%S).log
-setsid /bin/bash -c '
-  cd /home/shelldon || exit 1
-  trap '\''/usr/bin/sudo -n /usr/bin/systemctl start openclaw-gateway.service'\'' EXIT
-  touch /home/shelldon/.openclaw/.maintenance
-  /usr/bin/sudo -n /usr/bin/systemctl stop openclaw-gateway.service || exit 1
-  [ "$(/usr/bin/systemctl is-active openclaw-gateway.service)" = "inactive" ] || exit 1
-  /home/shelldon/.npm-global/bin/openclaw update --yes || exit 1
-  # INSERT planned local-plugin rebuild/install commands here (steps 1–3 below).
-  /home/shelldon/.npm-global/bin/openclaw doctor --fix --non-interactive || exit 1
-  /usr/bin/sudo -n /usr/bin/systemctl start openclaw-gateway.service || exit 1
-  until /usr/bin/curl --fail --silent --output /dev/null http://127.0.0.1:18789/; do sleep 5; done
-  echo "Local HTTP ready; public UI, channels and Vault verification still required"
-' >"$LOG" 2>&1 </dev/null &
+scripts/gateway-update.sh plan
 ```
 
-The exit trap attempts service recovery after failure; it cannot guarantee
-startup succeeds. Keep the maintenance guard until the verification checklist
-passes, then remove it and confirm the watchdog is armed. If the chain fails,
-restore service availability and investigate the reported phase; do not call
-that a completed update. Do not poll it in a loop.
+`plan` is read-only: no service changes, guard creation, dependency installs or
+run directories. It checks the owning context, another OpenClaw CLI/updater/
+Doctor, existing guards, active service/watchdog, sudo permission listing, disk
+space, installed and configured-channel versions, local plugin inventory,
+previous boot plugin list when readable, and cache sizes. It does not read
+credentials or OpenClaw databases. A 5 GiB free-space floor is a conservative
+initial check, not an estimate; the updater owns its capacity preflight.
 
-## Procedure — human path (foreground, SSH terminal)
+Resolve a refusal before proceeding. Unknown local plugin sources are refused
+rather than silently omitted; add a tested rebuild to the workflow first.
+`start` repeats preflight under a lifecycle lock so a stale plan is not authority.
+
+### 2. Start one window
 
 ```bash
-# 1. Use the owning account/cwd, pause the watchdog, arrange service recovery.
-cd /home/shelldon
-trap 'sudo -n systemctl start openclaw-gateway.service' EXIT
-touch ~/.openclaw/.maintenance
-
-# 2. Stop the gateway and wait for inactive.
-sudo systemctl stop openclaw-gateway.service
-until [ "$(systemctl is-active openclaw-gateway.service)" = "inactive" ]; do sleep 5; done
-
-# 3. Confirm the ground is clear (CLI + process view only).
-# If another updater/Doctor is running, wait for it; do not launch a competitor.
-pgrep -af 'openclaw.*(update|doctor)' || true
-openclaw update status          # use repair only for required recovery/unfinished work
-
-# 4. Update. Allow long execution; no short wrapper timeout.
-openclaw update --yes           # on failure, follow its recovery advice first
-
-# 4a. Rebuild/test/install stale local plugins NOW, while still stopped.
-# Follow steps 1–3 under "Local plugins and version bumps" below.
-# This includes Vault; do not postpone it until after bringing the gateway up.
-
-# 5. Run one explicit final Doctor AFTER plugins are rebuilt.
-# Wait for Doctor complete AND exit 0, even if it takes tens of minutes.
-openclaw doctor --fix --non-interactive
-# A failure is not permission to continue normal activation; recover service
-# and investigate. Do not repeatedly rerun Doctor after a successful pass.
-
-# 6. Start and wait for readiness (plugin load takes ~45s).
-sudo systemctl start openclaw-gateway.service
-until curl --fail --silent --output /dev/null http://127.0.0.1:18789/; do sleep 5; done
-
-# 7. Verify.
-openclaw --version                                    # expect the target release
-openclaw update status                                # terminal, succeeded
-openclaw gateway status --deep
-journalctl -u openclaw-gateway.service --since "-5 min" | grep "http server listening"
-# Expect the full plugin set including codex; compare with the previous boot.
-
-# Complete the full verification checklist below, not only these CLI probes.
-# 8. After verification passes, remove this window's guard and re-arm the watchdog.
-rm ~/.openclaw/.maintenance
-systemctl --user list-timers | grep openclaw
+scripts/gateway-update.sh start --expect-version <target-release>
 ```
 
-## Local plugins and version bumps (mandatory check)
+`--expect-version` is optional but recommended. It validates the candidate on
+the **configured channel** before downtime and the installed version afterward.
+It is not a pin, does not pass `--tag`, and never overrides the update channel.
+The core command remains exactly **`openclaw update --yes`**. No available
+update means refusal without downtime, not another Doctor window.
 
-Path-installed plugins (`~/.openclaw/extensions/*`, or entries in
-`plugins.load.paths`) declare the plugin API they were built against
-(`openclaw.compat.pluginApi` in their `package.json`). On a core version bump
-the host **skips** any plugin whose declaration does not cover the new
-version:
+`start` returns the run id, worker PID and log path. It creates a unique private
+run directory under the gitignored `logs/gateway-updates/`, creates `.maintenance`
+exclusively with that run's identity, and launches a detached session using
+`start_new_session=True` (the native `setsid` mechanism). The lifecycle lock is
+inherited by the worker and retained through maintenance. It attempts service
+recovery on failure; **recovery is not update success**. Failed windows retain
+their guard and exact failed phase for investigation.
 
-```
-plugin requires plugin API 2026.9.5, but this host is 2026.9.6; skipping discovery
-```
+The wrapper is persisted in Git. The old `logs/update-2026.9.8.sh` is historical
+runtime evidence, not the next update's entry point.
 
-Doctor then reports `Plugin install incomplete: plugin metadata is missing`.
-**No updater can fix this.** Upstream treats path-installed copies as
-operator-managed, and the plugin must be rebuilt against the new SDK — which is
-only possible *after* the new core is installed. A core update is therefore not
-"complete" until every local plugin passes this check.
-
-**Pre-update (inventory, read-only).** Record which local plugins exist and
-what they declare, so the rebuild is planned for the same window:
+### 3. Monitor through startup
 
 ```bash
-CORE=$(python3 -c "import json;print(json.load(open('/home/shelldon/.npm-global/lib/node_modules/openclaw/package.json'))['version'])")
-python3 - "$CORE" <<'PY'
-import json, glob, os, re, sys
-core = sys.argv[1]
-def tup(v): return tuple(int(x) for x in re.findall(r'\d+', v))
-def ok(decl):
-    if not decl: return False
-    decl = decl.strip()
-    for op in ('>=', '<=', '>', '<', '^', '~'):
-        if decl.startswith(op):
-            v = decl[len(op):].strip()
-            return tup(core) >= tup(v) if op in ('>=', '^', '~') else tup(core) <= tup(v)
-    return decl == core
-for p in sorted(glob.glob(os.path.expanduser('~/.openclaw/extensions/*/package.json'))):
-    d = json.load(open(p)); oc = d.get('openclaw') or {}
-    api = ((oc.get('compat') or {}).get('pluginApi')
-           or (oc.get('build') or {}).get('openclawVersion')
-           or (d.get('peerDependencies') or {}).get('openclaw'))
-    name = d.get('name') or os.path.basename(os.path.dirname(p))
-    print(f"{'OK   ' if ok(api) else 'STALE'} {name}: declares {api}, host {core}")
-PY
+scripts/gateway-update.sh status
+# Read the reported run.log path for the current command's progress/errors.
 ```
 
-**Post-update (mandatory).** Rerun the same check. For every `STALE` **local**
-plugin:
+`status` reads private receipts and the lifecycle lock; it does **not** invoke
+OpenClaw or compete for maintenance state. It reports current phase, phase and
+total elapsed seconds, completed phase timings, log modification time, guard
+ownership, and whether an operation holds the lock. A missing worker without a
+terminal receipt is an attention condition, not success. Revisit at reasonable
+intervals and keep the owner informed; do not repeatedly run Doctor/repair or
+poll OpenClaw state in a tight loop.
 
-1. Bump **all five** version pins in the source
-   (`~/.openclaw/plugins/<id>/package.json`) to the new core version:
-   `openclaw.compat.pluginApi`, `openclaw.build.openclawVersion`,
-   `openclaw.build.pluginSdkVersion`, `peerDependencies.openclaw`, **and
-   `devDependencies.openclaw`**. Missing the dev dependency is the subtle one:
-   the build then resolves the *stale local SDK*, and the plugin refuses the
-   state directory (`schema 18 vs 17`) even though the manifest looks correct.
-2. Refresh dependencies and rebuild, using the plugin's own scripts
-   (`scripts` in that package.json; for the Vault Access Broker:
-   `pnpm install`, `npm test`, `npm run plugin:build`,
-   `npm run plugin:validate`). `npm test` uses the controlled fake Bitwarden CLI;
-   it does not use the Personal Vault Identity.
-   **pnpm workspace note:** the source's `pnpm-workspace.yaml` must set
-   `allowBuilds: true` for the packages that need build scripts (for the Vault
-   Access Broker: `@google/genai`, `esbuild`, `koffi`, `openclaw`, `protobufjs`,
-   `tree-sitter-bash`). Placeholder/prompt values fail the install with
-   `ERR_PNPM_IGNORED_BUILDS`. A freshly published core release is also blocked by
-   pnpm's minimum-release-age gate; add the new version to
-   `minimumReleaseAgeExclude` in the same file (for the Vault Access Broker:
-   `openclaw@<version>` and `@openclaw/ai@<version>`).
-3. Install a **lean copy**, never the development source tree. Installing the
-   source directory copies the whole tree and blows the installer's hardlink
-   preflight:
+Maintenance commands have **no short wrapper timeout**. The bounded readiness
+window after startup is separate: local HTTP and then live Gateway/plugin/channel
+readiness, up to ten minutes, with spaced read-only health probes. It does not
+retry maintenance. Continued process/CPU
+activity is evidence of activity, not proof of semantic progress or completion.
+A quiet log does not by itself prove a hang; an explicit failed phase does need
+investigation. Do not interrupt a slow Doctor merely to meet an estimate.
 
-   ```
-   failed to copy plugin: FsSafeError: Source hardlink preflight exceeds 50000 entries
-   ```
+**Do not promise a completion time.** The 2026.9.8 window observed roughly
+56 minutes for core update, seven for broker rebuild/install, twenty for final
+Doctor, and two for startup. Earlier 2026.9.7 observations were about 31 minutes
+for update and 18 for a separate Doctor. These are observations, not deadlines
+or proof that hardware explains every delay.
 
-   (A development `node_modules` is ~71k entries / ~1 GB. On such a failure the
-   installer rolls the previous copy back intact — no damage.)
+An external Pi operator must stay with the update through startup and verification.
+A gateway-hosted turn will drop; resume monitoring in an independent session or
+new turn. Detachment is recovery protection, not permission to abandon monitoring.
 
-   **Verified route — stage a lean copy:**
+### 4. Complete owner verification and finish
 
-   ```bash
-   rm -rf /tmp/vab-install && mkdir -p /tmp/vab-install
-   cd ~/.openclaw/plugins/<id>
-   cp -a dist openclaw.plugin.json README.md package.json /tmp/vab-install/
-   cd /tmp/vab-install
-   npm install --omit=dev                      # production deps only (~1.5k entries)
-   ln -sfn /home/shelldon/.npm-global/lib/node_modules/openclaw node_modules/openclaw
-   openclaw plugins install /tmp/vab-install --force
-   ```
+Automatic checks produce **`awaiting-confirmation`**, not `complete`:
 
-   The installer preserves the `node_modules/openclaw` symlink and the version
-   declarations. Clean the staging directory up afterwards.
+- installed and live version agree; this window's recorded core update run
+  is the current terminal `succeeded` run;
+- final stopped-gateway Doctor logged `Doctor complete`, exited 0, and left no
+  explicit plugin ERROR or unfinished migration report;
+- system service active with a different PID, local HTTP success;
+- public `/` is successful HTML with the current
+  `data-openclaw-control-ui-build-id`, not JSON `proxy_attribution_required`;
+- Discord and Telegram connected, ready, with no last error;
+- live Gateway plugin set includes codex and the Vault Access Broker, without
+  plugin errors/unavailability, and preserves the previous boot's list when
+  that list was readable;
+- all installed extension API declarations cover the core (the tested exact
+  and `>=` forms; unknown ranges fail closed);
+- live `plugins.inspect` and Shelldon's `tools.catalog` expose the broker;
+  runtime inspection reports loaded/enabled/activated, built on the current
+  SDK, optional `vault_fetch`, `before_tool_call` and `tool_result_persist`,
+  and no diagnostics;
+- startup journal has the plugin listener and non-secret Vault runtime health
+  lines when accessible; owned boot-cleanup targets captured immediately before
+  start no longer retain their old file identity (metadata only, no contents);
+- cache sizes captured before and after using a single `du -sk` invocation per
+  measurement so shared hardlinks are counted once.
 
-   **Alternative — packed artifact:** `npm run plugin:build`, `npm pack`, then
-   `openclaw plugins install ./<name>-<version>.tgz --force`. The source's
-   `files` field (`dist`, `openclaw.plugin.json`, `README.md`) keeps this to a
-   few KB.
-4. Continue with the final Doctor and start steps in the same maintenance
-   chain. Do not add a separate restart during the update. After startup,
-   confirm the plugin appears in the `http server listening
-   (N plugins: …)` line.
+Then verify public application **rendering in a real browser** and the owner's
+existing signed-in connection. Prefer the native browser tool for agent checks.
+A fresh browser may show the token login screen: normal rendering evidence,
+**not** proof of the existing owner connection or an authentication failure.
+Do not retrieve a token, inspect secret environment files, or change auth to
+connect that browser. Ask the owner to confirm their existing connection.
 
-**Known local plugin:** `vault-access-broker` — source
-`~/.openclaw/plugins/vault-access-broker/`, installed copy
-`~/.openclaw/extensions/vault-access-broker/`. It must be rebuilt on **every**
-core version bump, otherwise the Vault Access Broker is offline and
-`vault_fetch` is unavailable to Shelldon.
+After both rendering and owner connection checks pass:
 
-**Not a local plugin:** `llama-cpp` is an official/ClawHub plugin that declares
-`>=` a range and loads normally; it only waits for upstream's release. Do not
-rebuild it by hand.
+```bash
+scripts/gateway-update.sh finish --owner-ui-confirmed
+scripts/gateway-update.sh status
+```
 
-## Verification checklist
+`finish` refreshes the read-only runtime checks, verifies watchdog activation,
+removes **only the latest successful run's own guard**, then confirms the timer
+remains active. A replaced guard, alias guard, failed/active run, or failing
+verification blocks cleanup. A completed finish is idempotent and still refuses
+to remove a newer guard. Runtime guards and run artifacts remain gitignored.
 
-- `openclaw --version` shows the target release.
-- Service `active`, HTTP 200 on `127.0.0.1:18789`.
-- `openclaw update status` reports the current update terminal (`succeeded`).
-  Also inspect phase outcomes: `update repair` can exit 0 with maintenance
-  skipped or pending. That is not a completed Doctor run.
-- The explicit final `doctor --fix --non-interactive` logged `Doctor complete`,
-  exited 0, and did not leave required migrations or local-plugin repairs
-  skipped. Record its outcome before restarting; do not restart a second full
-  Doctor just to verify the first one.
-- **Local plugin check reports `OK` for every path-installed plugin** (see the
-  section above), and `openclaw doctor` shows no plugin ERROR for them.
-- Every expected plugin appears in the gateway's plugin list, including
-  `vault-access-broker` when the Vault Access Broker is meant to be online.
-- Control UI loads via `https://ai.sieh.org/` in a real browser; a successful
-  local HTTP probe or `/healthz` is not sufficient. Verify the public `/`
-  response is HTTP 200 **and HTML containing
-  `data-openclaw-control-ui-build-id`**, then confirm the application renders
-  and the existing owner connection works. A fresh browser's token login page
-  can prove rendering, but not the existing owner connection. If that connection
-  is not available to the agent, request owner confirmation and leave that check
-  pending; do not retrieve a token or change authentication. A JSON
-  `proxy_attribution_required` response is a failed update verification.
-- If public attribution fails, compare the exact peer in the gateway's
-  `observed unattributable proxy-shaped traffic from …` log with
-  `gateway.trustedProxies`. Verify that peer serves the configured NPM host
-  before correcting its single-IP entry. This does not establish that an
-  operator changed Nginx; do not change proxy settings or trust a subnet
-  merely to suppress the error.
-- `openclaw status --deep --json` reports Discord/Telegram connected, ready,
-  and without a last error; do not send unsolicited channel messages.
-- Verify the Vault Access Broker through the live Gateway (`plugins.inspect`,
-  `tools.catalog` for Shelldon), the optional tool and both typed hooks via
-  runtime inspection, and its controlled fake-CLI tests. Keep Retrieval
-  Approval and redaction in place. These are runtime registration checks, not
-  `vault_fetch` invocations. A version-pin rebuild does not require the separate
-  disposable-Vault-Item login test in `vault-access-runtime.md`. Maintenance is
-  not permission to retrieve an arbitrary Vault Item.
-- Measure generated plugin/runtime and compile caches before and after the
-  window (`du -sk` over all paths in one invocation, so shared hardlinks are
-  counted once). Existing boot cleanup remains responsible for temporary
-  captures. Remove obsolete, regenerable unnamespaced Node compile caches
-  only with the gateway stopped; preserve the current version-namespaced
-  cache. Never delete an active capture, npm runtime generation, or recovery
-  archive just to meet a disk target.
-- Guard file gone; `systemctl --user list-timers | grep openclaw` shows the
-  watchdog armed.
-- The boot wiped `~/.openclaw/tmp` and `/tmp/openclaw-plugin-build-*`
-  (ExecStartPre hook), so post-update debris self-cleans.
+If journal access was unavailable, have the owner inspect the journal since the
+receipt's `startRequestedAt`: require `http server listening` (the expected
+plugin list) and `vault-access-runtime healthy: … credentials=3`. Only after
+that independent confirmation may finish use the additional flag:
 
-## Failure branches
+```bash
+scripts/gateway-update.sh finish --owner-ui-confirmed --journal-confirmed
+```
 
-- **`doctor-failed` / `agent-database-lease-active`:** the gateway was still
-  running. It holds the agent-database leases. Stop it and re-run step 4.
-  The run rolls back on its own; the live release is untouched.
-- **Actual unfinished run or required post-update repair:** with the gateway
-  stopped and no other maintenance process running, use
-  `openclaw update repair --yes`. Inspect completed/skipped phases, not only
-  its exit code; then resume at the unfinished step rather than repeating the
-  entire update.
-- **Historical abandoned record with no target build:** repair may leave it
-  abandoned because version equality cannot prove that old attempt succeeded.
-  Distinguish it from an active run and current failures. Record the remaining
-  notice honestly; do not erase history, fabricate success, or repeat repair
-  indefinitely to make it disappear.
-- **Doctor exit 137 / SIGINT / lost maintenance lease after interruption:** the
-  run did not complete. The exit alone does not establish corruption or the
-  precise kill source. Wait until its processes are gone, then perform one
-  supported stopped-gateway run without a short artificial deadline.
-- **`managed-service` warning in the report:** expected on this host. It only
-  means the updater did not touch the service; steps 2 and 6 cover that.
-- **`failed to copy plugin: FsSafeError: Source hardlink preflight exceeds
-  50000 entries`:** the plugin was installed from a source tree carrying a
-  development `node_modules`. Install the packed artifact instead, or prune dev
-  dependencies first (see "Local plugins and version bumps").
-- **Plugin skipped / `Plugin install incomplete: plugin metadata is missing`:**
-  a path-installed local plugin is pinned to the old plugin API. Rebuild and
-  reinstall it per "Local plugins and version bumps" above, then restart the
-  gateway. This is expected work, not a failed update.
-- **Failed after the package swap:** package rollback cannot undo migrated
-  state. Finish with `openclaw doctor --fix` on the installed build, then
-  start the service.
-- **Gateway won't start:** `journalctl -u openclaw-gateway.service -n 100`;
-  common causes are config errors (doctor flags them) or a full disk
-  (`df -h /`).
-- **Installation considered unrecoverable:** the updater points at
-  `openclaw triage`. Treat that as a human decision, not an automatic step.
+This is owner attestation of a performed journal check, not a skip switch.
+Do not call the update complete while either owner check remains pending. The
+watchdog timer can be active while **recovery is paused by the guard**; report
+that distinction explicitly. Do not leave a successful window awaiting cleanup
+without telling the owner what is needed.
+
+## Local plugin maintenance
+
+The workflow rebuilds the **Vault Access Broker** from
+`plugins/vault-access-broker/` after the new core is installed and while the
+service is stopped. It updates all five pins: compatibility API, build core,
+build SDK, peer dependency, and development dependency. Omitting the last pin
+can resolve a stale SDK even when the manifest looks current.
+
+It checks explicit `allowBuilds: true` entries in `pnpm-workspace.yaml` for
+`@google/genai`, `esbuild`, `koffi`, `openclaw`, `protobufjs`, and
+`tree-sitter-bash`, and adds only the new `openclaw@<version>` and
+`@openclaw/ai@<version>` release-age exclusions. It runs `pnpm install`,
+`npm test`, `npm run plugin:build`, and `npm run plugin:validate`.
+
+Tests use a **controlled fake Bitwarden CLI**, never the Personal Vault Identity.
+A core bump is not permission to fetch a real Vault Item, create a disposable
+Vault Item, invoke the private CLI, or run the separate owner-approved login test
+in [vault-access-runtime.md](vault-access-runtime.md). Preserve Retrieval Approval
+and redaction.
+
+Installation uses a unique lean staging directory containing only `dist`, the
+manifest, README and package metadata. Production dependencies are installed
+without automatically installing the core peer; that peer is symlinked to the
+new core root reported by the CLI. The managed install uses `--force` and the
+existing explicit local capability acceptance. The staging directory is cleaned
+on normal/error exit. Installing the development tree instead can exceed the
+50,000-entry hardlink preflight; do not use it as a shortcut.
+
+Registry-managed **llama-cpp** is not rebuilt by hand. Its `>=` API range allows
+it to load while waiting for upstream's matching release. An older registry
+version alone is not update failure.
+
+## Safety and failure branches
+
+- Service control from agent turns goes only through the tracked detached update
+  entry point or `~/.local/bin/openclaw-gateway-restart-detached` for ordinary
+  restarts. Inline `systemctl stop/restart`, in-process restart signals,
+  `openclaw gateway restart` variants, and restart tools/UI controls remain
+  forbidden (ADR 0005).
+- Never open, query, copy, or inspect OpenClaw's SQLite databases, patch installed
+  core source, expose credentials, or change credential permissions during an
+  update. Use supported CLI reports, process inspection and service journal.
+- `doctor --fix --non-interactive` and maintenance-running `update repair`
+  require a stopped gateway. Online checks use `doctor --lint --non-interactive`.
+  Non-interactive mode does not remove leases.
+- A `failed` receipt preserves the guard and records the failure phase. The
+  worker attempts to start the service if it had requested a stop; a pre-stop
+  refusal never starts a service against another operator's maintenance. Check
+  `recoveryStartAttempted` and `recoveryStartExit`,
+  service state and journal. Do not launch a competing window or manually delete
+  its guard to fabricate completion.
+- Actual unfinished updates follow current CLI recovery advice: with the service
+  stopped and no maintenance competitor, `openclaw update repair --yes`, inspect
+  completed/skipped phases, then resume required plugin maintenance/final Doctor.
+  This is a deliberate independent-terminal recovery operation, not an automatic
+  retry inside the reusable script. Reconcile the failed window's guard explicitly
+  after recovery and full verification; `finish` deliberately refuses failed runs.
+- An old abandoned record or update-time maintenance notice does not justify
+  extra repair/Doctor runs merely to erase warnings. Service-inspection warnings
+  are expected for this system-scope unit. Denied access to the Vault environment
+  file is not permission to inspect bootstrap credentials.
+- `agent-database-lease-active` means the gateway/another process still holds
+  state; inspect processes and service state, not databases. Exit 137, interruption,
+  or lost lease is not a successful Doctor and does not establish corruption.
+- If public attribution fails, compare the exact logged proxy peer with the
+  configured trusted proxies and verify it serves this NPM host before changing
+  a single-IP entry. Do not trust a subnet or change proxy/auth settings to
+  suppress verification errors.
+- Boot cleanup remains the existing `ExecStartPre` hook (ADR 0005). It wipes
+  gateway temporary captures; new captures may already exist after startup.
+  Do not delete active captures, npm generations, recovery archives or the
+  current namespaced compile cache to meet a disk target. The script measures
+  caches but intentionally performs no new cache-deletion policy.
+
+## Testing and repository follow-up
+
+```bash
+bash -n scripts/gateway-update.sh
+python3 -m unittest discover -s tests -v
+# Equivalent: pnpm run test:gateway-update
+```
+
+The tests inject fake command execution; no service, network, OpenClaw database
+or real Vault credentials are used. Cover guard ownership, overlap refusal,
+version checks, dependency pins, ordering, recovery, incomplete Doctor,
+registration/health checks, and confirmed cleanup. Do not live-test `start` or
+`finish` as part of a source refactor.
+
+After a real update, sync version anchors and review the tracked config snapshots,
+broker pins/lockfile/workspace exceptions, and redacted upstream update report.
+Inspect Git status and the staged diff before committing; private lifecycle logs
+and guards are not repository content.

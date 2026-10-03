@@ -26,6 +26,8 @@ live in [`CONTEXT.md`](CONTEXT.md).
   their credential fields are `${VAR}` references whose values stay in the
   gitignored `.env`. Automatic `openclaw.json.bak*` backups and other runtime
   state remain ignored.
+- Gateway updates use tracked `scripts/gateway-update.sh`; read
+  `docs/runbooks/gateway-update.md` before launching or finishing a window.
 - New commits must follow [Conventional Commits 1.0.0](docs/agents/git-commits.md).
 
 ## Context routing
@@ -48,7 +50,7 @@ record the gap for domain modeling instead of inventing competing vocabulary.
 ## Instance anchors
 
 - Host: `ubuntu-8gb-nbg`; public gateway: `https://ai.sieh.org/`; gateway port:
-  `18789`; OpenClaw version: `2026.9.7`.
+  `18789`; OpenClaw version: `2026.9.8`.
 - Repository remote: `https://github.com/henningsieh/openclaw-setup.git`.
   Native work belongs on `native-setup`; remote `main` contains the Dockerized
   setup and remains untouched unless explicitly changed.

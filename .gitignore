@@ -20,6 +20,8 @@
 /credentials/
 /locks/
 /logs/
+/.maintenance
+/.maintainance
 /media/
 /migration/
 /state/
