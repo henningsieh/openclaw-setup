@@ -944,7 +944,10 @@
     }
   },
   "logging": {
-    "level": "trace"
+    "level": "trace",
+    "consoleLevel": "info",
+    "file": "/home/shelldon/.openclaw/logs/gateway/openclaw.log",
+    "maxFileBytes": 20971520
   },
   "commands": {
     "ownerAllowFrom": [
