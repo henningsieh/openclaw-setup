@@ -25,11 +25,11 @@ Ein einzelner physischer Seed hat nicht automatisch alle Eigenschaften, die in e
 
 - [Linda Seeds offizieller Katalog](https://www.linda-seeds.com/en/) — als künftige Quelle für konkrete Linda-Produktseiten geprüft. Die exakte Gorilla-Produktseite und deren Angaben konnte ich in dieser Recherche nicht belastbar zuordnen; daher sind keine Linda-Katalogmerkmale in der Datenbank eingetragen.
 - [Elev8 Seeds offizieller Katalog](https://elev8seeds.com/) — offizieller Anbieter-Katalog geprüft. Eine konkrete aktuelle Produktseite für „Apples and Bananas“ wurde nicht gefunden; daher sind keine Elev8-Katalogmerkmale eingetragen.
-- [CULTIVATION-SETUP.md](../CULTIVATION-SETUP.md) — interne Primärquelle für die aktuelle Zuordnung und Stückzahlen: zwei Linda Seeds „Gorilla Skittlez“ und ein Elev8 Seeds „Apples and Bananas“, insgesamt drei Pflanzen/Seeds. Das Setup enthält keine Charge, Kauf-, Aussaat- oder Keimdaten.
+- [CULTIVATION-SETUP.md](../CULTIVATION-SETUP.md) — interne Primärquelle für die aktuelle Zuordnung und Stückzahlen: zwei Linda Seeds „Gorilla Zkittlez“ und ein Elev8 Seeds „Apples and Bananas“, insgesamt drei Pflanzen/Seeds. Das Setup enthält keine Charge, Kauf-, Aussaat- oder Keimdaten.
 
 ## Befüllungsentscheidung
 
-- Die beiden Sortennamen werden **genau wie im Grow-Setup** gespeichert. Für Gorilla Skittlez bleibt ein möglicher abweichender Katalogname offen, bis die Packung oder die exakte offizielle Produktseite vorliegt.
+- Die beiden Sortennamen werden **genau wie im Grow-Setup** gespeichert.
 - Eingetragen sind **2 Sorten-Datensätze und 3 Seed-Einheiten**, weil das Setup drei Seeds/Pflanzen nennt. Die Unit-IDs sind lokale Datenbank-IDs, keine ursprünglichen Packungs- oder Pflanzenschilder.
 - Nicht belegte Angaben (Genetik, Seed-Typ, THC/CBD, Ertrag, Charge, Kauf-/Aussaat-/Keimdatum, Händler und Lagerort) bleiben leer. Es wurden dafür keine Werte geschätzt.
 

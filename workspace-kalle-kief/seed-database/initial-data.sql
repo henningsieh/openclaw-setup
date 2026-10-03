@@ -33,23 +33,23 @@ VALUES
 
 INSERT INTO grow_runs (grow_id, label, flowering_started_on, notes, source_id)
 VALUES ('GROW-2026-CURRENT', 'Aktueller Indoor-Coco-Grow 2026', '2026-08-17',
-        'Grow reference records 3 plants / seeds: 2 × Linda Seeds — Gorilla Skittlez; 1 × Elev8 Seeds — Apples and Bananas.',
+        'Grow reference records 3 plants / seeds: 2 × Linda Seeds — Gorilla Zkittlez; 1 × Elev8 Seeds — Apples and Bananas.',
         'SRC-SETUP');
 
 INSERT INTO cultivars
     (cultivar_id, breeder_as_recorded, cultivar_name_as_recorded, standardized_name, notes)
 VALUES
-    ('CV-LINDA-GORILLA-SKITTLEZ', 'Linda Seeds', 'Gorilla Skittlez', NULL,
-     'Name kept exactly as written in the grow reference. Do not normalize to a catalog spelling until the packet or an exact official product page confirms it.'),
+    ('CV-LINDA-GORILLA-ZKITTLEZ', 'Linda Seeds', 'Gorilla Zkittlez', NULL,
+     'Product name recorded for the current grow; cultivar traits remain blank until supported by a product source.'),
     ('CV-ELEV8-APPLES-BANANAS', 'Elev8 Seeds', 'Apples and Bananas', NULL,
      'Name kept exactly as written in the grow reference. Cultivar traits remain blank until supported by the packet or an exact official product page.');
 
 INSERT INTO seed_units
     (seed_id, cultivar_id, grow_id, lifecycle_status, status_as_of, notes)
 VALUES
-    ('SEED-2026-001', 'CV-LINDA-GORILLA-SKITTLEZ', 'GROW-2026-CURRENT', 'flowering', '2026-09-25',
+    ('SEED-2026-001', 'CV-LINDA-GORILLA-ZKITTLEZ', 'GROW-2026-CURRENT', 'flowering', '2026-09-25',
      'Database-assigned unit ID; setup records two seeds/plants of this cultivar but does not map individual seeds to plant labels.'),
-    ('SEED-2026-002', 'CV-LINDA-GORILLA-SKITTLEZ', 'GROW-2026-CURRENT', 'flowering', '2026-09-25',
+    ('SEED-2026-002', 'CV-LINDA-GORILLA-ZKITTLEZ', 'GROW-2026-CURRENT', 'flowering', '2026-09-25',
      'Database-assigned unit ID; setup records two seeds/plants of this cultivar but does not map individual seeds to plant labels.'),
     ('SEED-2026-003', 'CV-ELEV8-APPLES-BANANAS', 'GROW-2026-CURRENT', 'flowering', '2026-09-25',
      'Database-assigned unit ID; setup records one seed/plant of this cultivar but does not provide a physical plant label.');
@@ -58,12 +58,12 @@ INSERT INTO field_evidence (entity_kind, entity_id, field_name, source_id, excer
 VALUES
     ('grow', 'GROW-2026-CURRENT', 'flowering_started_on', 'SRC-SETUP', 'Grow reference: flowering since Monday 17 August 2026.'),
     ('grow', 'GROW-2026-CURRENT', 'plant_and_seed_counts', 'SRC-SETUP', 'Grow reference: 3 plants / 3 seeds.'),
-    ('cultivar', 'CV-LINDA-GORILLA-SKITTLEZ', 'breeder_as_recorded', 'SRC-SETUP', 'Grow reference: 2 × Linda Seeds — Gorilla Skittlez.'),
-    ('cultivar', 'CV-LINDA-GORILLA-SKITTLEZ', 'cultivar_name_as_recorded', 'SRC-SETUP', 'Grow reference spelling preserved verbatim: Gorilla Skittlez.'),
+    ('cultivar', 'CV-LINDA-GORILLA-ZKITTLEZ', 'breeder_as_recorded', 'SRC-SETUP', 'Grow reference: 2 × Linda Seeds — Gorilla Zkittlez.'),
+    ('cultivar', 'CV-LINDA-GORILLA-ZKITTLEZ', 'cultivar_name_as_recorded', 'SRC-SETUP', 'Cultivar: Gorilla Zkittlez.'),
     ('cultivar', 'CV-ELEV8-APPLES-BANANAS', 'breeder_as_recorded', 'SRC-SETUP', 'Grow reference: 1 × Elev8 Seeds — Apples and Bananas.'),
     ('cultivar', 'CV-ELEV8-APPLES-BANANAS', 'cultivar_name_as_recorded', 'SRC-SETUP', 'Grow reference spelling preserved verbatim: Apples and Bananas.'),
-    ('seed_unit', 'SEED-2026-001', 'cultivar_and_count', 'SRC-SETUP', 'First local unit ID instantiated from the recorded count 2 × Linda Seeds — Gorilla Skittlez; no physical plant tag is recorded.'),
-    ('seed_unit', 'SEED-2026-002', 'cultivar_and_count', 'SRC-SETUP', 'Second local unit ID instantiated from the recorded count 2 × Linda Seeds — Gorilla Skittlez; no physical plant tag is recorded.'),
+    ('seed_unit', 'SEED-2026-001', 'cultivar_and_count', 'SRC-SETUP', 'First local unit ID instantiated from the recorded count 2 × Linda Seeds — Gorilla Zkittlez; no physical plant tag is recorded.'),
+    ('seed_unit', 'SEED-2026-002', 'cultivar_and_count', 'SRC-SETUP', 'Second local unit ID instantiated from the recorded count 2 × Linda Seeds — Gorilla Zkittlez; no physical plant tag is recorded.'),
     ('seed_unit', 'SEED-2026-003', 'cultivar_and_count', 'SRC-SETUP', 'Local unit ID instantiated from the recorded count 1 × Elev8 Seeds — Apples and Bananas; no physical plant tag is recorded.'),
     ('seed_unit', 'SEED-2026-001', 'lifecycle_status', 'SRC-SETUP', 'The reference describes the current three-plant grow as flowering; individual plant labels are absent.'),
     ('seed_unit', 'SEED-2026-002', 'lifecycle_status', 'SRC-SETUP', 'The reference describes the current three-plant grow as flowering; individual plant labels are absent.'),

@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS cultivars (
 CREATE TABLE IF NOT EXISTS seed_units (
     seed_id          TEXT PRIMARY KEY,
     cultivar_id      TEXT NOT NULL REFERENCES cultivars(cultivar_id),
+    purchase_item_id TEXT REFERENCES purchase_order_items(purchase_item_id),
     grow_id          TEXT REFERENCES grow_runs(grow_id),
     plant_label      TEXT,
     supplier         TEXT,
@@ -94,8 +95,33 @@ CREATE TABLE IF NOT EXISTS candidate_offers (
     notes              TEXT
 );
 
+-- Purchases track ordered/incoming quantities separately from physically held seed_units.
+CREATE TABLE IF NOT EXISTS purchase_orders (
+    purchase_id        TEXT PRIMARY KEY,
+    supplier           TEXT NOT NULL,
+    supplier_order_ref TEXT NOT NULL,
+    ordered_on         TEXT NOT NULL,
+    payment_status     TEXT NOT NULL,
+    receipt_status     TEXT NOT NULL DEFAULT 'awaiting_delivery'
+        CHECK (receipt_status IN ('awaiting_delivery', 'partially_received', 'received', 'cancelled')),
+    total_amount       REAL,
+    currency           TEXT,
+    source_id          TEXT NOT NULL REFERENCES source_catalog(source_id)
+);
+
+CREATE TABLE IF NOT EXISTS purchase_order_items (
+    purchase_item_id TEXT PRIMARY KEY,
+    purchase_id      TEXT NOT NULL REFERENCES purchase_orders(purchase_id),
+    cultivar_id      TEXT NOT NULL REFERENCES cultivars(cultivar_id),
+    quantity         INTEGER NOT NULL CHECK (quantity > 0),
+    item_kind        TEXT NOT NULL CHECK (item_kind IN ('paid', 'bonus')),
+    line_total       REAL,
+    notes            TEXT
+);
+
 CREATE INDEX IF NOT EXISTS idx_seed_units_cultivar ON seed_units(cultivar_id);
 CREATE INDEX IF NOT EXISTS idx_seed_units_grow ON seed_units(grow_id);
 CREATE INDEX IF NOT EXISTS idx_field_evidence_entity ON field_evidence(entity_kind, entity_id);
 CREATE INDEX IF NOT EXISTS idx_candidates_role ON seed_research_candidates(candidate_role);
 CREATE INDEX IF NOT EXISTS idx_candidate_offers_candidate ON candidate_offers(candidate_id);
+CREATE INDEX IF NOT EXISTS idx_purchase_items_order ON purchase_order_items(purchase_id);
