@@ -259,6 +259,12 @@
       },
       "vault-access-broker": {
         "enabled": true
+      },
+      "opencode": {
+        "enabled": true
+      },
+      "perplexity": {
+        "enabled": true
       }
     }
   },
@@ -267,7 +273,7 @@
       "modelPolicyAllowlist": true,
       "utilityModelSeparation": true
     },
-    "lastTouchedVersion": "2026.9.8"
+    "lastTouchedVersion": "2026.9.9"
   },
   "gateway": {
     "mode": "local",
@@ -305,8 +311,8 @@
     }
   },
   "wizard": {
-    "lastRunAt": "2026-09-30T18:37:40.999Z",
-    "lastRunVersion": "2026.9.7",
+    "lastRunAt": "2026-10-08T12:00:44.731Z",
+    "lastRunVersion": "2026.9.9",
     "lastRunCommand": "doctor",
     "lastRunMode": "local"
   },
