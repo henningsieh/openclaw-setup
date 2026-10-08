@@ -210,6 +210,16 @@ sudo journalctl -u openclaw-gateway.service --follow
   - `/etc/systemd/system/openclaw-gateway.service.d/30-tmp-clean.conf`
     wipes `~/.openclaw/tmp` via `ExecStartPre` on every boot (root-owned,
     installed once by the owner); no sweeper scripts or timers.
+  - ⚠️ HIGH PRIORITY (outages 2026-10-08, twice): `~/.openclaw/tmp/openclaw-<uid>/`
+    holds the live gateway state-ownership locks (`state.*.lock`,
+    `gateway.state.lock`). Deleting it under a running gateway orphans its
+    lock FDs (`(deleted)`), and EVERY state read/write fails with
+    "state ownership ... could not be verified" until restart — Discord,
+    Telegram, Control UI and all automations go dark. Disk cleanups must
+    NEVER touch `tmp/openclaw-*/`; only `playwright-transform-cache-*`,
+    `tsx-*`, stale `plugin-captures/` and `/tmp/openclaw-plugin-build-*`
+    are safe targets. Never approve an agent-proposed `rm -rf` of tmp
+    without this exclusion.
 - Implementation components (all shelldon-owned except the drop-in above):
   - `~/.local/bin/openclaw-gateway-restart-detached` — the agent
     self-restart command.

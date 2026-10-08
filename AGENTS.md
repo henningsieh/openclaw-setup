@@ -14,6 +14,8 @@ live in [`CONTEXT.md`](CONTEXT.md).
 - The gateway runs natively as service user `shelldon`, never as root or Docker.
   Use `/home/shelldon` as the working directory for OpenClaw installation and
   package operations.
+- Never delete `~/.openclaw/tmp/openclaw-*/` (live gateway state-ownership
+  locks — deleting them darkens every channel until restart, see `CONTEXT.md`).
 - Preserve the native architecture. Do not restore Docker-era QMD, caches,
   session exports, credentials, or configuration wholesale. Do not restore
   Clawfred unless explicitly requested.
