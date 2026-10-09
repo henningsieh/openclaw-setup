@@ -264,7 +264,7 @@ sudo journalctl -u openclaw-gateway.service --follow
   `.env` at startup; its value must never enter Git. Telegram, Discord, and
   llama.cpp credential fields likewise use `${VAR}` references. The tracked config
   and retained snapshots contain references only, never credential values.
-- `gateway.trustedProxies`: `["127.0.0.1", "::1", "172.25.0.3"]` — the new gateway
+- `gateway.trustedProxies`: `["127.0.0.1", "::1", "172.25.0.4"]` (was `172.25.0.3` until the 2026-10-09 NPM recreate) — the new gateway
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
 - `gateway.controlUi.allowedOrigins`: `["https://<gateway-host>"]`.
@@ -415,7 +415,7 @@ agent rather than copying Docker runtime state wholesale:
 - ⚠️ The generated `.conf` was edited directly + `nginx -s reload` because a plain
   container restart does not regenerate it from the DB. Editing host 34 in the NPM
   UI later regenerates from the DB — same value, harmless.
-- ⚠️ NPM's observed peer IP (`172.25.0.3`) is pinned in `trustedProxies`. If the NPM
+- ⚠️ NPM's observed peer IP (currently `172.25.0.4`; was `172.25.0.3` before the 2026-10-09 recreate) is pinned in `trustedProxies`. If the NPM
   container is recreated with a different IP, update `gateway.trustedProxies`
   (`openclaw config set gateway.trustedProxies '["127.0.0.1", "::1", "<new-ip>"]'`)
   and restart the gateway.
