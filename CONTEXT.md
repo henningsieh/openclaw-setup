@@ -264,7 +264,7 @@ sudo journalctl -u openclaw-gateway.service --follow
   `.env` at startup; its value must never enter Git. Telegram, Discord, and
   llama.cpp credential fields likewise use `${VAR}` references. The tracked config
   and retained snapshots contain references only, never credential values.
-- `gateway.trustedProxies`: `["127.0.0.1", "::1", "172.25.0.2"]` (was `172.25.0.3` until the 2026-10-09 NPM recreate, `172.25.0.4` until 2026-10-10) — the new gateway
+- `gateway.trustedProxies`: `["127.0.0.1", "::1", "172.25.0.20"]` (history: dynamic `.3` → `.4` on 2026-10-09 → `.2` on 2026-10-10; static `.20` since 2026-10-10 root-agent network fix) — the new gateway
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
 - `gateway.controlUi.allowedOrigins`: `["https://<gateway-host>"]`.
@@ -415,7 +415,7 @@ agent rather than copying Docker runtime state wholesale:
 - ⚠️ The generated `.conf` was edited directly + `nginx -s reload` because a plain
   container restart does not regenerate it from the DB. Editing host 34 in the NPM
   UI later regenerates from the DB — same value, harmless.
-- ⚠️ NPM's observed peer IP (currently `172.25.0.2`; history: `172.25.0.3` → `172.25.0.4` on 2026-10-09 → `172.25.0.2` on 2026-10-10) is pinned in `trustedProxies`. If the NPM
+- ⚠️ NPM's peer IP is now static (`172.25.0.20`, pinned 2026-10-10) — dynamic churn (`.3`→`.4`→`.2`) ended with the root-agent static-IP rollout. `trustedProxies` hot-reloads on `config set` (verified 2026-10-10, no restart needed). If the NPM
   container is recreated with a different IP, update `gateway.trustedProxies`
   (`openclaw config set gateway.trustedProxies '["127.0.0.1", "::1", "<new-ip>"]'`)
   and restart the gateway.
