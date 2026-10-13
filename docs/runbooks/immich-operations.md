@@ -25,12 +25,29 @@ skill.
 
 ## Credentials and command environment
 
-The existing native `~/.openclaw/.env` is the only secret source:
-`IMMICH_API_KEY` is the asset owner's non-admin key; `IMMICH_ADMIN_API_KEY` is
-for administrative operations. Check key presence and `/api/users/me` without
-printing values. Never substitute the admin key for the asset key: uploads
-would belong to the wrong account. A missing key in one process environment is
-a runtime observation, not proof that the dotenv lacks it.
+Read the Immich keys from the environment variables the running process already
+provides: `IMMICH_API_KEY` is the asset owner's non-admin key; `IMMICH_ADMIN_API_KEY`
+is for administrative operations. Use the value exactly as the runtime exposes it;
+never hand-derive or re-parse it. When a key must be stored separately, keep it as
+a raw file and always expand it quoted:
+
+```bash
+printf '%s' 'KEY' > ~/.immich_key && chmod 600 ~/.immich_key
+IMMICH_API_KEY="$(cat ~/.immich_key)"
+curl -s -H "x-api-key: $IMMICH_API_KEY" https://<immich-host>/api/users/me
+```
+
+An unquoted `$KEY` lets the shell eat special characters (`!`, `$`, backtick)
+intermittently, which looks exactly like flapping auth. Verify access against
+`/api/users/me` (expect HTTP 200) before asset work, without printing values.
+Never substitute the admin key for the asset key: uploads would belong to the
+wrong account.
+
+**401 diagnosis order.** 1) `/api/server/version` — should be 200; a failure there
+means server/network, not the key. 2) `/api/users/me` with the key. `Invalid API
+key` means the *sent* value is wrong (check the file/variable), not that the server
+should be restarted or the key rotated. After a container restart or update, a
+short 401 window is normal: wait ~2 minutes and retest before touching the key.
 
 | `immich-go` operation | Map `IMMICH_API_KEY` to | Origin flag |
 |---|---|---|
@@ -57,6 +74,13 @@ Do not point `--config` at a missing file. Disable job pausing for normal previe
 | Asset export | `immich-go archive from-immich` | Reviewed filter, capacity-checked destination, exported content verified |
 | Stacking | `immich-go stack` | Bounded preview, reviewed mode, resulting groups and retained formats verified |
 | Metadata/date changes | Version-matched OpenAPI | Read back every changed asset; HTTP 2xx alone is insufficient |
+| Tag create/assign | `POST /api/tags`, then attach to assets | Tag name has no `/`; read the created tag back |
+| Version update | `sudo -n /usr/local/bin/immich-update` (root-only, NOPASSWD) | Release applied, `immich_server` healthy and version label matches |
+
+The `📸 Immich Nightly Update` automation runs the update check daily at 02:30
+(after the 02:00 DB backup, which the script requires <48 h fresh) and announces
+one line to Discord `#system-status`. Agents otherwise treat Immich lifecycle as
+root-only and stay read-only/API.
 
 Use a dry-run for state-changing CLI operations; archive previews need both
 `--dry-run` and `--from-dry-run`. Report the exact source, filters, destination,

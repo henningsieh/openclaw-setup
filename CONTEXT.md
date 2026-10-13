@@ -83,7 +83,7 @@ automations, and wiki. The complete Docker-era state remains preserved as backup
 | Item | Value |
 |---|---|
 | Host | `ubuntu-8gb-nbg` (<host-ip>, Hetzner nbg1) |
-| OpenClaw version | 2026.9.8 (`fc23bc8`) |
+| OpenClaw version | 2026.10.2 (`b8952d4`) |
 | Runtime | Native Node.js v24 (system `/usr/bin/node`), **not** Docker |
 | Service user | `shelldon` (uid 1000) — gateway never runs as root |
 | Public URL | `https://<gateway-host>/` |
@@ -162,7 +162,7 @@ catalog, usage limits, and privacy policies:
 - https://opencode.ai/docs/en/go.md
 
 When a local command and a remembered procedure disagree, check the docs for
-OpenClaw `2026.9.8` behavior and verify with `openclaw <command> --help` as the
+OpenClaw `2026.10.2` behavior and verify with `openclaw <command> --help` as the
 installed CLI is authoritative for this host.
 
 ## Layout (all owned by `shelldon`)
@@ -479,11 +479,13 @@ timezone use the Gateway host's local timezone, which is Europe/Berlin.
 |---|---|---|---|---|
 | `🦀 OpenClaw Nightly Backup` | Daily 00:01 | — command job | Creates and verifies the official archive on the StorageBox/Nextcloud mount. | Concise success status → Discord `#system-status` |
 | `📧 MailCow Nightly Update` | Daily 02:00 | — command job | Checks MailCow via the native `host-server` SSH alias; applies an available update, then reports container status. The private key is at `~/.ssh/host-server`, outside the workspace and Git. | Discord `#system-status` |
-| `Memory Dreaming Promotion` | Daily 03:00 | Native managed: `nvidia/nemotron-3-ultra-550b-a55b`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. | None |
-| `🧹 Session Cleanup (Trajectory & Orphans)` | Daily 04:00, 10-minute stagger | `nvidia/nemotron-3-super-120b-a12b` | Prunes stale session transcripts and trajectory sidecars. | German summary → Discord `#system-status` |
-| `📺 Markus Lanz Guest Lookup` | Every 30 minutes, 11:00–17:59, Tue–Thu | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning`; fallbacks: `nvidia/nemotron-3-super-120b-a12b`, `opencode-go/muse-spark-1.3-contributor` | Runs the deterministic guest-lookup script; it sends Telegram only when it finds a new result. | Telegram `<telegram-chat-id>`, conditional |
-| `📋 Weekly AI Wiki Curation (Entities & Concepts)` | Sunday 06:00 | `nvidia/nemotron-3-ultra-550b-a55b`; fallbacks: `nvidia/nemotron-3-super-120b-a12b`, `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning` | Makes up to three evidence-based native-wiki curation changes; preserves Docker/QMD/Clawfred history without promoting retired claims. | Up to five lines → Discord `#system-status` |
+| `📸 Immich Nightly Update` | Daily 02:30 | — command job | Checks and applies the newest Immich release via `sudo -n /usr/local/bin/immich-update`, after the 02:00 DB backup. | Discord `#system-status` |
+| `🧠 Memory Dreaming Promotion` | Daily 03:00 | Native managed: `nvidia/nemotron-3-ultra-550b-a55b`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. | None |
 | `skill-collection-review-shelldon` | Every 7 days | Native managed; agent default `opencode-go/deepseek-v4.1-flash`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native managed review of the local Skill Workshop collection. | None |
+| `skill-collection-review-kalle-kief` | Every 7 days | as above, agent `kalle-kief` | Native managed review of the kalle-kief Skill Workshop collection. | None |
+
+Disabled since 2026-10-09 (kept, not deleted): `📺 Markus Lanz Guest Lookup`,
+`📋 Weekly AI Wiki Curation (Entities & Concepts)`, `🧹 Session Cleanup`.
 
 No OpenAI model remains in any configured default or fallback chain; the
 OpenAI OAuth profile is retained solely for the `codex` plugin harness.
