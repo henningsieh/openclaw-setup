@@ -12,7 +12,7 @@ _openclaw_root_completion() {
     "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
     "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
     "--no-color[Disable ANSI colors]" \
-    "1: :_values 'command' 'acp[Run an ACP bridge backed by the Gateway]' 'agent[Run an agent turn via the Gateway (use --local for embedded)]' 'agents[Manage isolated agents (workspaces + auth + routing)]' 'approvals[Manage approval policy and pending requests]' 'exec-approvals[Manage approval policy and pending requests]' 'attach[Attach Claude Code to a gateway session with scoped MCP tools]' 'audit[Inspect activity records and exact-run identity context]' 'backup[Create, verify, and restore backup archives and SQLite snapshots]' 'channels[Manage connected chat channels and accounts]' 'clawbot[Legacy clawbot command aliases]' 'completion[Generate shell completion script]' 'config[Non-interactive config helpers (get/set/patch/unset/file/schema/validate). Run without subcommand for guided setup.]' 'configure[Interactive configuration for credentials, channels, gateway, and agent defaults]' 'connect[Connect this machine to an OpenClaw Gateway as a node]' 'cron[Manage automations (via Gateway)]' 'automations[Manage automations (via Gateway)]' 'daemon[Manage the Gateway service (launchd/systemd/schtasks)]' 'dashboard[Open the Control UI with your current token]' 'database[Inspect database schema compatibility and shared-state write ownership]' 'devices[Device pairing and auth tokens (for mobile app setup codes, use \`openclaw qr\` instead)]' 'directory[Lookup contact and group IDs (self, peers, groups) for supported chat channels]' 'dns[DNS helpers for wide-area discovery (Tailscale + CoreDNS)]' 'docs[Search the live OpenClaw docs]' 'doctor[Health checks + quick fixes for the gateway and channels]' 'exec-policy[Show or synchronize requested exec policy with host approvals]' 'fleet[Provision and manage isolated tenant cells (experimental)]' 'gateway[Run, inspect, and query the WebSocket Gateway]' 'health[Fetch health from the running gateway]' 'hooks[Manage internal agent hooks]' 'infer[Run provider-backed inference commands through a stable CLI surface]' 'capability[Run provider-backed inference commands through a stable CLI surface]' 'logs[Tail gateway file logs via RPC]' 'mcp[Manage OpenClaw mcp.servers config and channel bridge]' 'message[Send, read, and manage messages and channel actions]' 'migrate[Import state from another agent system]' 'models[Model discovery, scanning, and configuration]' 'node[Run and manage the headless node host service]' 'nodes[Manage gateway-owned nodes (pairing, status, invoke, and media)]' 'onboard[Guided setup for auth, models, Gateway, workspace, channels, and skills]' 'pairing[Secure DM pairing (approve inbound requests)]' 'plugins[Manage OpenClaw plugins and extensions]' 'promos[Discover and claim promotional model offers from ClawHub]' 'proxy[Run the OpenClaw debug proxy and inspect captured traffic]' 'qr[Generate a mobile pairing QR code and setup code]' 'reset[Reset local config/state (keeps the CLI installed)]' 'resume[Resume a recent Gateway session in the TUI]' 'sandbox[Manage sandbox containers (Docker-based agent isolation)]' 'secrets[Secrets runtime controls]' 'security[Audit local config and state for common security foot-guns]' 'sessions[List stored conversation sessions]' 'setup[Chat with OpenClaw; onboard when setup is incomplete]' 'skills[List and inspect available skills]' 'status[Show channel health and recent session recipients]' 'system[System tools (events, heartbeat, presence)]' 'telemetry[Inspect and manage anonymous usage telemetry]' 'transcripts[Inspect stored transcripts]' 'triage[Collect sanitized diagnostics and open a local coding agent for repair]' 'tui[Open a terminal UI connected to the Gateway]' 'terminal[Open a terminal UI connected to the Gateway]' 'chat[Open a terminal UI connected to the Gateway]' 'uninstall[Uninstall the gateway service + local data]' 'update[Update OpenClaw and inspect update channel status]' 'users[Manage durable user profiles and email aliases]' 'webhooks[Webhook helpers and integrations]' 'worker[Run the restricted cloud worker runtime]' 'worktrees[Create, inspect, restore, and clean up managed worktrees]'" \
+    "1: :_values 'command' 'acp[Run an ACP bridge backed by the Gateway]' 'agent[Run an agent turn via the Gateway (use --local for embedded)]' 'agents[Manage isolated agents (workspaces + auth + routing)]' 'approvals[Manage approval policy and pending requests]' 'exec-approvals[Manage approval policy and pending requests]' 'attach[Attach Claude Code to a gateway session with scoped MCP tools]' 'audit[Inspect activity records and exact-run identity context]' 'backup[Create, verify, and restore backup archives and SQLite snapshots]' 'channels[Manage connected chat channels and accounts]' 'clawbot[Legacy clawbot command aliases]' 'completion[Generate shell completion script]' 'config[Non-interactive config helpers (get/set/patch/unset/file/schema/validate). Run without subcommand for guided setup.]' 'configure[Interactive configuration for credentials, channels, gateway, and agent defaults]' 'connect[Connect this machine to an OpenClaw Gateway as a node]' 'cron[Manage automations (via Gateway)]' 'automations[Manage automations (via Gateway)]' 'daemon[Manage the Gateway service (launchd/systemd/schtasks)]' 'dashboard[Open the Control UI with your current token]' 'database[Inspect database schema compatibility and shared-state write ownership]' 'devices[Device pairing and auth tokens (for mobile app setup codes, use \`openclaw qr\` instead)]' 'directory[Lookup contact and group IDs (self, peers, groups) for supported chat channels]' 'dns[DNS helpers for wide-area discovery (Tailscale + CoreDNS)]' 'docs[Search the live OpenClaw docs]' 'doctor[Health checks + quick fixes for the gateway and channels]' 'exec-policy[Show or synchronize requested exec policy with host approvals]' 'fleet[Provision and manage isolated tenant cells (experimental)]' 'gateway[Run, inspect, and query the WebSocket Gateway]' 'health[Fetch health from the running gateway]' 'hooks[Manage internal agent hooks]' 'infer[Run provider-backed inference commands through a stable CLI surface]' 'capability[Run provider-backed inference commands through a stable CLI surface]' 'logs[Tail gateway file logs via RPC]' 'mcp[Manage OpenClaw mcp.servers config and channel bridge]' 'message[Send, read, and manage messages and channel actions]' 'migrate[Import state from another agent system]' 'models[Model discovery, scanning, and configuration]' 'node[Run and manage the headless node host service]' 'nodes[Manage gateway-owned nodes (pairing, status, invoke, and media)]' 'onboard[Guided setup for auth, models, Gateway, workspace, channels, and skills]' 'pairing[Secure DM pairing (approve inbound requests)]' 'plugins[Manage OpenClaw plugins and extensions]' 'promos[Discover and claim promotional model offers from ClawHub]' 'proxy[Run the OpenClaw debug proxy and inspect captured traffic]' 'qr[Generate a mobile pairing QR code and setup code]' 'reset[Reset local config/state (keeps the CLI installed)]' 'resume[Resume a recent Gateway session in the TUI]' 'sandbox[Manage sandbox containers (Docker-based agent isolation)]' 'secrets[Secrets runtime controls]' 'security[Audit local config and state for common security foot-guns]' 'sessions[List stored conversation sessions]' 'setup[Chat with OpenClaw; onboard when setup is incomplete]' 'skills[List and inspect available skills]' 'status[Show channel health and recent session recipients]' 'storage[List, initialize, and test configured storage locations]' 'system[System tools (events, heartbeat, presence)]' 'telemetry[Inspect and manage anonymous usage telemetry]' 'transcripts[Inspect stored transcripts]' 'triage[Collect sanitized diagnostics and open a local coding agent for repair]' 'tui[Open a terminal UI connected to the Gateway]' 'terminal[Open a terminal UI connected to the Gateway]' 'chat[Open a terminal UI connected to the Gateway]' 'uninstall[Uninstall the gateway service + local data]' 'update[Update OpenClaw and inspect update channel status]' 'users[Manage durable user profiles and email aliases]' 'webhooks[Webhook helpers and integrations]' 'worker[Run the restricted cloud worker runtime]' 'worktrees[Create, inspect, restore, and clean up managed worktrees]'" \
     "*::arg:->args"
 
   case $state in
@@ -27,6 +27,7 @@ _openclaw_root_completion() {
         (backup) _openclaw_backup ;;
         (database) _openclaw_database ;;
         (migrate) _openclaw_migrate ;;
+        (storage) _openclaw_storage ;;
         (doctor) _openclaw_doctor ;;
         (triage) _openclaw_triage ;;
         (dashboard) _openclaw_dashboard ;;
@@ -503,6 +504,12 @@ openclaw config set --batch-file ./config-set.batch.json --dry-run]' 'unset[Remo
 _openclaw_backup_create() {
   _arguments -C \
     "--output[Archive path or destination directory]:output:" \
+    "--to[Upload the verified archive to a storage location]:to:" \
+    "--claim-namespace[Deliberately take over the backup namespace for this installation]" \
+    "--namespace[Backup namespace (default: sanitized hostname)]:namespace:" \
+    "--keep-daily[Retain the newest backup in N daily UTC buckets]:keepDaily:" \
+    "--keep-weekly[Retain the newest backup in N weekly UTC buckets]:keepWeekly:" \
+    "--keep-monthly[Retain the newest backup in N monthly UTC buckets]:keepMonthly:" \
     "--json[Output JSON]" \
     "--dry-run[Print the backup plan without writing the archive]" \
     "--verify[Verify the archive after writing it]" \
@@ -512,12 +519,32 @@ _openclaw_backup_create() {
 
 _openclaw_backup_verify() {
   _arguments -C \
+    "--from[Read a backup key or latest from a storage location]:from:" \
+    "--namespace[Backup namespace (default: sanitized hostname)]:namespace:" \
     "--json[Output JSON]"
 }
 
 _openclaw_backup_restore() {
   _arguments -C \
+    "--from[Read a backup key or latest from a storage location]:from:" \
+    "--namespace[Backup namespace (default: sanitized hostname)]:namespace:" \
     "--target[Fresh target directory; non-empty directories are refused]:target:" \
+    "--json[Output JSON]"
+}
+
+_openclaw_backup_list() {
+  _arguments -C \
+    "--from[Storage location name]:from:" \
+    "--namespace[Backup namespace (default: sanitized hostname)]:namespace:" \
+    "--json[Output JSON]"
+}
+
+_openclaw_backup_record() {
+  _arguments -C \
+    "--status[ok or failed]:status:" \
+    "--target[External backup target label]:target:" \
+    "--bytes[Backup size in bytes]:bytes:" \
+    "--error[Failure details]:error:" \
     "--json[Output JSON]"
 }
 
@@ -637,6 +664,13 @@ _openclaw_backup_git() {
 _openclaw_backup_enable() {
   _arguments -C \
     "--repository[Git backup repository directory]:repository:" \
+    "--to[Storage location for offsite archive backups]:to:" \
+    "--claim-namespace[Deliberately take over the backup namespace on each scheduled run]" \
+    "--namespace[Backup namespace (default: sanitized hostname)]:namespace:" \
+    "--no-include-workspace[Exclude workspace directories from offsite archives]" \
+    "--keep-daily[Retain the newest backup in N daily UTC buckets]:keepDaily:" \
+    "--keep-weekly[Retain the newest backup in N weekly UTC buckets]:keepWeekly:" \
+    "--keep-monthly[Retain the newest backup in N monthly UTC buckets]:keepMonthly:" \
     "--every[Backup interval]:every:" \
     "--push[Push the current branch to origin after each backup]" \
     "--exclude-secrets[Omit credential-bearing database tables]" \
@@ -653,6 +687,8 @@ _openclaw_backup_enable() {
 
 _openclaw_backup_disable() {
   _arguments -C \
+    "--offsite[Disable only offsite archive backups]" \
+    "--git[Disable only Git backups]" \
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--port[Local Gateway port]:port:" \
     "--token[Gateway token (if required)]:token:" \
@@ -667,7 +703,7 @@ _openclaw_backup() {
   
   _arguments -C \
      \
-    "1: :_values 'command' 'create[Write a backup archive for config, credentials, sessions, and workspaces]' 'disable[Remove the scheduled Git backup automation]' 'enable[Provision a Gateway automation for scheduled Git backups]' 'git[Create and restore deterministic versioned SQLite dumps in Git]' 'restore[Restore a verified backup archive to a fresh staging directory]' 'sqlite[Create, list, verify, and restore SQLite snapshots]' 'verify[Validate a backup archive and its embedded manifest]'" \
+    "1: :_values 'command' 'create[Write a backup archive for config, credentials, sessions, and workspaces]' 'disable[Remove both scheduled backup modes, or the selected mode]' 'enable[Provision a Gateway automation for offsite or Git backups]' 'git[Create and restore deterministic versioned SQLite dumps in Git]' 'list[List archives in a storage location]' 'record[Record an external backup job outcome]' 'restore[Restore a verified backup archive to a fresh staging directory]' 'sqlite[Create, list, verify, and restore SQLite snapshots]' 'verify[Validate a backup archive and its embedded manifest]'" \
     "*::arg:->args"
 
   case $state in
@@ -676,6 +712,8 @@ _openclaw_backup() {
         (create) _openclaw_backup_create ;;
         (verify) _openclaw_backup_verify ;;
         (restore) _openclaw_backup_restore ;;
+        (list) _openclaw_backup_list ;;
+        (record) _openclaw_backup_record ;;
         (sqlite) _openclaw_backup_sqlite ;;
         (git) _openclaw_backup_git ;;
         (enable) _openclaw_backup_enable ;;
@@ -812,6 +850,41 @@ _openclaw_migrate() {
         (list) _openclaw_migrate_list ;;
         (plan) _openclaw_migrate_plan ;;
         (apply) _openclaw_migrate_apply ;;
+      esac
+      ;;
+  esac
+}
+
+_openclaw_storage_list() {
+  _arguments -C \
+    "--json[Output JSON]"
+}
+
+_openclaw_storage_init() {
+  _arguments -C \
+    "--json[Output JSON]"
+}
+
+_openclaw_storage_test() {
+  _arguments -C \
+    "--json[Output JSON]"
+}
+
+_openclaw_storage() {
+  local -a commands
+  local -a options
+  
+  _arguments -C \
+    "--json[Output JSON]" \
+    "1: :_values 'command' 'init[Initialize a new location or verify its existing marker and encryption key]' 'list[List storage locations and probe their availability]' 'test[Write, read, verify, and delete a temporary probe object]'" \
+    "*::arg:->args"
+
+  case $state in
+    (args)
+      case $line[1] in
+        (list) _openclaw_storage_list ;;
+        (init) _openclaw_storage_init ;;
+        (test) _openclaw_storage_test ;;
       esac
       ;;
   esac
@@ -1948,6 +2021,22 @@ _openclaw_sessions_delete() {
     "--json[Output JSON]"
 }
 
+_openclaw_sessions_import() {
+  _arguments -C \
+    "--agent[Agent id that owns the session (required for global keys)]:agent:" \
+    "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
+    "--token[Gateway token (if required)]:token:" \
+    "--password[Gateway password (password auth)]:password:" \
+    "--timeout[RPC timeout in milliseconds]:timeout:" \
+    "--json[Output JSON]" \
+    "--all[Import every visible catalog session, paging each source]" \
+    "--catalog[Catalog to import with --all (for example: claude or codex)]:catalog:" \
+    "--host[Source host (single transcript default: discover the Gateway host)]:host:" \
+    "--source-home[Source home for a single transcript]:sourceHome:" \
+    "--limit[Maximum number of sessions to import with --all]:limit:" \
+    "--dry-run[List the transcripts that would be imported without writing]"
+}
+
 _openclaw_sessions_compact() {
   _arguments -C \
     "--agent[Agent id that owns the session (required for global keys)]:agent:" \
@@ -1971,7 +2060,7 @@ _openclaw_sessions() {
     "--all-agents[Aggregate sessions across all configured agents]" \
     "--active[Only show sessions updated within the past N minutes]:active:" \
     "--limit[Max sessions to show (default: 100; use \"all\" for full output)]:limit:" \
-    "1: :_values 'command' 'archive[Archive stored sessions via the running gateway]' 'cleanup[Run session-store maintenance now]' 'compact[Compact a stored session transcript via the running gateway]' 'delete[Delete stored sessions and their live artifacts via the running gateway. Retained archives can remain searchable.]' 'export-trajectory[Export a redacted trajectory bundle for a stored session]' 'list[List stored conversation sessions]' 'tail[Tail human-readable session trajectory progress]'" \
+    "1: :_values 'command' 'archive[Archive stored sessions via the running gateway]' 'cleanup[Run session-store maintenance now]' 'compact[Compact a stored session transcript via the running gateway]' 'delete[Delete stored sessions and their live artifacts via the running gateway. Retained archives can remain searchable.]' 'export-trajectory[Export a redacted trajectory bundle for a stored session]' 'import[Preserve native catalog transcripts in ordinary OpenClaw sessions]' 'list[List stored conversation sessions]' 'tail[Tail human-readable session trajectory progress]'" \
     "*::arg:->args"
 
   case $state in
@@ -1983,6 +2072,7 @@ _openclaw_sessions() {
         (export-trajectory) _openclaw_sessions_export_trajectory ;;
         (archive) _openclaw_sessions_archive ;;
         (delete) _openclaw_sessions_delete ;;
+        (import) _openclaw_sessions_import ;;
         (compact) _openclaw_sessions_compact ;;
       esac
       ;;
@@ -2073,6 +2163,7 @@ _openclaw_gateway_install() {
     "--port[Gateway port]:port:" \
     "--runtime[Daemon runtime (node|bun). Default: node]:runtime:" \
     "--runtime-path[Pin an absolute Node/Bun executable path]:runtimePath:" \
+    "!--expected-runtime-pin[Require the observed runtime intent]:expectedRuntimePin:" \
     "--token[Gateway token (token auth)]:token:" \
     "--wrapper[Executable wrapper for generated service ProgramArguments]:wrapper:" \
     "--allow-unconfigured[Allow the service to start without gateway.mode=local]" \
@@ -2350,6 +2441,7 @@ _openclaw_daemon_install() {
     "--port[Gateway port]:port:" \
     "--runtime[Daemon runtime (node|bun). Default: node]:runtime:" \
     "--runtime-path[Pin an absolute Node/Bun executable path]:runtimePath:" \
+    "!--expected-runtime-pin[Require the observed runtime intent]:expectedRuntimePin:" \
     "--token[Gateway token (token auth)]:token:" \
     "--wrapper[Executable wrapper for generated service ProgramArguments]:wrapper:" \
     "--allow-unconfigured[Allow the service to start without gateway.mode=local]" \
@@ -4482,6 +4574,7 @@ _openclaw_cron_list() {
   _arguments -C \
     "--all[Include disabled jobs]" \
     "--agent[Filter by agent id]:agent:" \
+    "--query[Filter automations by search text]:query:" \
     "--json[Output JSON]" \
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--port[Local Gateway port]:port:" \
@@ -4617,6 +4710,7 @@ _openclaw_cron_runs() {
   _arguments -C \
     "--json[Explicit machine-output spelling (command results are JSON by default)]" \
     "--id[Job id (alternative to positional argument)]:id:" \
+    "--all[Show run history across all visible automations]" \
     "--run-id[Filter by cron run id]:runId:" \
     "--status[Filter by run status]:status:(all ok error skipped)" \
     "--delivery-status[Filter by delivery status]:deliveryStatus:(delivered not-delivered unknown not-requested)" \
@@ -5647,7 +5741,7 @@ _openclaw_secrets_store_set() {
   _arguments -C \
     "--value[Literal value (env kind only)]:value:" \
     "--value-file[Read value from a file; use - for stdin]:valueFile:" \
-    "--kind[Entry kind (defaults from NAME)]:kind:" \
+    "--kind[Entry kind (defaults to existing kind, then NAME)]:kind:" \
     "--allow-host[Allow substitution only for this exact host (repeatable)]:allowHost:" \
     "--clear-allowed-hosts[Remove all allowed hosts]" \
     "--scope[Store scope]:scope:" \
@@ -6213,6 +6307,28 @@ _openclaw_skills() {
   esac
 }
 
+_openclaw_update_adopt_immutable() {
+  _arguments -C \
+    "--root[Stable installation root containing current and releases]:root:" \
+    "--service[Existing system-scope systemd service unit]:service:" \
+    "--account[Existing Gateway service account]:account:" \
+    "--state-dir[Existing Gateway state directory]:stateDir:" \
+    "--config[Existing Gateway configuration file]:config:" \
+    "--runtime[Pinned external Node executable]:runtime:" \
+    "--profile[Existing Gateway profile]:profile:" \
+    "--enable-activation[Enable native activation and recovery in the adoption record]" \
+    "--previous-updater-stopped[Confirm the previous updater has settled and stopped scheduling]" \
+    "--json[Output result as JSON]"
+}
+
+_openclaw_update_recover() {
+  _arguments -C \
+    "--root[Stable adopted installation root]:root:" \
+    "--timeout[Bound readiness verification in seconds]:timeout:" \
+    "--drain-timeout[Set the drain budget if recovery must stop an unhealthy service]:drainTimeout:" \
+    "--json[Output result as JSON]"
+}
+
 _openclaw_update_admit() {
   _arguments -C \
     "--context[Absolute path to the private admission context]:context:"
@@ -6278,15 +6394,19 @@ _openclaw_update() {
     "--channel[Persist update channel (git + npm)]:channel:" \
     "--tag[Override the package target for this update (dist-tag, version, or package spec)]:tag:" \
     "--timeout[Set a per-step deadline in seconds]:timeout:" \
+    "--drain-timeout[Set the immutable activation drain budget before interruption]:drainTimeout:" \
+    "--sha[Prepare an exact official commit for an adopted immutable installation]:sha:" \
     "--yes[Skip confirmation prompts (non-interactive)]" \
     "--reapply-local-overrides[Replay trusted packaged dist edits when the target baseline is unchanged]" \
     "--accept-capabilities[Accept widened plugin capabilities]" \
-    "1: :_values 'command' 'cleanup[Retire verified update recovery originals after acknowledging rollback loss]' 'repair[Reconcile abandoned updates or repair post-update doctor and plugin convergence]' 'status[Show update channel and version status]' 'wizard[Interactive update wizard]'" \
+    "1: :_values 'command' 'adopt-immutable[Explicitly record ownership of an existing sealed release installation]' 'cleanup[Retire verified update recovery originals after acknowledging rollback loss]' 'recover[Resume a retained immutable activation without restarting a healthy Gateway]' 'repair[Reconcile abandoned updates or repair post-update doctor and plugin convergence]' 'status[Show update channel and version status]' 'wizard[Interactive update wizard]'" \
     "*::arg:->args"
 
   case $state in
     (args)
       case $line[1] in
+        (adopt-immutable) _openclaw_update_adopt_immutable ;;
+        (recover) _openclaw_update_recover ;;
         (admit) _openclaw_update_admit ;;
         (cleanup) _openclaw_update_cleanup ;;
         (repair) _openclaw_update_repair ;;

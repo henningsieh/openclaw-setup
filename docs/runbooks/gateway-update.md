@@ -62,8 +62,13 @@ inherited by the worker and retained through maintenance. It attempts service
 recovery on failure; **recovery is not update success**. Failed windows retain
 their guard and exact failed phase for investigation.
 
-The wrapper is persisted in Git. The old `logs/update-2026.9.8.sh` is historical
-runtime evidence, not the next update's entry point.
+After the stop command, `stop-state.json` records systemd state and PID evidence.
+A cleanup failure may leave an already stopped unit `failed` rather than
+`inactive`: either state is accepted only with zero MainPID/ControlPID and no
+processes in the service cgroup or its descendants. Live PIDs, transitional
+states, unexpected cgroups, or inaccessible cgroup evidence block the update.
+This permits maintenance of a proven stopped unit; it does not treat failed
+shutdown cleanup as a successful update.
 
 ### 3. Monitor through startup
 
@@ -76,9 +81,10 @@ scripts/gateway-update.sh status
 OpenClaw or compete for maintenance state. It reports current phase, phase and
 total elapsed seconds, completed phase timings, log modification time, guard
 ownership, and whether an operation holds the lock. A missing worker without a
-terminal receipt is an attention condition, not success. Revisit at reasonable
-intervals and keep the owner informed; do not repeatedly run Doctor/repair or
-poll OpenClaw state in a tight loop.
+terminal receipt is an attention condition, not success. Give brief status updates
+about every two to three minutes and on phase changes or errors. Report the
+current step, observed result and next action; do not repeatedly run Doctor/repair
+or poll OpenClaw state in a tight loop.
 
 Maintenance commands have **no short wrapper timeout**. The bounded readiness
 window after startup is separate: local HTTP and then live Gateway/plugin/channel
@@ -88,11 +94,8 @@ activity is evidence of activity, not proof of semantic progress or completion.
 A quiet log does not by itself prove a hang; an explicit failed phase does need
 investigation. Do not interrupt a slow Doctor merely to meet an estimate.
 
-**Do not promise a completion time.** The 2026.9.8 window observed roughly
-56 minutes for core update, seven for broker rebuild/install, twenty for final
-Doctor, and two for startup. Earlier 2026.9.7 observations were about 31 minutes
-for update and 18 for a separate Doctor. These are observations, not deadlines
-or proof that hardware explains every delay.
+**Do not promise a completion time.** Maintenance duration varies; phase receipts
+and verified results determine progress, not an estimate.
 
 An external Pi operator must stay with the update through startup and verification.
 A gateway-hosted turn will drop; resume monitoring in an independent session or
@@ -105,7 +108,9 @@ Automatic checks produce **`awaiting-confirmation`**, not `complete`:
 - installed and live version agree; this window's recorded core update run
   is the current terminal `succeeded` run;
 - final stopped-gateway Doctor logged `Doctor complete`, exited 0, and left no
-  explicit plugin ERROR or unfinished migration report;
+  explicit plugin ERROR; a fresh `update status --json` reports no unfinished
+  migrations, migration-inspection error, or package-recovery gate. Doctor's
+  pre-repair warnings remain in its log and are not themselves current state;
 - system service active with a different PID, local HTTP success;
 - public `/` is successful HTML with the current
   `data-openclaw-control-ui-build-id`, not JSON `proxy_attribution_required`;
@@ -159,6 +164,50 @@ Do not call the update complete while either owner check remains pending. The
 watchdog timer can be active while **recovery is paused by the guard**; report
 that distinction explicitly. Do not leave a successful window awaiting cleanup
 without telling the owner what is needed.
+
+## Explicit manual npm recovery
+
+If the installed older updater cannot replace its package receipt or recover a
+changed/missing handoff lease, follow current upstream recovery guidance. Do not
+patch the installed core, delete lease databases or recovery evidence, or retry
+normal `start` against the failed window. After explicit owner authorization:
+
+```bash
+scripts/gateway-update.sh recover --manual-npm --expect-version <target-release>
+```
+
+This resumes only the latest exited failed window with its unchanged owned guard
+and inherited lifecycle lock. It preserves the original failed receipt before
+launching a detached worker. The configured-channel candidate must match the
+explicit target; this exceptional npm hop installs that exact release into the
+existing native prefix, without changing channels or service definitions.
+
+The worker stops and proves service quiescence, creates an official verified
+backup on the mounted `/mnt/openclaw-backup`, then installs with the owning npm
+from the owner's home. It uses OpenClaw-only lifecycle approval on npm 11.16+
+or 12+. The new CLI runs `update repair --yes --no-restart` before the normal
+broker rebuild/test/install, final Doctor, startup and verification. A failed
+backup blocks replacement. Recovery failure remains failure with its guard and
+receipts retained; this is never an automatic fallback from `start`.
+
+Use ordinary `status` monitoring and the same browser/owner confirmation and
+`finish` procedure afterward. The successful repair must be the current terminal
+core run. The original failed upstream report remains historical evidence.
+
+For the narrowly identified historical-warning refusal after an **exited-zero**
+final Doctor, the owner may authorize:
+
+```bash
+scripts/gateway-update.sh recover --verify-only --expect-version <target-release>
+```
+
+This requires unchanged installed/recorded versions, the same succeeded core run,
+no current migrations or package recovery in the supported CLI report, and no
+explicit Doctor errors or skipped migrations. It preserves the original failed
+receipt and performs only a controlled stop/start and full verification, including
+new PID and boot-cleanup metadata. It never reinstalls packages or reruns Doctor.
+An interrupted/nonzero Doctor or a genuine pending migration cannot use this path.
+`finish` also refreshes the migration report before removing the guard.
 
 ## Local plugin maintenance
 
@@ -233,6 +282,29 @@ version alone is not update failure.
   Do not delete active captures, npm generations, recovery archives or the
   current namespaced compile cache to meet a disk target. The script measures
   caches but intentionally performs no new cache-deletion policy.
+
+## Python implementation reference
+
+`scripts/gateway_update.py` documents its contracts directly in module, class and
+function docstrings. Read these before changing lifecycle behavior:
+
+- **Host / Commands:** instance settings, executable discovery and the injectable
+  subprocess boundary. Maintenance commands run from the owner's home unless a
+  build explicitly selects its source directory.
+- **preflight / start / lock:** admission, guard creation, detachment and inherited
+  lock custody. A launch receipt is not a completed update.
+- **recover / manual_install:** explicit recovery modes and backup-before-replacement
+  ordering; failed receipts are preserved as private operational evidence.
+- **worker / require_stopped:** step ordering, proof of service quiescence and
+  failure recovery. `phase` records the step; `status` records the outcome.
+- **doctor_ok / verify / finish:** Doctor output versus current migration state,
+  live verification and the owner-confirmed cleanup boundary.
+- **status_view:** receipt-only diagnostics that do not compete with maintenance.
+
+The supported operator commands are above; `_run` is an internal worker entry
+point that requires an inherited lock descriptor and the matching owned guard.
+Release outcomes, timestamps and timings belong in ignored runtime receipts,
+not implementation comments or this procedure.
 
 ## Testing and repository follow-up
 

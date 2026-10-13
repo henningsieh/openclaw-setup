@@ -57,7 +57,7 @@ _openclaw_completion() {
     done
     cur="${words[cword]}"
     word_prefix="${words[cword+1]}"
-    opts="acp agent agents approvals exec-approvals attach audit backup channels clawbot completion config configure connect cron automations daemon dashboard database devices directory dns docs doctor exec-policy fleet gateway health hooks infer capability logs mcp message migrate models node nodes onboard pairing plugins promos proxy qr reset resume sandbox secrets security sessions setup skills status system telemetry transcripts triage tui terminal chat uninstall update users webhooks worker worktrees -V --version --container --dev --profile --log-level --no-color"
+    opts="acp agent agents approvals exec-approvals attach audit backup channels clawbot completion config configure connect cron automations daemon dashboard database devices directory dns docs doctor exec-policy fleet gateway health hooks infer capability logs mcp message migrate models node nodes onboard pairing plugins promos proxy qr reset resume sandbox secrets security sessions setup skills status storage system telemetry transcripts triage tui terminal chat uninstall update users webhooks worker worktrees -V --version --container --dev --profile --log-level --no-color"
     value_options="--container --profile --log-level"
     required_value_options="--container --profile --log-level"
     command_path=""
@@ -187,27 +187,39 @@ _openclaw_completion() {
             ;;
           "backup")
             command_path="${candidate_path}"
-            opts="create disable enable git restore sqlite verify"
+            opts="create disable enable git list record restore sqlite verify"
             value_options="--container --profile --log-level"
             required_value_options="--container --profile --log-level"
             ;;
           "backup create")
             command_path="${candidate_path}"
-            opts="--output --json --dry-run --verify --only-config --no-include-workspace"
-            value_options="--container --profile --log-level --output"
-            required_value_options="--container --profile --log-level --output"
+            opts="--output --to --claim-namespace --namespace --keep-daily --keep-weekly --keep-monthly --json --dry-run --verify --only-config --no-include-workspace"
+            value_options="--container --profile --log-level --output --to --namespace --keep-daily --keep-weekly --keep-monthly"
+            required_value_options="--container --profile --log-level --output --to --namespace --keep-daily --keep-weekly --keep-monthly"
             ;;
           "backup verify")
             command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
+            opts="--from --namespace --json"
+            value_options="--container --profile --log-level --from --namespace"
+            required_value_options="--container --profile --log-level --from --namespace"
             ;;
           "backup restore")
             command_path="${candidate_path}"
-            opts="--target --json"
-            value_options="--container --profile --log-level --target"
-            required_value_options="--container --profile --log-level --target"
+            opts="--from --namespace --target --json"
+            value_options="--container --profile --log-level --from --namespace --target"
+            required_value_options="--container --profile --log-level --from --namespace --target"
+            ;;
+          "backup list")
+            command_path="${candidate_path}"
+            opts="--from --namespace --json"
+            value_options="--container --profile --log-level --from --namespace"
+            required_value_options="--container --profile --log-level --from --namespace"
+            ;;
+          "backup record")
+            command_path="${candidate_path}"
+            opts="--status --target --bytes --error --json"
+            value_options="--container --profile --log-level --status --target --bytes --error"
+            required_value_options="--container --profile --log-level --status --target --bytes --error"
             ;;
           "backup sqlite")
             command_path="${candidate_path}"
@@ -277,13 +289,13 @@ _openclaw_completion() {
             ;;
           "backup enable")
             command_path="${candidate_path}"
-            opts="--repository --every --push --exclude-secrets --include-secrets --global-only --agent --url --port --token --password --timeout --expect-final"
-            value_options="--container --profile --log-level --repository --every --agent --url --port --token --password --timeout"
-            required_value_options="--container --profile --log-level --repository --every --agent --url --port --token --password --timeout"
+            opts="--repository --to --claim-namespace --namespace --no-include-workspace --keep-daily --keep-weekly --keep-monthly --every --push --exclude-secrets --include-secrets --global-only --agent --url --port --token --password --timeout --expect-final"
+            value_options="--container --profile --log-level --repository --to --namespace --keep-daily --keep-weekly --keep-monthly --every --agent --url --port --token --password --timeout"
+            required_value_options="--container --profile --log-level --repository --to --namespace --keep-daily --keep-weekly --keep-monthly --every --agent --url --port --token --password --timeout"
             ;;
           "backup disable")
             command_path="${candidate_path}"
-            opts="--url --port --token --password --timeout --expect-final"
+            opts="--offsite --git --url --port --token --password --timeout --expect-final"
             value_options="--container --profile --log-level --url --port --token --password --timeout"
             required_value_options="--container --profile --log-level --url --port --token --password --timeout"
             ;;
@@ -346,6 +358,30 @@ _openclaw_completion() {
             opts="--from --agent --include-secrets --no-auth-credentials --overwrite --json --skill --plugin --item --verify-plugin-apps --yes --backup-output --no-backup --force"
             value_options="--container --profile --log-level --from --agent --skill --plugin --item --backup-output"
             required_value_options="--container --profile --log-level --from --agent --skill --plugin --item --backup-output"
+            ;;
+          "storage")
+            command_path="${candidate_path}"
+            opts="init list test --json"
+            value_options="--container --profile --log-level"
+            required_value_options="--container --profile --log-level"
+            ;;
+          "storage list")
+            command_path="${candidate_path}"
+            opts="--json"
+            value_options="--container --profile --log-level"
+            required_value_options="--container --profile --log-level"
+            ;;
+          "storage init")
+            command_path="${candidate_path}"
+            opts="--json"
+            value_options="--container --profile --log-level"
+            required_value_options="--container --profile --log-level"
+            ;;
+          "storage test")
+            command_path="${candidate_path}"
+            opts="--json"
+            value_options="--container --profile --log-level"
+            required_value_options="--container --profile --log-level"
             ;;
           "doctor")
             command_path="${candidate_path}"
@@ -829,7 +865,7 @@ _openclaw_completion() {
             ;;
           "sessions")
             command_path="${candidate_path}"
-            opts="archive cleanup compact delete export-trajectory list tail --json --verbose --store --agent --all-agents --active --limit"
+            opts="archive cleanup compact delete export-trajectory import list tail --json --verbose --store --agent --all-agents --active --limit"
             value_options="--container --profile --log-level --store --agent --active --limit"
             required_value_options="--container --profile --log-level --store --agent --active --limit"
             ;;
@@ -868,6 +904,12 @@ _openclaw_completion() {
             opts="--dry-run --yes --agent --url --token --password --timeout --json"
             value_options="--container --profile --log-level --store --active --limit --agent --url --token --password --timeout"
             required_value_options="--container --profile --log-level --store --active --limit --agent --url --token --password --timeout"
+            ;;
+          "sessions import")
+            command_path="${candidate_path}"
+            opts="--agent --url --token --password --timeout --json --all --catalog --host --source-home --limit --dry-run"
+            value_options="--container --profile --log-level --store --active --agent --url --token --password --timeout --catalog --host --source-home --limit"
+            required_value_options="--container --profile --log-level --store --active --agent --url --token --password --timeout --catalog --host --source-home --limit"
             ;;
           "sessions compact")
             command_path="${candidate_path}"
@@ -908,8 +950,8 @@ _openclaw_completion() {
           "gateway install")
             command_path="${candidate_path}"
             opts="--port --runtime --runtime-path --token --wrapper --allow-unconfigured --force --json"
-            value_options="--container --profile --log-level --bind --auth --password --password-file --tailscale --task-supervisor-child --ws-log --raw-stream-path --port --runtime --runtime-path --token --wrapper --update-executor"
-            required_value_options="--container --profile --log-level --bind --auth --password --password-file --tailscale --task-supervisor-child --ws-log --raw-stream-path --port --runtime --runtime-path --token --wrapper --update-executor"
+            value_options="--container --profile --log-level --bind --auth --password --password-file --tailscale --task-supervisor-child --ws-log --raw-stream-path --port --runtime --runtime-path --expected-runtime-pin --token --wrapper --update-executor"
+            required_value_options="--container --profile --log-level --bind --auth --password --password-file --tailscale --task-supervisor-child --ws-log --raw-stream-path --port --runtime --runtime-path --expected-runtime-pin --token --wrapper --update-executor"
             ;;
           "gateway uninstall")
             command_path="${candidate_path}"
@@ -1034,8 +1076,8 @@ _openclaw_completion() {
           "daemon install")
             command_path="${candidate_path}"
             opts="--port --runtime --runtime-path --token --wrapper --allow-unconfigured --force --json"
-            value_options="--container --profile --log-level --port --runtime --runtime-path --token --wrapper --update-executor"
-            required_value_options="--container --profile --log-level --port --runtime --runtime-path --token --wrapper --update-executor"
+            value_options="--container --profile --log-level --port --runtime --runtime-path --expected-runtime-pin --token --wrapper --update-executor"
+            required_value_options="--container --profile --log-level --port --runtime --runtime-path --expected-runtime-pin --token --wrapper --update-executor"
             ;;
           "daemon uninstall")
             command_path="${candidate_path}"
@@ -2191,9 +2233,9 @@ _openclaw_completion() {
             ;;
           "cron list"|"automations list")
             command_path="${candidate_path}"
-            opts="--all --agent --json --url --port --token --password --timeout --expect-final"
-            value_options="--container --profile --log-level --agent --url --port --token --password --timeout"
-            required_value_options="--container --profile --log-level --agent --url --port --token --password --timeout"
+            opts="--all --agent --query --json --url --port --token --password --timeout --expect-final"
+            value_options="--container --profile --log-level --agent --query --url --port --token --password --timeout"
+            required_value_options="--container --profile --log-level --agent --query --url --port --token --password --timeout"
             ;;
           "cron add"|"cron create"|"automations add"|"automations create")
             command_path="${candidate_path}"
@@ -2233,7 +2275,7 @@ _openclaw_completion() {
             ;;
           "cron runs"|"automations runs")
             command_path="${candidate_path}"
-            opts="--json --id --run-id --status --delivery-status --query --offset --sort --limit --url --port --token --password --timeout --expect-final"
+            opts="--json --id --all --run-id --status --delivery-status --query --offset --sort --limit --url --port --token --password --timeout --expect-final"
             value_options="--container --profile --log-level --id --run-id --status --delivery-status --query --offset --sort --limit --url --port --token --password --timeout"
             required_value_options="--container --profile --log-level --id --run-id --status --delivery-status --query --offset --sort --limit --url --port --token --password --timeout"
             ;;
@@ -2995,51 +3037,63 @@ _openclaw_completion() {
             ;;
           "update")
             command_path="${candidate_path}"
-            opts="cleanup repair status wizard --json --no-restart --dry-run --admission --channel --tag --timeout --yes --reapply-local-overrides --accept-capabilities"
-            value_options="--container --profile --log-level --admission --channel --tag --timeout"
-            required_value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            opts="adopt-immutable cleanup recover repair status wizard --json --no-restart --dry-run --admission --channel --tag --timeout --drain-timeout --sha --yes --reapply-local-overrides --accept-capabilities"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout --drain-timeout --sha"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout --drain-timeout --sha"
+            ;;
+          "update adopt-immutable")
+            command_path="${candidate_path}"
+            opts="--root --service --account --state-dir --config --runtime --profile --enable-activation --previous-updater-stopped --json"
+            value_options="--container --log-level --admission --channel --tag --timeout --drain-timeout --sha --root --service --account --state-dir --config --runtime --profile"
+            required_value_options="--container --log-level --admission --channel --tag --timeout --drain-timeout --sha --root --service --account --state-dir --config --runtime --profile"
+            ;;
+          "update recover")
+            command_path="${candidate_path}"
+            opts="--root --timeout --drain-timeout --json"
+            value_options="--container --profile --log-level --admission --channel --tag --sha --root --timeout --drain-timeout"
+            required_value_options="--container --profile --log-level --admission --channel --tag --sha --root --timeout --drain-timeout"
             ;;
           "update admit")
             command_path="${candidate_path}"
             opts="--context"
-            value_options="--container --profile --log-level --admission --channel --tag --timeout --context"
-            required_value_options="--container --profile --log-level --admission --channel --tag --timeout --context"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout --drain-timeout --sha --context"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout --drain-timeout --sha --context"
             ;;
           "update cleanup")
             command_path="${candidate_path}"
             opts="--dry-run --json --yes"
-            value_options="--container --profile --log-level --admission --channel --tag --timeout"
-            required_value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout --drain-timeout --sha"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout --drain-timeout --sha"
             ;;
           "update repair")
             command_path="${candidate_path}"
             opts="--json --channel --timeout --yes --accept-capabilities --no-restart"
-            value_options="--container --profile --log-level --admission --tag --channel --timeout"
-            required_value_options="--container --profile --log-level --admission --tag --channel --timeout"
+            value_options="--container --profile --log-level --admission --tag --drain-timeout --sha --channel --timeout"
+            required_value_options="--container --profile --log-level --admission --tag --drain-timeout --sha --channel --timeout"
             ;;
           "update finalize")
             command_path="${candidate_path}"
             opts="--json --channel --timeout --yes --accept-capabilities --no-restart"
-            value_options="--container --profile --log-level --admission --tag --channel --timeout"
-            required_value_options="--container --profile --log-level --admission --tag --channel --timeout"
+            value_options="--container --profile --log-level --admission --tag --drain-timeout --sha --channel --timeout"
+            required_value_options="--container --profile --log-level --admission --tag --drain-timeout --sha --channel --timeout"
             ;;
           "update migration-plan")
             command_path="${candidate_path}"
             opts="--snapshot-home --snapshot-config --snapshot-state --dry-run --json"
-            value_options="--container --profile --log-level --admission --channel --tag --timeout --snapshot-home --snapshot-config --snapshot-state"
-            required_value_options="--container --profile --log-level --admission --channel --tag --timeout --snapshot-home --snapshot-config --snapshot-state"
+            value_options="--container --profile --log-level --admission --channel --tag --timeout --drain-timeout --sha --snapshot-home --snapshot-config --snapshot-state"
+            required_value_options="--container --profile --log-level --admission --channel --tag --timeout --drain-timeout --sha --snapshot-home --snapshot-config --snapshot-state"
             ;;
           "update wizard")
             command_path="${candidate_path}"
             opts="--accept-capabilities --timeout"
-            value_options="--container --profile --log-level --admission --channel --tag --timeout"
-            required_value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            value_options="--container --profile --log-level --admission --channel --tag --drain-timeout --sha --timeout"
+            required_value_options="--container --profile --log-level --admission --channel --tag --drain-timeout --sha --timeout"
             ;;
           "update status")
             command_path="${candidate_path}"
             opts="--json --timeout"
-            value_options="--container --profile --log-level --admission --channel --tag --timeout"
-            required_value_options="--container --profile --log-level --admission --channel --tag --timeout"
+            value_options="--container --profile --log-level --admission --channel --tag --drain-timeout --sha --timeout"
+            required_value_options="--container --profile --log-level --admission --channel --tag --drain-timeout --sha --timeout"
             ;;
         esac
     done

@@ -26,7 +26,12 @@ class FakeCommands:
         self.target = "2026.9.9"
         self.available = True
         self.service = "active"
+        self.stop_state = "inactive"
+        self.stop_pid = "0"
+        self.control_pid = "0"
+        self.cgroup = ""
         self.pid = "111"
+        self.starts = 0
         self.service_user = pwd.getpwuid(os.getuid()).pw_name
         self.clients = []
         self.journal = True
@@ -37,6 +42,8 @@ class FakeCommands:
         self.skip_boot_cleanup = False
         self.http_code = "200"
         self.doctor_output = "Doctor complete.\n"
+        self.backup_verified = True
+        self.backup_warning = ""
         self.core = host.home / "sdk"
         self.core.mkdir()
         (self.core / "package.json").write_text(json.dumps({"version": self.installed}))
@@ -76,18 +83,23 @@ class FakeCommands:
                 output = self.service
                 code = 0 if self.service == "active" else 3
             elif args[0] == "show":
-                output = self.service_user if "--property=User" in args else self.pid
+                if "--property=ActiveState,SubState,MainPID,ControlPID,ControlGroup" in args:
+                    output = (f"ActiveState={self.service}\nSubState={self.service}\n"
+                              f"MainPID={self.pid}\nControlPID={self.control_pid}\nControlGroup={self.cgroup}")
+                else:
+                    output = self.service_user if "--property=User" in args else self.pid
             elif "list-timers" in args:
                 output = self.host.watchdog
             else:
                 output = "active"
         elif name == "sudo":
             if "stop" in args:
-                self.service = "inactive"
-                self.pid = "0"
+                self.service = self.stop_state
+                self.pid = self.stop_pid
             elif "start" in args:
                 if self.service != "active":
-                    self.pid = "222"
+                    self.starts += 1
+                    self.pid = str(111 + self.starts * 111)
                 self.service = "active"
                 if not self.skip_boot_cleanup:
                     for row in update.boot_temps(self.host):
@@ -109,6 +121,11 @@ class FakeCommands:
             else:
                 output = "permission denied"
                 code = 1
+        elif name == "npm":
+            if args == ("--version",):
+                output = "11.19.0"
+            elif args == ("prefix", "-g"):
+                output = str(self.host.home / ".npm-global")
         elif name == "openclaw":
             if args == ("--version",):
                 output = f"OpenClaw {self.installed} (build)"
@@ -136,9 +153,14 @@ class FakeCommands:
         self.run(name, *args, cwd=cwd)
         args = tuple(map(str, args))
         text = "passed\n"
-        if name == "openclaw" and args == ("update", "--yes"):
+        if (name == "openclaw" and args == ("update", "--yes")) or (name == "npm" and args[:2] == ("install", "-g")):
             self.installed = self.target
             (self.core / "package.json").write_text(json.dumps({"version": self.installed}))
+        elif name == "openclaw" and args[:2] == ("backup", "create"):
+            archive = self.host.backup_destination / "fake-backup.tar.gz"
+            archive.parent.mkdir(parents=True, exist_ok=True)
+            archive.write_text("controlled fixture, not real state")
+            text = self.backup_warning + json.dumps({"archivePath": str(archive), "verified": self.backup_verified})
         elif name == "openclaw" and args[0] == "doctor":
             text = self.doctor_output
         elif name == "openclaw" and args[:2] == ("plugins", "install"):
@@ -160,6 +182,7 @@ class LifecycleTests(unittest.TestCase):
             "sudo", "systemctl", "openclaw", "curl", "npm", "pnpm", "ps", "du", "journalctl"]})
         self.host.system_tmp = self.home / "system-tmp"
         self.host.system_tmp.mkdir()
+        self.host.backup_destination = self.home / "external-backup"
         self.host.broker.mkdir(parents=True)
         fixture = {"name": "openclaw-plugin-vault-access-broker", "version": "0.1.0",
                    "peerDependencies": {"openclaw": "2026.9.8"},
@@ -288,6 +311,103 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(sum(a == ("doctor", "--fix", "--non-interactive") for n, a in calls), 1)
         self.assertEqual(update.finish(self.host, self.commands, True)["status"], "complete")
 
+    def test_manual_recovery_backs_up_before_install_and_repairs_before_rebuild(self):
+        run = self.prepare()
+        state = update.load(run / "state.json")
+        state["manualRecovery"] = {"target": self.commands.target}
+        update.save(run / "state.json", state)
+        self.assertEqual(update.worker(self.host, self.commands, run), 0)
+        calls = self.commands.calls
+        backup = next(i for i, (n, a) in enumerate(calls) if a[:2] == ("backup", "create"))
+        install = next(i for i, (n, a) in enumerate(calls) if n == "npm" and a[:2] == ("install", "-g"))
+        repair = next(i for i, (n, a) in enumerate(calls) if a[:2] == ("update", "repair"))
+        rebuild = next(i for i, (n, a) in enumerate(calls) if n == "pnpm")
+        self.assertTrue(backup < install < repair < rebuild)
+        self.assertIn("--allow-scripts=openclaw", calls[install][1])
+        self.assertNotIn(("openclaw", ("update", "--yes")), calls)
+        self.assertTrue(update.load(run / "backup-receipt.json")["verified"])
+
+    def test_manual_backup_json_accepts_a_preceding_cli_warning(self):
+        run = self.prepare()
+        self.commands.backup_warning = "[sqlite/transaction] slow transaction\n"
+        update.manual_install(self.host, self.commands, run, self.commands.target)
+        self.assertTrue(update.load(run / "backup-receipt.json")["verified"])
+
+    def test_manual_recovery_refuses_unverified_backup_before_npm(self):
+        run = self.prepare()
+        state = update.load(run / "state.json")
+        state["manualRecovery"] = {"target": self.commands.target}
+        update.save(run / "state.json", state)
+        self.commands.backup_verified = False
+        self.assertEqual(update.worker(self.host, self.commands, run), 1)
+        self.assertFalse(any(n == "npm" and a[:2] == ("install", "-g") for n, a in self.commands.calls))
+        self.assertTrue(update.own_guard(self.host, run.name))
+        self.assertEqual(self.commands.service, "active")
+
+    def test_recover_requires_explicit_authority_and_preserves_failed_receipt(self):
+        run = self.prepare()
+        self.commands.fail = "openclaw update --yes"
+        self.assertEqual(update.worker(self.host, self.commands, run), 1)
+        self.commands.fail = None
+        with self.assertRaises(update.UpdateError):
+            update.recover(self.host, self.commands, self.commands.target, False)
+        self.commands.core = self.home / ".npm-global/lib/node_modules/openclaw"
+        self.commands.core.mkdir(parents=True)
+        (self.commands.core / "package.json").write_text(json.dumps({"version": self.commands.installed}))
+        with patch.object(update.os.path, "ismount", return_value=True), patch.object(update.subprocess, "Popen") as spawn:
+            spawn.return_value.pid = 555
+            result = update.recover(self.host, self.commands, self.commands.target, True)
+        self.assertEqual(result["status"], "recovery-launched")
+        self.assertTrue(spawn.call_args.kwargs["start_new_session"])
+        current = update.load(run / "state.json")
+        self.assertEqual(update.load(run / current["manualRecovery"]["previousReceipt"])["status"], "failed")
+        self.assertTrue(update.own_guard(self.host, run.name))
+
+    def test_failed_but_empty_service_can_enter_update(self):
+        self.commands.stop_state = "failed"
+        run = self.successful_run()
+        receipt = update.load(run / "stop-state.json")
+        self.assertEqual(receipt["ActiveState"], "failed")
+        self.assertEqual(receipt["MainPID"], "0")
+
+    def test_nonterminal_stop_states_refused_before_update(self):
+        for state in ("active", "activating", "deactivating", "reloading"):
+            with self.subTest(state=state):
+                self.commands.service = state
+                run = self.host.runs / ("stop-" + state)
+                run.mkdir(parents=True)
+                with self.assertRaises(update.UpdateError):
+                    update.require_stopped(self.host, self.commands, run)
+
+    def test_stopped_state_with_live_pid_refused(self):
+        self.commands.service = "failed"
+        run = self.host.runs / "stop-pids"
+        run.mkdir(parents=True)
+        for main, control in (("111", "0"), ("0", "222")):
+            with self.subTest(main=main, control=control):
+                self.commands.pid, self.commands.control_pid = main, control
+                with self.assertRaises(update.UpdateError):
+                    update.require_stopped(self.host, self.commands, run)
+
+    def test_stopped_service_requires_empty_descendant_cgroups(self):
+        self.host.cgroup_root = self.home / "cgroups"
+        self.commands.service, self.commands.pid = "failed", "0"
+        self.commands.cgroup = "/system.slice/" + self.host.unit
+        group = self.host.cgroup_root / self.commands.cgroup.lstrip("/")
+        child = group / "plugin-child"
+        child.mkdir(parents=True)
+        (group / "cgroup.procs").write_text("")
+        (child / "cgroup.procs").write_text("999\n")
+        run = self.host.runs / "stop-cgroup"
+        run.mkdir(parents=True)
+        with self.assertRaisesRegex(update.UpdateError, "processes"):
+            update.require_stopped(self.host, self.commands, run)
+        (child / "cgroup.procs").write_text("")
+        update.require_stopped(self.host, self.commands, run)
+        self.commands.cgroup = "/unexpected.slice/other.service"
+        with self.assertRaises(update.UpdateError):
+            update.require_stopped(self.host, self.commands, run)
+
     def test_pins_and_workspace_exceptions_updated_idempotently(self):
         update.pin_broker(self.host, "2026.9.9")
         update.pin_broker(self.host, "2026.9.9")
@@ -329,6 +449,36 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(update.worker(self.host, self.commands, run), 1)
         self.assertTrue(self.host.guard.exists())
         self.assertFalse(update.load(run / "state.json").get("doctorPassed"))
+
+    def test_intermediate_doctor_warning_requires_authoritative_clearance(self):
+        output = 'Plugin "codex" data/settings upgrade is unfinished\nDoctor complete.'
+        with self.assertRaises(update.UpdateError):
+            update.doctor_ok(output)
+        status = self.commands.status()
+        update.doctor_ok(output, status)
+        for key, value in (("migrationWarnings", ["codex pending"]),
+                           ("migrationWarningsError", "inspection failed"),
+                           ("packageActivationError", "lease changed"),
+                           ("packageActivation", {"phase": "prepared"})):
+            with self.subTest(key=key), self.assertRaises(update.UpdateError):
+                update.doctor_ok(output, dict(status, **{key: value}))
+        with self.assertRaises(update.UpdateError):
+            update.doctor_ok('- ERROR codex: broken\nDoctor complete.', status)
+        with self.assertRaises(update.UpdateError):
+            update.doctor_ok('migration skipped\nDoctor complete.', status)
+
+    def test_verification_recovery_never_reinstalls_or_repeats_doctor(self):
+        run = self.successful_run()
+        state = update.load(run / "state.json")
+        state.update(status="running", verificationRecovery=True)
+        update.save(run / "state.json", state)
+        (run / "doctor.log").write_text('Plugin "codex" data/settings upgrade is unfinished\nDoctor complete.')
+        self.commands.calls.clear()
+        self.assertEqual(update.worker(self.host, self.commands, run), 0)
+        calls = self.commands.calls
+        self.assertFalse(any(n in {"npm", "pnpm"} for n, a in calls))
+        self.assertFalse(any(a[:1] == ("doctor",) or a == ("update", "--yes") for n, a in calls))
+        self.assertEqual(update.load(run / "state.json")["status"], "awaiting-confirmation")
 
     def test_recovery_start_failure_explicit(self):
         run = self.prepare()

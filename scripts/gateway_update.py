@@ -1,8 +1,33 @@
 #!/usr/bin/env python3
-"""Native-host update lifecycle. No database access, credentials or auto-repair.
+"""Own one native OpenClaw maintenance window from preflight to confirmed cleanup.
 
-Public commands: plan, start, status, finish. Tests inject command execution at
-an internal seam; the production CLI has no executable/path overrides.
+Public interface (through gateway-update.sh):
+    plan     Inspect prerequisites without creating lifecycle artifacts.
+    start    Launch the detached update worker on the configured channel.
+    status   Inspect receipts and lock ownership without invoking OpenClaw.
+    recover  Resume a failed window in an explicitly authorized recovery mode.
+    finish   Refresh verification and remove the owned guard after owner checks.
+
+The normal worker runs stop -> update -> broker rebuild/test/install -> Doctor
+-> start -> verification. Automatic success is awaiting-confirmation, not
+complete; only finish records completion. phase names the current step, while
+status distinguishes running, failed, awaiting-confirmation and complete.
+
+Two ownership mechanisms serve different purposes: the inherited flock file
+descriptor excludes concurrent lifecycle operations; the run-id maintenance
+guard pauses watchdog recovery and survives worker exit. Failed windows keep
+their guard and receipts. A service recovery attempt never changes failure to
+success. Recovery preserves the failed receipt before resuming the same run.
+
+Host contains native-instance settings. Commands is the injectable subprocess
+boundary used by isolated tests; production discovers executable paths itself.
+Maintenance subprocesses have no short wrapper deadline. Bounded startup probes
+are separate and never retry installation or Doctor.
+
+This module accesses supported CLI reports, filesystem metadata and receipts,
+not OpenClaw databases or credential contents. Cleanup is limited to its own
+installation staging directory and the guard removed by confirmed finish.
+Boot temp cleanup belongs to systemd. Operator procedure: docs/runbooks/gateway-update.md.
 """
 import argparse
 import dataclasses
@@ -23,6 +48,8 @@ import uuid
 
 
 class UpdateError(Exception):
+    """Refusal or failed verification; callers must preserve maintenance evidence."""
+
     pass
 
 
@@ -35,6 +62,7 @@ def load(path):
 
 
 def save(path, value):
+    """Atomically replace a private JSON receipt using a mode-0600 sibling file."""
     path = Path(path)
     temp = path.with_name(path.name + ".new")
     with temp.open("w") as handle:
@@ -46,6 +74,8 @@ def save(path, value):
 
 @dataclasses.dataclass
 class Host:
+    """Native host settings and owned paths; tests may substitute isolated roots."""
+
     home: Path
     repo: Path
     executables: dict
@@ -54,6 +84,8 @@ class Host:
     local_url: str = "http://127.0.0.1:18789/"
     public_url: str = "https://<gateway-host>/"
     system_tmp: Path = Path("/tmp")
+    cgroup_root: Path = Path("/sys/fs/cgroup")
+    backup_destination: Path = Path("/mnt/openclaw-backup")
 
     @property
     def runs(self):
@@ -73,6 +105,7 @@ class Host:
 
     @classmethod
     def discover(cls):
+        """Validate the unprivileged owner/repository and resolve required binaries."""
         if os.getuid() == 0:
             raise UpdateError("Run as the native gateway owner, never root.")
         home = Path(pwd.getpwuid(os.getuid()).pw_dir)
@@ -89,10 +122,13 @@ class Host:
 
 
 class Commands:
+    """Subprocess seam: run in the owner's home unless a build selects its source."""
+
     def __init__(self, host):
         self.host = host
 
     def run(self, name, *args, cwd=None, check=True):
+        """Capture combined output; raise on nonzero exit unless check is false."""
         # Maintenance commands deliberately have no short execution deadline.
         argv = [self.host.executables[name], *map(str, args)]
         result = subprocess.run(argv, cwd=cwd or self.host.home, text=True,
@@ -102,6 +138,11 @@ class Commands:
         return result
 
     def stream(self, name, *args, cwd=None, output):
+        """Tee combined output to private evidence and the worker log.
+
+        Return the captured text only after exit zero. stderr is included, so
+        machine-readable consumers must account for preceding CLI warnings.
+        """
         argv = [self.host.executables[name], *map(str, args)]
         print(f"COMMAND: {name} {' '.join(map(str, args))}", flush=True)
         with Path(output).open("w") as evidence:
@@ -119,6 +160,7 @@ class Commands:
         return Path(output).read_text()
 
     def active_clients(self):
+        """Find native CLI/worker PIDs outside the gateway's service cgroup."""
         clients = []
         result = self.run("ps", "-eo", "pid=,comm=,args=")
         for line in result.stdout.splitlines():
@@ -157,6 +199,7 @@ def json_command(commands, *args):
 
 
 def inventory(host):
+    """Read extension manifests and identify plugins with tracked local sources."""
     rows = []
     for path in sorted((host.repo / "extensions").glob("*/package.json")):
         data = load(path)
@@ -176,6 +219,7 @@ def cache_paths(host):
 
 
 def cache_sizes(host, commands):
+    """Measure all cache paths together so shared hardlinks are counted once."""
     paths = cache_paths(host)
     return commands.run("du", "-sk", *paths, check=False).stdout if paths else ""
 
@@ -198,6 +242,7 @@ def boot_temps(host):
 
 
 def check_api(declaration, installed):
+    """Accept exact versions or supported >= ranges; unknown syntax fails closed."""
     # Deliberately narrow: the locally supported plugin is exact-pinned and
     # the registry-managed llama-cpp declares >=. Unknown ranges fail closed.
     if declaration == installed:
@@ -212,6 +257,12 @@ def check_api(declaration, installed):
 
 
 def preflight(host, commands, expect=None):
+    """Return baseline evidence without creating a guard, run or service change.
+
+    Check owner, competitors, channel candidate, source inventory and capacity.
+    expect validates the configured-channel target; it never selects a release.
+    start repeats this check under the lifecycle lock before admitting downtime.
+    """
     if host.guard.exists() or host.guard.is_symlink() or host.alias.exists() or host.alias.is_symlink():
         raise UpdateError("Existing maintenance guard: preserve it; do not launch another window.")
     clients = commands.active_clients()
@@ -261,6 +312,11 @@ def preflight(host, commands, expect=None):
 
 
 def lock(host):
+    """Acquire the nonblocking lifecycle flock and return its open descriptor.
+
+    Detached workers inherit the same open-file description. The launcher
+    closes only its own descriptor; the worker keeps exclusion until it exits.
+    """
     host.runs.mkdir(parents=True, exist_ok=True, mode=0o700)
     fd = os.open(host.runs / ".lock", os.O_RDWR | os.O_CREAT, 0o600)
     try:
@@ -282,10 +338,12 @@ def latest_run(host):
 
 
 def own_guard(host, run_id):
+    """Match an ordinary guard file to the exact run identity; reject symlinks."""
     return not host.guard.is_symlink() and host.guard.is_file() and host.guard.read_text() == run_id + "\n"
 
 
 def set_phase(run, phase, **fields):
+    """Record phase transitions/timings and update fields without implying success."""
     data = load(run / "state.json")
     timestamp = now()
     if data.get("phase") != phase:
@@ -301,6 +359,7 @@ def set_phase(run, phase, **fields):
 
 
 def prepare_run(host, receipt):
+    """Create private baseline receipts, exclusively claim the guard and publish latest."""
     run_id = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
     run = host.runs / run_id
     run.mkdir(mode=0o700)
@@ -317,6 +376,11 @@ def prepare_run(host, receipt):
 
 
 def start(host, commands, expect):
+    """Admit and detach one update; return launch metadata, not an update result.
+
+    Only a pre-stop launch failure may remove the newly created guard. Once the
+    worker is launched, PID-receipt failure must not unwind its ownership.
+    """
     fd = lock(host)
     try:
         receipt = preflight(host, commands, expect)
@@ -346,7 +410,119 @@ def start(host, commands, expect):
         os.close(fd)  # Worker inherits the SAME locked open-file description.
 
 
+def recover(host, commands, expect, manual_npm, verify_only=False):
+    """Resume only the latest exited failed window with its unchanged owned guard.
+
+    Exactly one mode is required. manual_npm makes an explicit package-manager
+    hop followed by new-CLI repair. verify_only accepts only an exited-zero
+    Doctor warning refusal whose current migration report is clear, installed
+    version unchanged and succeeded core run identical; it repeats no repairs.
+    Both modes preserve the failed receipt and launch under the inherited lock.
+    """
+    require(bool(manual_npm) != bool(verify_only) and expect,
+            "Recovery requires exactly one of --manual-npm/--verify-only and --expect-version.")
+    fd = lock(host)
+    try:
+        run = latest_run(host)
+        state = load(run / "state.json")
+        require(state["status"] == "failed" and state.get("workerExitedAt"), "Worker still active or run not failed.")
+        require(own_guard(host, run.name) and not host.alias.exists() and not host.alias.is_symlink(),
+                "Recovery requires this failed window's unchanged guard.")
+        require(not commands.active_clients(), "Other OpenClaw maintenance clients are running.")
+        require(commands.run("systemctl", "show", host.unit, "--property=User", "--value").stdout.strip()
+                == pwd.getpwuid(os.getuid()).pw_name, "Caller is not the gateway service owner.")
+        require(commands.run("systemctl", "is-active", host.unit).stdout.strip() == "active",
+                "Recover serving health before starting manual replacement.")
+        commands.run("systemctl", "--user", "is-active", host.watchdog)
+        status = json_command(commands, "update", "status", "--json")
+        candidate = (status.get("availability", {}).get("latestVersion") or
+                     status.get("update", {}).get("registry", {}).get("latestVersion"))
+        require(candidate == expect, "Configured-channel candidate does not match recovery target.")
+        core = Path(status.get("update", {}).get("root", ""))
+        prefix = Path(commands.run("npm", "prefix", "-g").stdout.strip())
+        require(core == prefix / "lib/node_modules/openclaw" and prefix == host.home / ".npm-global",
+                "Manual recovery requires the existing native npm prefix.")
+        require(os.path.ismount(host.backup_destination), "External backup mount is not mounted.")
+        require(shutil.disk_usage(host.backup_destination).free > 5 * 1024 ** 3,
+                "External backup destination has insufficient space.")
+        installed = version(commands)
+        require(load(core / "package.json")["version"] == installed, "Core root/version mismatch.")
+        if verify_only:
+            require(state.get("failedPhase") == "final-doctor" and state.get("error") ==
+                    "Final Doctor left plugin errors or unfinished maintenance; inspect doctor.log.",
+                    "Verification-only recovery requires the exited-zero Doctor warning refusal.")
+            require(installed == expect == state.get("after"), "Verification recovery version changed.")
+            doctor_ok((run / "doctor.log").read_text(), status)
+            require((status.get("lastRun") or {}).get("runId") == state.get("coreRunId"),
+                    "The successful core repair run changed.")
+        history = run / ("before-manual-recovery-" + uuid.uuid4().hex[:8] + ".json")
+        save(history, state)  # Never erase the original failed result.
+        state.update(status="running", expected=expect,
+                     recoveryPreviousReceipt=history.name, verificationRecovery=verify_only)
+        if not verify_only:
+            state["manualRecovery"] = {"target": expect, "previousReceipt": history.name}
+        for key in ("workerExitedAt", "error", "failedPhase", "recoveryStartAttempted", "recoveryStartExit"):
+            state.pop(key, None)
+        save(run / "state.json", state)
+        try:
+            with (run / "run.log").open("a") as log:
+                worker_process = subprocess.Popen([sys.executable, str(Path(__file__).resolve()),
+                    "_run", str(run), str(fd)], cwd=host.home, stdin=subprocess.DEVNULL,
+                    stdout=log, stderr=log, start_new_session=True, pass_fds=(fd,))
+        except Exception:
+            save(run / "state.json", load(history))
+            raise
+        try:
+            save(run / "worker.json", {"pid": worker_process.pid})
+        except OSError as exc:
+            print(f"Recovery launched; PID receipt write failed: {exc}; inspect {run / 'run.log'}", file=sys.stderr)
+        return {"runId": run.name, "pid": worker_process.pid, "status": "recovery-launched",
+                "log": str(run / "run.log")}
+    finally:
+        os.close(fd)
+
+
+def manual_install(host, commands, run, target):
+    """Back up and verify externally before replacing core with an exact npm release.
+
+    Use npm-version-appropriate OpenClaw-only lifecycle approval. After verifying
+    the installed version, run repair from the new CLI without service activation.
+    The worker then performs broker maintenance and final Doctor normally.
+    """
+    require(re.fullmatch(r"\d{4}\.\d+\.\d+", target), "Manual recovery requires an exact stable release.")
+    set_phase(run, "verified-backup")
+    output = commands.stream("openclaw", "backup", "create", "--output", host.backup_destination,
+                             "--verify", "--json", output=run / "recovery-backup.log")
+    # stream() retains stderr too; the CLI can log a warning before stdout JSON.
+    backup = None
+    for match in re.finditer(r"(?m)^\{", output):
+        try:
+            data, end = json.JSONDecoder().raw_decode(output[match.start():])
+        except ValueError:
+            continue
+        if not output[match.start() + end:].strip() and isinstance(data, dict):
+            backup = data
+            break
+    require(backup is not None, "Official backup did not emit a terminal JSON result.")
+    archive = Path(backup.get("archivePath", ""))
+    require(backup.get("verified") is True and archive.parent == host.backup_destination and archive.is_file(),
+            "Official external backup was not verified; refusing package replacement.")
+    save(run / "backup-receipt.json", {"archivePath": str(archive), "verified": True})
+    set_phase(run, "manual-npm-install")
+    npm_version = commands.run("npm", "--version").stdout.strip()
+    require(re.fullmatch(r"\d+\.\d+\.\d+", npm_version), "Unknown npm version; refusing manual install.")
+    major, minor, _ = map(int, npm_version.split("."))
+    flags = ["--allow-scripts=openclaw"] if major >= 12 or (major == 11 and minor >= 16) else []
+    commands.stream("npm", "install", "-g", "openclaw@" + target, *flags,
+                    output=run / "manual-npm-install.log")
+    require(version(commands) == target, "Manual npm install did not install the exact requested release.")
+    set_phase(run, "recovery-repair")
+    commands.stream("openclaw", "update", "repair", "--yes", "--no-restart",
+                    output=run / "recovery-repair.log")
+
+
 def pin_broker(host, installed):
+    """Align all SDK/API/dependency pins and idempotently add release-age exclusions."""
     package = host.broker / "package.json"
     data = load(package)
     data["peerDependencies"]["openclaw"] = installed
@@ -373,14 +549,36 @@ def pin_broker(host, installed):
     workspace.write_text("".join(lines))
 
 
-def doctor_ok(output):
+def doctor_ok(output, update_status=None):
+    """Validate output from an exited-zero Doctor; this does not check its exit code.
+
+    stream() must already have enforced exit zero. Explicit errors, skipped
+    migrations and missing completion always fail. Intermediate pending warnings
+    need a fresh CLI report proving successful core finalization and no remaining
+    migration or package-recovery gate; log text alone cannot prove resolution.
+    """
     if "Doctor complete" not in output:
         raise UpdateError("Final Doctor did not report Doctor complete.")
-    if re.search(r"-\s*ERROR\s+\S+:|upgrade is unfinished|status=pending|migration[^\n]*skipped", output, re.I):
-        raise UpdateError("Final Doctor left plugin errors or unfinished maintenance; inspect doctor.log.")
+    failure = "Final Doctor left plugin errors or unfinished maintenance; inspect doctor.log."
+    if re.search(r"-\s*ERROR\s+\S+:|migration[^\n]*skipped", output, re.I):
+        raise UpdateError(failure)
+    if re.search(r"upgrade is unfinished|status=pending", output, re.I):
+        # Doctor prints pre-repair warnings too. Accept their resolution only via
+        # a fresh supported CLI migration report, never by deleting log lines.
+        require(update_status is not None
+                and not update_status.get("migrationWarnings")
+                and not update_status.get("migrationWarningsError")
+                and not update_status.get("packageActivationError")
+                and not update_status.get("packageActivation")
+                and (update_status.get("lastRun") or {}).get("status") == "succeeded", failure)
 
 
 def rebuild(host, commands, run, installed, core_root):
+    """Pin, test, build, validate and install the local broker while core is stopped.
+
+    Install a unique lean production stage rather than the development tree.
+    Link its peer to the verified core root; clean only this invocation's stage.
+    """
     pin_broker(host, installed)
     for label, name, args in [
         ("dependencies", "pnpm", ["install"]), ("tests", "npm", ["test"]),
@@ -409,6 +607,7 @@ def rebuild(host, commands, run, installed, core_root):
 
 
 def http_ready(host, commands, timeout=600):
+    """Wait for local HTTP 200 within the startup budget; redirects are not ready."""
     deadline = time.monotonic() + timeout
     while True:
         result = commands.run("curl", "--fail", "--silent", "--show-error", "--max-time", "10",
@@ -448,6 +647,13 @@ def require(condition, message):
 
 
 def verify(host, commands, run):
+    """Refresh live checks and save evidence without repairing or retrieving secrets.
+
+    Require matching versions/core run, clean migration state, a new service PID,
+    HTTP/UI, ready channels, plugin compatibility and broker registration. Compare
+    boot-cleanup metadata rather than reading temp contents. Journal failure is
+    returned separately for owner attestation at finish, not silently ignored.
+    """
     state = load(run / "state.json")
     require(state.get("doctorPassed"), "No successful final Doctor receipt.")
     installed = version(commands)
@@ -469,6 +675,11 @@ def verify(host, commands, run):
     last_run = (status.get("updateRunStatus") or {}).get("lastRun") or {}
     require(last_run.get("status") == "succeeded" and last_run.get("runId") == state["coreRunId"],
             "This window's core update is not the current terminal succeeded run.")
+    migrations = json_command(commands, "update", "status", "--json")
+    save(run / "migration-status.json", migrations)
+    require(not migrations.get("migrationWarnings") and not migrations.get("migrationWarningsError")
+            and not migrations.get("packageActivationError") and not migrations.get("packageActivation"),
+            "Current CLI reports unfinished migrations or package recovery.")
     health = status.get("health") or {}
     require(health.get("ok") is True and status.get("gateway", {}).get("reachable") is True,
             "Live Gateway health/RPC failed.")
@@ -527,7 +738,51 @@ def verify(host, commands, run):
             "bootTempCleared": True, "ownerUiConfirmed": False, "verifiedAt": now()}
 
 
+def require_stopped(host, commands, run):
+    """Record and prove service quiescence before any maintenance mutation.
+
+    inactive/failed are admissible only with zero service PIDs and an empty
+    service cgroup including descendants. Vanished empty cgroups are normal;
+    unreadable or unexpected cgroups and transitional states are refusals.
+    """
+    output = commands.run("systemctl", "show", host.unit,
+                          "--property=ActiveState,SubState,MainPID,ControlPID,ControlGroup").stdout
+    snapshot = dict(line.split("=", 1) for line in output.splitlines() if "=" in line)
+    save(run / "stop-state.json", snapshot)
+    require(snapshot.get("ActiveState") in {"inactive", "failed"}
+            and snapshot.get("MainPID") == "0" and snapshot.get("ControlPID") == "0",
+            "Gateway not quiescent after stop; inspect stop-state.json.")
+    require("ControlGroup" in snapshot, "Missing service cgroup evidence.")
+    group = snapshot["ControlGroup"]
+    processes = []
+    if group:
+        require(group == "/system.slice/" + host.unit, "Unexpected service cgroup; refusing maintenance.")
+        require(host.cgroup_root.is_dir(), "Service cgroup filesystem unavailable.")
+        root = host.cgroup_root / group.lstrip("/")
+        def inaccessible(error):
+            if not isinstance(error, FileNotFoundError):
+                raise error
+        for directory, _, _ in os.walk(root, onerror=inaccessible):
+            try:
+                processes.extend((Path(directory) / "cgroup.procs").read_text().split())
+            except FileNotFoundError:
+                # A stopped unit's empty cgroups may disappear during inspection.
+                if Path(directory).exists():
+                    raise
+    snapshot["remainingProcesses"] = processes
+    save(run / "stop-state.json", snapshot)
+    require(not processes, "Gateway service cgroup still has processes; inspect stop-state.json.")
+
+
 def worker(host, commands, run):
+    """Execute the guarded detached lifecycle and record its terminal outcome.
+
+    Normal and manual modes converge through broker rebuild and final Doctor;
+    verification recovery reuses validated evidence without repeating mutation.
+    Startup checks stop at awaiting-confirmation. Once a stop was requested,
+    finally attempts service recovery on any failure and retains the guard.
+    A pre-stop refusal never starts a service against another maintenance owner.
+    """
     exit_code = 0
     stop_requested = False
     try:
@@ -538,16 +793,23 @@ def worker(host, commands, run):
         set_phase(run, "stop", oldPid=old_pid)
         stop_requested = True
         commands.stream("sudo", "-n", host.executables["systemctl"], "stop", host.unit, output=run / "stop.log")
-        require(commands.run("systemctl", "is-active", host.unit, check=False).stdout.strip() == "inactive",
-                "Gateway did not stop.")
-        set_phase(run, "update")
-        commands.stream("openclaw", "update", "--yes", output=run / "update.log")
+        require_stopped(host, commands, run)
+        state = load(run / "state.json")
+        if state.get("verificationRecovery"):
+            doctor_ok((run / "doctor.log").read_text(),
+                      json_command(commands, "update", "status", "--json"))
+        elif state.get("manualRecovery"):
+            manual_install(host, commands, run, state["manualRecovery"]["target"])
+        else:
+            set_phase(run, "update")
+            commands.stream("openclaw", "update", "--yes", output=run / "update.log")
         installed = version(commands)
         state = load(run / "state.json")
         expected = state["expected"]
         require(installed != state["before"], "Updater did not apply a version change; inspect update.log.")
         require(not expected or installed == expected, f"Installed {installed}, expected {expected}.")
-        set_phase(run, "broker-rebuild", after=installed)
+        core_phase = "verify-existing-core" if state.get("verificationRecovery") else "broker-rebuild"
+        set_phase(run, core_phase, after=installed)
         # Resolve again after package replacement, rather than trusting an old path.
         status = json_command(commands, "update", "status", "--json")
         core_root = Path(status["update"]["root"])
@@ -556,13 +818,14 @@ def worker(host, commands, run):
                 and (core_run.get("after") or {}).get("version") == installed,
                 "Updater did not record terminal success for the installed core.")
         save(run / "update-status-after.json", status)
-        set_phase(run, "broker-rebuild", coreRunId=core_run["runId"])
+        set_phase(run, core_phase, coreRunId=core_run["runId"])
         require(core_root.is_absolute() and load(core_root / "package.json")["version"] == installed,
                 "Updated SDK root/version mismatch.")
-        rebuild(host, commands, run, installed, core_root)
-        set_phase(run, "final-doctor")
-        output = commands.stream("openclaw", "doctor", "--fix", "--non-interactive", output=run / "doctor.log")
-        doctor_ok(output)
+        if not state.get("verificationRecovery"):
+            rebuild(host, commands, run, installed, core_root)
+            set_phase(run, "final-doctor")
+            output = commands.stream("openclaw", "doctor", "--fix", "--non-interactive", output=run / "doctor.log")
+            doctor_ok(output, json_command(commands, "update", "status", "--json"))
         set_phase(run, "start", doctorPassed=True, startRequestedAt=now(), bootTempBefore=boot_temps(host))
         commands.stream("sudo", "-n", host.executables["systemctl"], "start", host.unit, output=run / "start.log")
         deadline = time.monotonic() + 600
@@ -603,6 +866,12 @@ def worker(host, commands, run):
 
 
 def finish(host, commands, owner_ui, journal_confirmed=False):
+    """Complete an automatically verified run after actual owner UI confirmation.
+
+    Refresh runtime checks under lock, require journal evidence or performed
+    owner attestation, then remove only this run's guard with watchdog checks.
+    Repeated completion is idempotent but never removes a newer/unowned guard.
+    """
     require(owner_ui, "Explicit --owner-ui-confirmed required after rendering and signed-in connection checks.")
     fd = lock(host)
     try:
@@ -641,6 +910,11 @@ def finish(host, commands, owner_ui, journal_confirmed=False):
 
 
 def status_view(host):
+    """Report receipts, timings and ownership without OpenClaw or service probes.
+
+    A running receipt without a held lifecycle lock signals attention, not
+    completion. The returned view is diagnostic; it does not mutate the receipt.
+    """
     run = latest_run(host)
     data = load(run / "state.json")
     busy = False
@@ -669,12 +943,17 @@ def status_view(host):
 
 
 def main():
+    """Dispatch public commands and validate the private worker's inherited custody."""
     os.umask(0o077)
     parser = argparse.ArgumentParser(prog="gateway-update.sh", description=__doc__)
-    subs = parser.add_subparsers(dest="command", required=True, metavar="{plan,start,status,finish}")
+    subs = parser.add_subparsers(dest="command", required=True, metavar="{plan,start,status,finish,recover}")
     subs.add_parser("plan", help="Read-only CLI preflight; no downtime, guard or run creation")
     begin = subs.add_parser("start", help="Launch one detached maintenance window")
     begin.add_argument("--expect-version", help="Validate configured-channel target; never sets --tag/channel")
+    recovery = subs.add_parser("recover", help="Owner-authorized recovery of the guarded failed window")
+    recovery.add_argument("--manual-npm", action="store_true", help="Replace core with an exact npm release after verified external backup")
+    recovery.add_argument("--verify-only", action="store_true", help="Reverify an exited-zero Doctor's resolved intermediate warning")
+    recovery.add_argument("--expect-version", required=True)
     subs.add_parser("status", help="Read receipts, phase timings and lock state; no OpenClaw probe")
     end = subs.add_parser("finish", help="Verify and remove only this successful run's guard")
     end.add_argument("--owner-ui-confirmed", action="store_true")
@@ -694,6 +973,8 @@ def main():
             print(json.dumps(result, indent=2))
         elif args.command == "start":
             print(json.dumps(start(host, commands, args.expect_version), indent=2))
+        elif args.command == "recover":
+            print(json.dumps(recover(host, commands, args.expect_version, args.manual_npm, args.verify_only), indent=2))
         elif args.command == "status":
             view = status_view(host)
             # Exact errors live in private logs; status is intended for owner review.

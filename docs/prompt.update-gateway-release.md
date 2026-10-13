@@ -21,7 +21,8 @@ notes and establish whether this session is external Pi or gateway-hosted.
    chain, add updater flags, run a competing maintenance command, or use any
    other restart mechanism. The script creates its own guard; do not pre-create it.
 3. **Monitor through startup.** Use `scripts/gateway-update.sh status` and the
-   reported log path, with brief phase/result/next-step messages. Status reads
+   reported log path. Give brief phase/result/next-step messages about every two
+   to three minutes and immediately on phase changes or errors. Status reads
    receipts without probing OpenClaw maintenance state. Allow long steps and
    do not promise an ETA. If gateway-hosted, resume from an independent session
    or new turn after disconnection; external Pi continues monitoring.
