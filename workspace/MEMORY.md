@@ -26,6 +26,8 @@ current time/weather, and simple reasoning do not require a wiki search.
 - Hetzner administration → `concepts/hetzner-hcloud-cli-administration.md`
 - Clawfred history → search the wiki for `clawfred`; its restored source history
   is retained for a future native agent restoration.
+- Dreaming promotion stalls (0 promotions, empty recall store) →
+  `concepts/dreaming.md`; upstream [openclaw#70509](https://github.com/openclaw/openclaw/issues/70509).
 
 ## Native migration decisions
 
@@ -39,3 +41,7 @@ current time/weather, and simple reasoning do not require a wiki search.
 - Consult `~/.openclaw/CONTEXT.md` for current native configuration, channel
   policy, backup procedure, and restoration runbooks. It is the source of truth
   for setup details, not this file.
+## Consolidated Memory (2026-10-12)
+
+<!-- openclaw-memory-promotion:memory:memory/2026-10-08.md:1:26 -->
+- # 2026-10-08 — Daily Notes ## Markus Lanz: Trigger-Datum-Bug behoben Source: memory/2026-10-08.md#L1-L3 <!-- trigger: trigger-datum-bug, cron-läufe, work/greendex-calculator --> <!-- importance: 8 --> <!-- project: github.com/henningsieh/openclaw-setup -->
