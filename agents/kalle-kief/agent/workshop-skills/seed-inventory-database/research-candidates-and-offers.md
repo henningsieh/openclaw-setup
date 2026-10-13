@@ -15,7 +15,6 @@ Read this when the user is comparing alternatives to a hard-to-source cultivar, 
 
 ## Research tooling
 
-- Bound research to the field/source decisions and exact relevant product pages.
 - Before browser work, inspect the browser tool's current status/doctor result; start or navigate only when a usable browser is reported.
 - Use direct product-page fetch for readable static details and browser control when variants/prices are dynamically rendered.
 - For web search, send only filters supported by the active provider; on an explicit unsupported-filter error, remove that filter and retry once rather than varying the query repeatedly.

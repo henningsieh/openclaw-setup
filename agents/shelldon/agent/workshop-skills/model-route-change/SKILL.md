@@ -10,6 +10,16 @@ description: "Change a default/fallback model route, fix a missing /models entry
    `agents.defaults.model` is the global route, and a per-agent `agents.entries.<id>.model` **wins
    over it**. Finish when you know the effective route *and* whether an override exists.
 
+   **When the user withholds a route change but the route is already wrong, date the change before
+   calling it intentional.** A global default can be silently rewritten by an update or migration:
+   verified, `agents.defaults.model.primary` flipped from a documented `opencode-go/deepseek-v4.1-flash`
+   to `openai/gpt-6-luna` inside a commit titled "finish 2026.9.7 update", contradicting the
+   instance's own `CONTEXT.md` ("No OpenAI model remains in any configured default or fallback chain").
+   `git -C ~/.openclaw log -S "<model-id>" -- openclaw.json` dates the entry in one call; compare the
+   commit subject against the change to decide drift-versus-deliberate. Report the route *and* its
+   origin so the user can decide; do not silently normalize it. Finish when the effective route, the
+   override state, and (when it looks wrong) the commit that set it are all known.
+
    **When the user reports that a model "failed" or "didn't take effect", compare the models
    actually pinned to the sessions before blaming the provider.** Every session carries its own
    `model`, independent of the global route and of the other channels: `openclaw sessions list

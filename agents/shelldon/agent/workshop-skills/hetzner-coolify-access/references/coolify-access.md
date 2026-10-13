@@ -30,7 +30,19 @@ the `coolify__*` MCP tools. If raw `curl` is unavoidable, never inline the token
   ./coolify_api.sh POST "endpoint" '{"key":"value"}'
   ```
 - Useful endpoints: `servers`, `projects`, `applications/{uuid}`, `applications/{uuid}/envs`
-  (PATCH matches by `key`), `deployments/applications/{uuid}` for deployment history.
+  for reads. There is no working per-key PATCH: `PATCH .../envs/{uuid}` and singular
+  `.../env` both answer 404 — update an env by re-listing for its current UUID (UUIDs are
+  re-versioned on every write, a minutes-old one is stale), then DELETE plus POST with
+  the previous flags; the full verified procedure is `coolify-preview-deployments` step 4.
+  `deployments/applications/{uuid}` for deployment history (not re-verified here).
+- Application creation has no API route on this server (verified 2026-10-11):
+  `POST /applications` answers 404 `{"message":"Not found."}` with and without a body —
+  the route is absent, not the payload wrong — and even `GET /system/version` 404s while
+  `GET applications|projects` succeed. Create new apps in the Coolify UI (project →
+  environment → New → Application, then repo/branch/build/domain), and resume automation
+  at deploy/verify (`coolify__deploy`, `deployments/applications/{uuid}`). Do not probe
+  alternate create shapes; the 404 is conclusive. MCP likewise offers lifecycle tools for
+  existing apps only, no creation.
 - Verify: `GET servers` returns `HTTP:200` and a JSON array.
 
 ## 3. MCP server (structured, tool-based)
@@ -52,6 +64,27 @@ the `coolify__*` MCP tools. If raw `curl` is unavoidable, never inline the token
 - Exposes `coolify_*` tools: `coolify_help` (intent catalog), plus list/get for servers, projects,
   applications, databases, and services.
 - Verify: the initialize call returns `serverInfo.name = "Coolify"`.
+
+## 4. Environment values and database connection strings
+
+- `list_env_keys` (MCP) returns key names only, never values — by design, not a
+  permission problem. To assemble a local `.env`, use the REST path, which returns
+  values: `./coolify_api.sh GET "applications/{uuid}/envs"`. Parse and redact in the
+  same pipeline — print key names and counts only, never secret values.
+- A database object's `internal_db_url` uses a UUID hostname on `:5432` that resolves
+  only inside Coolify's container network. From this host, use the external shape
+  instead: the `external_db_url` host (`188.245.144.137:<public_port>`) or, preferred
+  on the private net, `10.0.0.3:<public_port>`. The service-level database name may be
+  the maintenance database (`postgres`); the application's actual database name comes
+  from the app's own docs or `.env.example` comment, not from the service object.
+- Verify: TCP-connect (or `getent hosts`) against the chosen host:port before writing
+  any `.env`; compare the app's `DATABASE_URL` host (parsed, redacted) against the
+  intended service to catch stale pointers (e.g. still aimed at a deleted database).
+- No public port (`is_public: false`, no `public_port` on the database object): there is
+  no external shape — tunnel to the container **IP** (`docker inspect {cid}` →
+  `NetworkSettings.Networks.*.IPAddress`), never to the Docker-DNS UUID hostname, which
+  even the Coolify host cannot resolve (`getent hosts` empty). The full tunneled
+  migrate/seed flow lives in `coolify-preview-deployments` step 3.
 
 ## Notes
 

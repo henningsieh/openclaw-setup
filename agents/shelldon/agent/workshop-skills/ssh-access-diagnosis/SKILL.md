@@ -1,6 +1,6 @@
 ---
 name: "ssh-access-diagnosis"
-description: "SSH login to the gateway host itself fails, or a new user key is being added: prove which auth methods the server actually offers, check the permissions that silently reject a good key, and append keys without losing the existing ones."
+description: "SSH login to the gateway host itself fails, a new user key is being added, or a client (especially a mobile SFTP app) is being onboarded: prove which auth methods the server offers, check the permissions that silently reject a good key, append keys without losing existing ones, and pre-empt the client-side traps."
 ---
 
 # SSH Access Diagnosis
@@ -52,7 +52,28 @@ onboarding and login failures. Remote Hetzner/Coolify hosts belong to the
    change, so name it, do not bundle it into a key task, and do not edit `sshd_config` without an
    explicit go-ahead.
 
+5. **When a client is onboarded, hand over the connection facts and pre-empt the client-side traps.**
+   Give host, port, and user, and state that the client holds the private key (step 3). Keep the two
+   key roles distinct when a tool asks for several key fields at once: a `known_hosts` /
+   `known_hosts_base64` value is the **server's** host key (`ssh-keyscan -t rsa,ecdsa,ed25519
+   <host>`, public and safe to share) and is unrelated to the client's login key in
+   `key_base64` / `key_path`, which stays on the user's device and is never requested here.
+
+   Traps that otherwise cost round trips:
+   - SFTP browsers hide dotfiles, so `~/.openclaw` looks missing; enable "show hidden files" or type
+     the full path.
+   - On Android 11+ an app's private download folder is not writable by other apps, so
+     "download → edit in another editor → save" fails with a permission error; edit server-side with
+     a terminal editor, or download into shared storage first.
+   - Mobile SSH clients commonly ship no built-in GUI file editor; the choices are a server-side
+     terminal editor (`nano`, not `vi`) or a download → external app → upload cycle.
+   - Termius has no "default SFTP path" setting (only the server-side `sshd_config` `-d`
+     workaround), so do not promise one.
+
+   Finish when the user can connect and can name where they will edit files.
+
 Verification: the `Authentications that can continue:` line from `ssh -vv` is quoted as the basis
 for every auth claim; home/`~/.ssh`/`authorized_keys` modes were checked; `ssh-keygen -lf` shows
 the new fingerprint together with all pre-existing ones; no private key was read, written, or
-displayed; and any exposure finding was reported rather than silently fixed.
+displayed; and any exposure finding was reported rather than silently fixed. When a client was
+onboarded, the user can connect and knows where files are edited.

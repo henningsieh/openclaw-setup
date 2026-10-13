@@ -38,13 +38,16 @@ the other two.
    set of genuinely menu-eligible skill commands is known.
 
 3. **Rule out the platform cap and the trim collapse.** Command menus have a hard
-   cap (100 entries for Telegram; confirm the current value by searching the
+   cap (100 entries; confirm the current value by searching the
    installed bundle for the native-command-menu module rather than trusting a
    hash-named filename, which changes between releases). When the full set exceeds
    the cap, the runtime fits the list to the platform's text budget and **drops**
    entries. If the dropped entries include skill commands, the runtime collapses
-   them into a single umbrella command (for Telegram, a leading `/skill` entry)
-   instead of listing them individually. A specific skill command can therefore be
+   them into a single umbrella command — a leading `/skill` entry — instead of
+   listing them individually; this happens on **Discord too**, not only Telegram
+   (verified on Discord: ~47 native commands plus ~86 `commandVisible` skills
+   exceeded the cap, so **zero** skill commands appeared in the registered list
+   while `/skill` did). A specific skill command can therefore be
    missing from the menu while still working when typed — absence is not removal.
    Finish when you can say whether the entry was trimmed, or is genuinely
    unregistered.
@@ -56,14 +59,17 @@ the other two.
    sits at the cap, treat every absent entry as a capacity casualty. Do not re-add
    the entry; it is already registered and the menu has no room for it.
 
-5. **Give priority commands a guaranteed slot.** `customCommands` entries survive
-   trimming ahead of plugin and skill commands (names normalized to `a-z0-9_`,
-   1-32 chars, cannot override a native command). To surface a frequently used
-   skill, add it as a custom command rather than hoping it fits alphabetically. The
-   channel config also gates the families independently: `commands.native` for
-   built-ins, `commands.nativeSkills` for skill commands. A custom command is a
-   menu entry only — it does not implement behaviour, and typing an unlisted
-   plugin or skill command still works.
+5. **Give priority commands a guaranteed slot — but only where the platform has
+   one.** `customCommands` (Telegram only: `channels.telegram.customCommands`; the
+   config schema has no such key for Discord) survives trimming ahead of plugin and
+   skill commands (names normalized to `a-z0-9_`, 1-32 chars, cannot override a
+   native command). On **Discord there is no per-command pin** — when the cap is
+   exceeded every skill collapses to the `/skill` umbrella and an individual
+   `/<skill_name>` cannot be forced into the menu, so the supported path there is
+   `/skill <name> [input]`, which always works. The channel config also gates the
+   families independently: `commands.native` for built-ins, `commands.nativeSkills`
+   for skill commands. A custom command is a menu entry only — it does not
+   implement behaviour, and typing an unlisted plugin or skill command still works.
 
 6. **Verify on the user's own surface.** After any registration change, compare the
    scopes again and confirm the count moved. Chat clients cache the menu per bot, so
