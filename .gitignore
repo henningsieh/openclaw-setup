@@ -75,3 +75,17 @@ __pycache__/
 /.env
 /workspace/openclaw_BAK.env
 /workspace/coolify-server-access/ssh_key*
+
+# --- Downloaded assets and local runtime state (2026-10-13) -----------
+# MaxMind geolocation DB: large download, not portable source.
+/geolocation/
+# SQLite startup-migration run journals.
+/session-sqlite-migration-runs/
+# Greendex app env files carry live secrets (auth/db/oauth/SMTP).
+/workspace/greendex-env-ready/
+/workspace/greendex-env-backup/
+# Inbound media and editor/agent skill symlink trees.
+/workspace/media/
+/workspace/.agents/
+/workspace/.claude/
+/workspace-kalle-kief/skills/
