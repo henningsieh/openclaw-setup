@@ -6,7 +6,7 @@
       },
       "workspace": "/home/shelldon/.openclaw/workspace",
       "model": {
-        "primary": "openai/gpt-6-luna",
+        "primary": "opencode-go/muse-spark-1.3-contributor",
         "fallbacks": [
           "nvidia/nemotron-3-super-120b-a12b",
           "opencode-go/deepseek-v4.1-flash"
@@ -46,9 +46,9 @@
             "end": "06:45",
             "timezone": "Europe/Berlin"
           },
-          "prompt": "[Morning Heartbeat] Daily morning digest. Step 1 health: run ONE exec with this exact command: df -h / | tail -1; free -m | head -2; openclaw cron list --all | grep -c error. Step 2 backlog: read /home/shelldon/.openclaw/workspace/backlog_todos.md and pick exactly ONE open item that is the best next step. Step 3 reply in German with EXACTLY three lines and nothing else: line 1 Morgen, Human! ; line 2 Status: plus one sentence; line 3 Vorschlag: plus that ONE backlog item and a few-word reason. Never create or modify automation jobs. Do not reply NO_REPLY unless the health check itself completely failed.",
+          "prompt": "[Morning Heartbeat] Daily morning digest. Step 1 health: run ONE exec with this exact command: df -h / | tail -1; free -m | head -2; openclaw cron list --all | grep -c error; node /home/shelldon/.openclaw/workspace/lanz_cron/lanz-health.js. Step 2 backlog: read /home/shelldon/.openclaw/workspace/backlog_todos.md and pick exactly ONE open item that is the best next step. Step 3 reply in German with EXACTLY three lines and nothing else: line 1 Morgen, Human! ; line 2 Status: plus one sentence; line 3 Vorschlag: plus that ONE backlog item and a few-word reason. The Lanz line is silent on non-show days; if it reports a problem (FEHLT, 0 Gaeste, or Pruefung fehlgeschlagen), append it to line 2 in a few words, otherwise do not mention it. Never create or modify automation jobs. Do not reply NO_REPLY unless the health check itself completely failed.",
           "timeoutSeconds": 360,
-          "model": "openai/gpt-6-luna"
+          "model": "opencode-go/deepseek-v4.1-flash"
         },
         "thinkingDefault": "high"
       },
@@ -140,7 +140,8 @@
           "writing-for-agents",
           "writing-fragments",
           "writing-shape",
-          "xurl"
+          "xurl",
+          "immich-operations"
         ],
         "memory": {
           "search": {
@@ -257,13 +258,13 @@
       "browser": {
         "enabled": true
       },
-      "vault-access-broker": {
-        "enabled": true
-      },
       "opencode": {
         "enabled": true
       },
       "perplexity": {
+        "enabled": true
+      },
+      "vault-access-broker": {
         "enabled": true
       }
     }
@@ -271,9 +272,14 @@
   "meta": {
     "migrations": {
       "modelPolicyAllowlist": true,
-      "utilityModelSeparation": true
+      "utilityModelSeparation": true,
+      "webhookListeners": {
+        "telegram": [],
+        "feishu": [],
+        "nextcloud-talk": []
+      }
     },
-    "lastTouchedVersion": "2026.9.9"
+    "lastTouchedVersion": "2026.10.2"
   },
   "gateway": {
     "mode": "local",
@@ -289,7 +295,7 @@
     "trustedProxies": [
       "127.0.0.1",
       "::1",
-      "172.25.0.3"
+      "172.25.0.20"
     ],
     "controlUi": {
       "allowedOrigins": [
@@ -308,11 +314,14 @@
       "fetch": {
         "enabled": true
       }
+    },
+    "exec": {
+      "notifyOnExit": false
     }
   },
   "wizard": {
-    "lastRunAt": "2026-10-08T12:00:44.731Z",
-    "lastRunVersion": "2026.9.9",
+    "lastRunAt": "2026-10-12T18:41:58.806Z",
+    "lastRunVersion": "2026.10.2",
     "lastRunCommand": "doctor",
     "lastRunMode": "local"
   },
@@ -1062,6 +1071,11 @@
       "xurl": {
         "enabled": false
       }
+    },
+    "load": {
+      "allowSymlinkTargets": [
+        "/home/shelldon/.openclaw/agents/shelldon/agent/workshop-skills"
+      ]
     }
   },
   "mcp": {
