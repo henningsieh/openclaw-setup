@@ -30,8 +30,15 @@ description: "Change a default/fallback model route, fix a missing /models entry
    once the pins agree does a provider fault become the live hypothesis. Read the user's error text
    verbatim too: a failed turn is frequently absent from both `sessions_history` and the greppable
    gateway log tail, so when neither retains it, ask for the exact string instead of attributing a
-   cause. Finish when the session pins are known and a cause is either established or explicitly
-   left open pending the error text.
+   cause.
+
+   **A session pin outlives a default change AND `/new`.** Verified: after switching
+   `agents.defaults.model.primary`, `/new` in a channel still ran the old model because that
+   session kept its `modelOverride`/`providerOverride`; a pin-free sibling already showed the new
+   default. Do not edit the route again — clear the pin from inside that channel with
+   `/model default` (or `/model <provider/model>`); `thinkingLevel` is a separate pin (`/think`).
+   Finish when the session reports `modelOverride: null` and the configured default, and a cause is
+   either established or explicitly left open pending the error text, not just the global route.
 
 2. **Validate the active provider catalog before selecting a fallback.** Run
    `openclaw models list --agent <id> --provider <provider> --json`; `--all` does not escape a
@@ -55,17 +62,9 @@ description: "Change a default/fallback model route, fix a missing /models entry
    Never re-add the entry or restart the Gateway on the channel complaint alone. Finish when the
    probe lists the model id or an absence it confirms.
 
-   **When a provider is entirely absent from one agent’s Control UI selector**, do not equate
-   `models list` rows with selectable, authenticated models. Compare `openclaw models status
-   --agent <id> --json --check` and `openclaw models auth list --agent <id> --provider
-   <provider> --json` for both agents. If only the affected agent lacks an OpenAI OAuth profile,
-   use `openclaw models auth login --agent <id> --provider openai --device-code` (without
-   `--set-default`), have the owner complete the short-lived device approval privately, then
-   recheck its profile status and the UI. `auth activate` selects a saved profile *within* the
-   target agent store; it cannot adopt another agent’s profile. Do not copy agent SQLite stores,
-   change a shared default, or restart solely because the login warns that Gateway auth refresh
-   was unconfirmed: first check whether the actual UI now lists the models. Finish only when the
-   affected selector shows them; CLI catalog metadata alone is insufficient.
+   **When a provider is entirely absent from one agent’s Control UI selector**, read
+   [control-ui-provider-absent.md](references/control-ui-provider-absent.md) and follow it. Finish
+   only when the affected selector shows them.
 
 3. **Only when a route change was requested, set primary and fallbacks through the CLI.**
    `openclaw models set <provider/model>`, then

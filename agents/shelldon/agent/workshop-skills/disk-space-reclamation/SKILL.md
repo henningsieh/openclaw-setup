@@ -17,6 +17,17 @@ trigger is a backup folder or a gateway fault instead.
    before number so the gain is provable. Finish when the top GiB-consumers are
    named with sizes.
 
+   **An estimate request is read-only.** If the owner asks to check or estimate
+   what can be freed, do not delete, prune, or run package-manager verification
+   commands: `npm cache verify` can itself garbage-collect cache entries. For
+   workspace/package cleanup, enumerate the repo roots, inspect each `git status`
+   (including unpushed commits and uncommitted files), locate the pnpm store with
+   `pnpm store path`, and size repositories, `node_modules`, build outputs and
+   caches. Measure candidate roots together in one `du -xch <paths...>` call so
+   hard-linked pnpm content is not double-counted. Report both the estimate and
+   what deleting each workspace would discard; only proceed when cleanup, not
+   merely inspection, is requested and the named scope covers that loss.
+
 2. **Sort candidates into safety classes, delete the safe ones first.**
    - **Regenerable** — HTTP/build caches (`~/.npm/_cacache`, compile caches,
      Playwright/browser caches). Rebuilt on demand; no data lost.

@@ -34,6 +34,18 @@ payload script is the only thing you execute.
    Finish when the readback shows `enabled: true` and a `nextRunAtMs` in the
    future — `cron get` is the proof, not the command's own exit code.
 
+   **For a cost freeze (stop paid-provider burn), audit four layers — a paid
+   fallback still fires when the primary fails, and a cron payload overrides the
+   global default, so clearing only the primary leaves burn paths open.**
+   Summarise every job's `payload.model`/`fallbacks`/`thinking` in one `cron
+   list --json` pass, then read `agents.defaults.model` and
+   `agents.entries.<id>.heartbeat.model`. Switch each paid model to the free
+   target with its full `provider/model` id plus `--thinking` (prefer the full
+   id over a short alias, which can resolve ambiguously), drop paid entries
+   from every fallback list, and finish with a config-wide scan proving zero
+   paid refs outside the model catalog. Verify with a re-list, not the edit
+   exit code. Finish when no automated surface names a paid model.
+
    **A same-minute cluster means a bulk action, not a single click.** Observed:
    three unrelated jobs flipped to `enabled: false` within six seconds of each
    other (14:10:18, :23, :24). Treat that as one deliberate or automated sweep and
