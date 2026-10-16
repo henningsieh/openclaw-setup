@@ -13,8 +13,8 @@ importers:
         version: 1.3.34
     devDependencies:
       openclaw:
-        specifier: 2026.10.2
-        version: 2026.10.2(undici@8.10.2)
+        specifier: 2026.10.4
+        version: 2026.10.4(undici@8.10.2)
       typescript:
         specifier: ^5.9.0
         version: 5.9.3
@@ -466,8 +466,8 @@ packages:
     os: [linux]
     libc: [glibc]
 
-  '@openclaw/ai@2026.10.2':
-    resolution: {integrity: sha512-cgw8vpCfbmnY5Qbe+7gZWN1lsnCuBUFasu2nNjUkDAtKh+RzvPQZudMvkhA34vVhuQZ8KUf6D45dMePWC560Ww==}
+  '@openclaw/ai@2026.10.4':
+    resolution: {integrity: sha512-MrRkq0PzuK2O7v40k4dxt/GrRnpVD3P3ql5gVysNDu0fAFYD9lQ6LXZJiLQE7jBI44QpDzSxJn9oqJzxuroEuA==}
     engines: {node: '>=22.19.0'}
 
   '@openclaw/fs-safe-darwin-arm64@0.24.2':
@@ -1674,8 +1674,8 @@ packages:
       zod:
         optional: true
 
-  openclaw@2026.10.2:
-    resolution: {integrity: sha512-FuLLF+WI12ypwQ0r+pcKDcmB+kXus5N4QClaKEnaAn6GN4I1AitkOhwv0GFl2rVKpvuUBDQWIfglHNy6Trv/EQ==}
+  openclaw@2026.10.4:
+    resolution: {integrity: sha512-+FH0StZF1tlTazM7JJGY6JePeJmhFNSRByi2Q3jXPRiLO7o4dJh2xa9Vy4Dk8Cd2ic8B7Zkf5NfEaCCWUkgqnQ==}
     engines: {node: '>=24.16.0 <25 || >=26.1.0'}
     hasBin: true
     bundledDependencies:
@@ -2575,7 +2575,7 @@ snapshots:
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
 
-  '@openclaw/ai@2026.10.2(@modelcontextprotocol/sdk@1.31.0(zod@4.6.5))(undici@8.10.2)(ws@8.21.3)(zod@4.6.5)':
+  '@openclaw/ai@2026.10.4(@modelcontextprotocol/sdk@1.31.0(zod@4.6.5))(undici@8.10.2)(ws@8.21.3)(zod@4.6.5)':
     dependencies:
       '@anthropic-ai/sdk': 0.128.0(zod@4.6.5)
       '@google/genai': 2.24.0(@modelcontextprotocol/sdk@1.31.0(zod@4.6.5))
@@ -3618,7 +3618,7 @@ snapshots:
       ws: 8.21.3
       zod: 4.6.5
 
-  openclaw@2026.10.2(undici@8.10.2):
+  openclaw@2026.10.4(undici@8.10.2):
     dependencies:
       '@agentclientprotocol/sdk': 1.5.0(zod@4.6.5)
       '@anthropic-ai/sdk': 0.128.0(zod@4.6.5)
@@ -3635,7 +3635,7 @@ snapshots:
       '@mistralai/mistralai': 2.7.0
       '@modelcontextprotocol/sdk': 1.31.0(zod@4.6.5)
       '@mozilla/readability': 0.6.0
-      '@openclaw/ai': 2026.10.2(@modelcontextprotocol/sdk@1.31.0(zod@4.6.5))(undici@8.10.2)(ws@8.21.3)(zod@4.6.5)
+      '@openclaw/ai': 2026.10.4(@modelcontextprotocol/sdk@1.31.0(zod@4.6.5))(undici@8.10.2)(ws@8.21.3)(zod@4.6.5)
       '@openclaw/fs-safe': 0.24.2
       '@silvia-odwyer/photon-node': 0.3.4
       '@trycua/cua-driver': 0.28.2

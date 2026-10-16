@@ -83,7 +83,7 @@ automations, and wiki. The complete Docker-era state remains preserved as backup
 | Item | Value |
 |---|---|
 | Host | `ubuntu-8gb-nbg` (<host-ip>, Hetzner nbg1) |
-| OpenClaw version | 2026.10.2 (`b8952d4`) |
+| OpenClaw version | 2026.10.4 (`383c124`) |
 | Runtime | Native Node.js v24 (system `/usr/bin/node`), **not** Docker |
 | Service user | `shelldon` (uid 1000) — gateway never runs as root |
 | Public URL | `https://<gateway-host>/` |
@@ -162,7 +162,7 @@ catalog, usage limits, and privacy policies:
 - https://opencode.ai/docs/en/go.md
 
 When a local command and a remembered procedure disagree, check the docs for
-OpenClaw `2026.10.2` behavior and verify with `openclaw <command> --help` as the
+OpenClaw `2026.10.4` behavior and verify with `openclaw <command> --help` as the
 installed CLI is authoritative for this host.
 
 ## Layout (all owned by `shelldon`)
