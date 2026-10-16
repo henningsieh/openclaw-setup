@@ -194,8 +194,8 @@ Use ordinary `status` monitoring and the same browser/owner confirmation and
 `finish` procedure afterward. The successful repair must be the current terminal
 core run. The original failed upstream report remains historical evidence.
 
-For the narrowly identified historical-warning refusal after an **exited-zero**
-final Doctor, the owner may authorize:
+For a narrowly identified verification refusal after an **exited-zero** final
+Doctor, the owner may authorize:
 
 ```bash
 scripts/gateway-update.sh recover --verify-only --expect-version <target-release>
@@ -203,11 +203,15 @@ scripts/gateway-update.sh recover --verify-only --expect-version <target-release
 
 This requires unchanged installed/recorded versions, the same succeeded core run,
 no current migrations or package recovery in the supported CLI report, and no
-explicit Doctor errors or skipped migrations. It preserves the original failed
-receipt and performs only a controlled stop/start and full verification, including
-new PID and boot-cleanup metadata. It never reinstalls packages or reruns Doctor.
-An interrupted/nonzero Doctor or a genuine pending migration cannot use this path.
-`finish` also refreshes the migration report before removing the guard.
+explicit Doctor errors or skipped migrations. A completed package-activation
+receipt (`packageActivation.phase: complete`) is not a pending recovery gate.
+The mode accepts either the historical final-Doctor warning refusal or the exact
+verify-stage refusal caused by that completed receipt being misclassified. It
+preserves the original failed receipt and performs only a controlled stop/start
+and full verification, including new PID and boot-cleanup metadata. It never
+reinstalls packages or reruns Doctor. An interrupted/nonzero Doctor or a genuine
+pending migration cannot use this path. `finish` also refreshes the migration
+report before removing the guard.
 
 ## Local plugin maintenance
 

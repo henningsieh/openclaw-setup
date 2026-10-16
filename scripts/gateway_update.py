@@ -448,9 +448,13 @@ def recover(host, commands, expect, manual_npm, verify_only=False):
         installed = version(commands)
         require(load(core / "package.json")["version"] == installed, "Core root/version mismatch.")
         if verify_only:
-            require(state.get("failedPhase") == "final-doctor" and state.get("error") ==
-                    "Final Doctor left plugin errors or unfinished maintenance; inspect doctor.log.",
-                    "Verification-only recovery requires the exited-zero Doctor warning refusal.")
+            doctor_warning_refusal = (state.get("failedPhase") == "final-doctor" and state.get("error") ==
+                                      "Final Doctor left plugin errors or unfinished maintenance; inspect doctor.log.")
+            completed_activation_false_refusal = (
+                state.get("failedPhase") == "verify" and state.get("error") ==
+                "Current CLI reports unfinished migrations or package recovery.")
+            require(doctor_warning_refusal or completed_activation_false_refusal,
+                    "Verification-only recovery requires a recognized verification refusal.")
             require(installed == expect == state.get("after"), "Verification recovery version changed.")
             doctor_ok((run / "doctor.log").read_text(), status)
             require((status.get("lastRun") or {}).get("runId") == state.get("coreRunId"),
@@ -549,6 +553,12 @@ def pin_broker(host, installed):
     workspace.write_text("".join(lines))
 
 
+def package_activation_pending(update_status):
+    """Treat only a non-complete package activation as a recovery gate."""
+    activation = (update_status or {}).get("packageActivation")
+    return bool(activation) and activation.get("phase") != "complete"
+
+
 def doctor_ok(output, update_status=None):
     """Validate output from an exited-zero Doctor; this does not check its exit code.
 
@@ -569,7 +579,7 @@ def doctor_ok(output, update_status=None):
                 and not update_status.get("migrationWarnings")
                 and not update_status.get("migrationWarningsError")
                 and not update_status.get("packageActivationError")
-                and not update_status.get("packageActivation")
+                and not package_activation_pending(update_status)
                 and (update_status.get("lastRun") or {}).get("status") == "succeeded", failure)
 
 
@@ -678,7 +688,7 @@ def verify(host, commands, run):
     migrations = json_command(commands, "update", "status", "--json")
     save(run / "migration-status.json", migrations)
     require(not migrations.get("migrationWarnings") and not migrations.get("migrationWarningsError")
-            and not migrations.get("packageActivationError") and not migrations.get("packageActivation"),
+            and not migrations.get("packageActivationError") and not package_activation_pending(migrations),
             "Current CLI reports unfinished migrations or package recovery.")
     health = status.get("health") or {}
     require(health.get("ok") is True and status.get("gateway", {}).get("reachable") is True,

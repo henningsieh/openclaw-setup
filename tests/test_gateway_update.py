@@ -44,6 +44,7 @@ class FakeCommands:
         self.doctor_output = "Doctor complete.\n"
         self.backup_verified = True
         self.backup_warning = ""
+        self.package_activation = None
         self.core = host.home / "sdk"
         self.core.mkdir()
         (self.core / "package.json").write_text(json.dumps({"version": self.installed}))
@@ -54,6 +55,7 @@ class FakeCommands:
     def status(self):
         return {"update": {"root": str(self.core), "registry": {"latestVersion": self.target}},
                 "availability": {"available": self.available, "latestVersion": self.target},
+                "packageActivation": self.package_activation,
                 "lastRun": {"status": "succeeded", "runId": "fixture-core-run", "after": {"version": self.installed}}}
 
     def health(self):
@@ -456,6 +458,7 @@ class LifecycleTests(unittest.TestCase):
             update.doctor_ok(output)
         status = self.commands.status()
         update.doctor_ok(output, status)
+        update.doctor_ok(output, dict(status, packageActivation={"phase": "complete"}))
         for key, value in (("migrationWarnings", ["codex pending"]),
                            ("migrationWarningsError", "inspection failed"),
                            ("packageActivationError", "lease changed"),
@@ -466,6 +469,30 @@ class LifecycleTests(unittest.TestCase):
             update.doctor_ok('- ERROR codex: broken\nDoctor complete.', status)
         with self.assertRaises(update.UpdateError):
             update.doctor_ok('migration skipped\nDoctor complete.', status)
+
+    def test_verify_failure_from_completed_package_activation_can_recover_read_only(self):
+        run = self.successful_run()
+        state = update.load(run / "state.json")
+        state.update(status="failed", failedPhase="verify",
+                     error="Current CLI reports unfinished migrations or package recovery.",
+                     workerExitedAt=update.now(), recoveryStartAttempted=True, recoveryStartExit=0)
+        update.save(run / "state.json", state)
+        (run / "doctor.log").write_text(
+            'Plugin "vault-access-broker" data/settings upgrade is unfinished\nDoctor complete.')
+        self.commands.package_activation = {"phase": "complete"}
+        self.commands.core = self.home / ".npm-global/lib/node_modules/openclaw"
+        self.commands.core.mkdir(parents=True)
+        (self.commands.core / "package.json").write_text(json.dumps({"version": self.commands.installed}))
+        with patch.object(update.os.path, "ismount", return_value=True), \
+             patch.object(update.subprocess, "Popen") as spawn:
+            spawn.return_value.pid = 555
+            result = update.recover(self.host, self.commands, self.commands.target, False, True)
+        self.assertEqual(result["status"], "recovery-launched")
+        self.assertTrue(spawn.call_args.kwargs["start_new_session"])
+        current = update.load(run / "state.json")
+        self.assertTrue(current["verificationRecovery"])
+        self.assertEqual(update.load(run / current["recoveryPreviousReceipt"])["status"], "failed")
+        self.assertTrue(update.own_guard(self.host, run.name))
 
     def test_verification_recovery_never_reinstalls_or_repeats_doctor(self):
         run = self.successful_run()
