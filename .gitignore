@@ -10,6 +10,7 @@
 *.sqlite*
 *.sqlite-shm
 *.sqlite-wal
+/agents/*/agent/bin/
 /agents/*/agent/codex-home/
 /agents/*/qmd/
 /agents/*/sessions/
