@@ -71,6 +71,9 @@ __pycache__/
 # --- Maintained skill source ------------------------------------------
 # agents/*/agent/workshop-skills/** is intentionally NOT ignored. Those
 # skill files are portable source and may be reviewed and committed.
+# The per-skill .archive/ folders are undo snapshots of earlier versions, not
+# source: they grow with every patch, so keep them on disk and out of Git.
+/agents/*/agent/workshop-skills/.archive/
 
 # --- Secrets and key material ------------------------------------------
 /config-journal-fingerprint.key
