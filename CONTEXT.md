@@ -378,12 +378,21 @@ agent rather than copying Docker runtime state wholesale:
 
 ## Providers
 
-- The configured default for `shelldon` is `opencode-go/deepseek-v4.1-flash`
-  with thinking `high` and `opencode-go/muse-spark-1.3-contributor` as its
-  only global fallback.
+- The configured default for both agents is `opencode-go/deepseek-v4.1-flash`
+  with thinking `high` and `nvidia/nemotron-3-super-120b-a12b` as its only
+  global fallback. `agents.defaults.modelPolicy.allow` restricts the Control UI
+  model picker to seven OpenCode Go models (`deepseek-v4.1-flash`,
+  `glm-5.3-flash`, `mimo-v2.6-flash`, `minimax-m3.1-flash-free`,
+  `qwen3.8-flash`, `muse-spark-1.2-contributor`, `muse-spark-1.3-contributor`)
+  plus the untouched `google/*`, `llama-cpp/*`, `nvidia/*`, and `openai/*`
+  groups. `opencode-go/gemini-4-argon-contributor` was removed again on
+  2026-10-20: despite the "contributor" label it costs $4/$20 per 1M tokens
+  (vs. $0.10/$0.20 for the Muse Spark contributor models) and consumed the
+  whole monthly Go allowance in one afternoon.
 - Native credential profiles exist for OpenAI (OAuth), NVIDIA (API key), and
   OpenCode Go (API key), stored in the agent SQLite auth store rather than an
-  environment file. NVIDIA is used by the Session Cleanup automation.
+  environment file. `kalle-kief` inherits the OpenCode Go key from `shelldon`
+  through `agents.defaults.authInheritance`.
 - OpenCode Go is a separate paid subscription from OpenCode Zen; sharing the
   OpenCode API key does not itself grant Go entitlement. A successful model
   catalog listing is not an entitlement check. See the dedicated [OpenCode Go
@@ -392,6 +401,19 @@ agent rather than copying Docker runtime state wholesale:
 - The `codex` plugin is enabled and loaded. Use `openclaw models status` before
   changing provider or runtime configuration; it is the live authority for model
   routes and credential usability.
+- OpenCode Go usage is queryable with the stored Go API key (agent auth store,
+  profile `opencode-go:default`):
+  - `GET https://opencode.ai/zen/go/v1/usage` — aggregate gauges only
+    (`rolling` 5 h, `weekly`, `monthly` percent plus reset timestamps).
+  - `GET https://console.opencode.ai/api/v2/usage/export?range=30d` — CSV with
+    one row per day, member/service account, provider, and model, including
+    `cost_micro_cents` (1 USD = 100,000,000 micro-cents). This is the only
+    per-model source; `GET /api/v1/budgets/members` needs console admin and
+    answers 403 for an inference key.
+  - The console gauges are per model: each model's own monthly dollar limit
+    (Go plan), with the weekly limit at 50 % and the 5-hour rolling window at
+    20 % of it. A model at 12 % monthly can still sit at 61 % in the rolling
+    window.
 - `web_search` and `web_fetch` are enabled. Web search runs through the bundled
   Google plugin with Google Search grounding: `tools.web.search.provider: "gemini"`,
   authenticated by `${GEMINI_API_KEY}` from the ignored `.env`.
@@ -480,12 +502,40 @@ timezone use the Gateway host's local timezone, which is Europe/Berlin.
 | `🦀 OpenClaw Nightly Backup` | Daily 00:01 | — command job | Creates and verifies the official archive on the StorageBox/Nextcloud mount. | Concise success status → Discord `#system-status` |
 | `📧 MailCow Nightly Update` | Daily 02:00 | — command job | Checks MailCow via the native `host-server` SSH alias; applies an available update, then reports container status. The private key is at `~/.ssh/host-server`, outside the workspace and Git. | Discord `#system-status` |
 | `📸 Immich Nightly Update` | Daily 02:30 | — command job | Checks and applies the newest Immich release via `sudo -n /usr/local/bin/immich-update`, after the 02:00 DB backup. | Discord `#system-status` |
-| `🧠 Memory Dreaming Promotion` | Daily 03:00 | Native managed: `nvidia/nemotron-3-ultra-550b-a55b`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. | None |
+| `🧠 Memory Dreaming Promotion` | Daily 03:00 | `opencode-go/muse-spark-1.3-contributor` (thinking `high`); fallback `opencode-go/muse-spark-1.2-contributor` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. The durable source is `plugins.entries.memory-core.config.dreaming.model`. | None |
+| `🌱 Keimungs-Check (täglich)` | Daily 05:30 | `opencode-go/muse-spark-1.3-contributor` (thinking `low`); fallback `opencode-go/muse-spark-1.2-contributor` | Agent `kalle-kief`: germination status and selection request for the five seeds. | Discord `#grow-log` (`<discord-channel-id>`) |
+| `📺 Markus Lanz Guest Lookup` | Every 30 min, Tue–Thu 11:00–19:30 | `opencode-go/muse-spark-1.3-contributor` (thinking `low`); fallback `opencode-go/muse-spark-1.2-contributor` | Runs `workspace/lanz_cron/lanz-guests.js`; the agent forwards stdout to the owner's Telegram chat. **Re-enabled 2026-10-20** (it had been disabled since 2026-10-09). | Telegram `<telegram-chat-id>` (the agent's own `message` call) |
 | `skill-collection-review-shelldon` | Every 7 days | Native managed; agent default `opencode-go/deepseek-v4.1-flash`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native managed review of the local Skill Workshop collection. | None |
 | `skill-collection-review-kalle-kief` | Every 7 days | as above, agent `kalle-kief` | Native managed review of the kalle-kief Skill Workshop collection. | None |
 
-Disabled since 2026-10-09 (kept, not deleted): `📺 Markus Lanz Guest Lookup`,
-`📋 Weekly AI Wiki Curation (Entities & Concepts)`, `🧹 Session Cleanup`.
+Still disabled (kept, not deleted): `📋 Weekly AI Wiki Curation (Entities &
+Concepts)` and `🧹 Session Cleanup`. Both are already configured for
+`opencode-go/muse-spark-1.3-contributor` (thinking `high` for the wiki
+curation, `low` for the session cleanup).
+
+### OpenCode Go protocol requirement (muse-spark contributor)
+
+`muse-spark-1.2-contributor` and `muse-spark-1.3-contributor` are served over
+the OpenAI **Responses** protocol. Without an explicit
+`"api": "openai-responses"` on their entries in
+`models.providers["opencode-go"].models`, OpenClaw sends them to
+`/chat/completions` and every run fails with
+`400 Model does not support this protocol. (format)`. The upstream metadata
+(`https://models.opencode.ai/api.json`) lists the plain `openai/v1` path for
+these two models, so the protocol cannot be inferred and must be configured.
+Other OpenCode Go models use different protocols per the OpenCode docs
+endpoint table (`anthropic-messages` for Qwen 3.8 Flash and MiniMax M3,
+`openai-responses` for Grok and the GPT Luna models).
+
+### Markus Lanz delivery failure mode
+
+`lanz-guests.js` writes the show to `lanz-guests.db` *before* the agent sends
+the message. If the send fails (for example `Cron receipt authority is
+unavailable` after a Gateway restart), every later run of the same day stays
+silent because the database entry already exists. Recovery: delete the
+`shows` row for that date (guests cascade) and trigger the job again, e.g.
+`sqlite3 lanz-guests.db "DELETE FROM shows WHERE date='YYYY-MM-DD';"` followed
+by `openclaw cron run 4dbc748a-e3aa-4aa3-9d8f-a7bf039b5cf8 --wait`.
 
 No OpenAI model remains in any configured default or fallback chain; the
 OpenAI OAuth profile is retained solely for the `codex` plugin harness.
