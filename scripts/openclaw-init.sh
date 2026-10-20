@@ -83,7 +83,9 @@ fi
 # for agent sessions. The password comes from the Vaultwarden MailCow item that
 # has SOGO_EMAIL as its login username, resolved at container startup — never
 # stored as an env var (the .env holds SOGO_EMAIL, not the password).
-SOGO_BASE_URL="https://<mail-host>/SOGo/dav"
+# The live base URL comes from SOGO_BASE_URL in the environment (.env holds
+# SOGO_EMAIL, not the password); it is deliberately not hardcoded here.
+SOGO_BASE_URL="${SOGO_BASE_URL:-https://<mail-host>/SOGo/dav}"
 : "${SOGO_EMAIL:?SOGO_EMAIL is not set}"
 
 if [ -n "${BW_CLIENTID:-}" ] && [ -n "${BW_CLIENTSECRET:-}" ] && [ -n "${BW_PASSWORD:-}" ]; then
