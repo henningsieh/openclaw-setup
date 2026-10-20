@@ -508,10 +508,11 @@ timezone use the Gateway host's local timezone, which is Europe/Berlin.
 | `skill-collection-review-shelldon` | Every 7 days | Native managed; agent default `opencode-go/deepseek-v4.1-flash`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native managed review of the local Skill Workshop collection. | None |
 | `skill-collection-review-kalle-kief` | Every 7 days | as above, agent `kalle-kief` | Native managed review of the kalle-kief Skill Workshop collection. | None |
 
-Still disabled (kept, not deleted): `📋 Weekly AI Wiki Curation (Entities &
-Concepts)` and `🧹 Session Cleanup`. Both are already configured for
-`opencode-go/muse-spark-1.3-contributor` (thinking `high` for the wiki
-curation, `low` for the session cleanup).
+Still disabled (kept, not deleted): none — every automation is enabled as of
+2026-10-20. `📋 Weekly AI Wiki Curation (Entities & Concepts)` and
+`🧹 Session Cleanup (Trajectory & Orphans)` were re-enabled on 2026-10-20 and
+are already configured for `opencode-go/muse-spark-1.3-contributor` (thinking
+`high` for the wiki curation, `low` for the session cleanup).
 
 ### OpenCode Go protocol requirement (muse-spark contributor)
 
