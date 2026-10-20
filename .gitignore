@@ -75,6 +75,17 @@ __pycache__/
 # source: they grow with every patch, so keep them on disk and out of Git.
 /agents/*/agent/workshop-skills/.archive/
 
+# --- Generated memory state ------------------------------------------
+# memory-core dreaming and promotion output is runtime state: session
+# corpora, dream reports, daily notes, recall event streams and the Kalle
+# agent's promoted personal memories. It is regenerated on the host and has
+# no value in a public setup repository — keep it on disk, keep it out of Git.
+/workspace/memory/
+/workspace/DREAMS.md
+/workspace-kalle-kief/memory/
+/workspace-kalle-kief/DREAMS.md
+/workspace-kalle-kief/MEMORY.md
+
 # --- Secrets and key material ------------------------------------------
 /config-journal-fingerprint.key
 /.env
