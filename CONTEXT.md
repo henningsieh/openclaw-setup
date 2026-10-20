@@ -341,12 +341,14 @@ values live in the gitignored `~/.openclaw/.env`. The live configuration keeps
 the real routing values because the gateway reads it from disk.
 
 The history was rewritten on 2026-10-20 (`git filter-repo`) to purge the
-memory corpus, `workspace/USER.md`, and every historical identifier; the
-branches `native-setup` and `feature/vault-access-broker-package` were
-force-pushed. A pre-rewrite backup bundle lives outside the repository at
-`/home/shelldon/openclaw-setup-pre-purge-2026-10-20.bundle`. The Docker-era
-`main` branch still carries the old identifiers and was deliberately left
-untouched.
+memory corpus, `workspace/USER.md`, and every historical identifier; **every
+branch** was force-pushed afterwards (`main` and the Docker-era branches
+included). A pre-rewrite backup bundle lives outside the repository at
+`/home/shelldon/openclaw-setup-pre-purge-2026-10-20.bundle`. The only
+identifiers that remain in the public repository are the routing values inside
+`openclaw.json` and its snapshots, because that file is the running
+instance's configuration and the Discord guild and channel ids are structural
+object keys that cannot be templated.
 
 ## Deferred re-setup: Clawfred
 
