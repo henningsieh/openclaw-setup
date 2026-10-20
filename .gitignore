@@ -86,6 +86,10 @@ __pycache__/
 /workspace-kalle-kief/DREAMS.md
 /workspace-kalle-kief/MEMORY.md
 
+# The user model holds the owner's contact details and identifiers. It is
+# personal runtime data for the agent, not public setup material.
+/workspace/USER.md
+
 # --- Secrets and key material ------------------------------------------
 /config-journal-fingerprint.key
 /.env
