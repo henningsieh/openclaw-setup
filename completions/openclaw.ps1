@@ -10,6 +10,10 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
     $previousElement = if ($previousElementIndex -ge 1) { $commandElements[$previousElementIndex].Extent.Text } else { '' }
     $choiceFlag = $previousElement
     $choicePrefix = $wordToComplete
+    # PowerShell retains quotes in wordToComplete, even for an unfinished literal.
+    if ($wordToComplete -ne '' -and $commandElements[-1] -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
+        $choicePrefix = $commandElements[-1].Value
+    }
     $choiceCompletionPrefix = ''
     if ($wordToComplete -match '^(--[^=]+)=(.*)$') {
         $choiceFlag = $Matches[1]
@@ -604,7 +608,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'gateway install' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--bind','--auth','--password','--password-file','--tailscale','--task-supervisor-child','--ws-log','--raw-stream-path','--port','--runtime','--runtime-path','--expected-runtime-pin','--token','--wrapper','--update-executor')
+                $valueOptions = @('--container','--profile','--log-level','--bind','--auth','--password','--password-file','--tailscale','--task-supervisor-child','--ws-log','--raw-stream-path','--port','--runtime','--runtime-path','--expected-runtime-pin','--restore-service-cli','--token','--wrapper','--update-executor')
             }
             'gateway uninstall' {
                 $commandPath = $candidatePath
@@ -688,7 +692,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'daemon install' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--port','--runtime','--runtime-path','--expected-runtime-pin','--token','--wrapper','--update-executor')
+                $valueOptions = @('--container','--profile','--log-level','--port','--runtime','--runtime-path','--expected-runtime-pin','--restore-service-cli','--token','--wrapper','--update-executor')
             }
             'daemon uninstall' {
                 $commandPath = $candidatePath
@@ -1566,62 +1570,6 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--session','--agent')
             }
-            'fleet' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'fleet create' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--image','--runtime','--port','--memory','--cpus','--disk','--network','--pids-limit','--env','--gateway-token')
-            }
-            'fleet backup' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--out','--max-bytes')
-            }
-            'fleet restore' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--from','--max-bytes')
-            }
-            'fleet doctor' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'fleet list' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'fleet ls' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'fleet status' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'fleet logs' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--tail','--since')
-            }
-            'fleet start' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'fleet stop' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'fleet restart' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
-            'fleet upgrade' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--image')
-            }
-            'fleet rm' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
-            }
             'worktrees' {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level')
@@ -1652,7 +1600,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'worktrees gc' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level')
+                $valueOptions = @('--container','--profile','--log-level','--job')
             }
             'attach' {
                 $commandPath = $candidatePath
@@ -1876,7 +1824,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
             'hooks relay' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--agent','--provider','--relay-id','--state-db','--generation','--event','--pre-tool-use-unavailable','--timeout')
+                $valueOptions = @('--container','--profile','--log-level','--agent','--provider','--relay-id','--state-db','--remote-credential','--generation','--event','--pre-tool-use-unavailable','--timeout')
             }
             'hooks install' {
                 $commandPath = $candidatePath
@@ -2226,26 +2174,6 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--version','--tag','--agent')
             }
-            'skills curator' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--agent')
-            }
-            'skills curator status' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--agent')
-            }
-            'skills curator pin' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--agent')
-            }
-            'skills curator unpin' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--agent')
-            }
-            'skills curator restore' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--agent')
-            }
             'skills workshop' {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--agent')
@@ -2254,37 +2182,21 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--agent')
             }
-            'skills workshop inspect' {
+            'skills workshop changes' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--agent')
+                $valueOptions = @('--container','--profile','--log-level','--limit','--agent')
             }
-            'skills workshop propose-create' {
+            'skills workshop show' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--name','--description','--proposal','--proposal-dir','--goal','--evidence','--agent')
+                $valueOptions = @('--container','--profile','--log-level','--file','--version','--agent')
             }
-            'skills workshop propose-update' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--proposal','--proposal-dir','--description','--goal','--evidence','--agent')
-            }
-            'skills workshop revise' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--proposal','--proposal-dir','--description','--goal','--evidence','--agent')
-            }
-            'skills workshop evaluate' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--correlation-id','--agent')
-            }
-            'skills workshop apply' {
-                $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--agent')
-            }
-            'skills workshop reject' {
+            'skills workshop archive' {
                 $commandPath = $candidatePath
                 $valueOptions = @('--container','--profile','--log-level','--reason','--agent')
             }
-            'skills workshop quarantine' {
+            'skills workshop restore' {
                 $commandPath = $candidatePath
-                $valueOptions = @('--container','--profile','--log-level','--reason','--agent')
+                $valueOptions = @('--container','--profile','--log-level','--version','--agent')
             }
             'skills list' {
                 $commandPath = $candidatePath
@@ -2683,7 +2595,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
     
     # Root command
     if ($commandPath -eq "") {
-         $completions = @('acp','agent','agents','approvals','exec-approvals','attach','audit','backup','channels','clawbot','completion','config','configure','connect','cron','automations','daemon','dashboard','database','devices','directory','dns','docs','doctor','exec-policy','fleet','gateway','health','hooks','infer','capability','logs','mcp','message','migrate','models','node','nodes','onboard','pairing','plugins','promos','proxy','qr','reset','resume','sandbox','secrets','security','sessions','setup','skills','status','storage','system','telemetry','transcripts','triage','tui','terminal','chat','uninstall','update','users','webhooks','worker','worktrees','-V','--version','--container','--dev','--profile','--log-level','--no-color')
+         $completions = @('acp','agent','agents','approvals','exec-approvals','attach','audit','backup','channels','clawbot','completion','config','configure','connect','cron','automations','daemon','dashboard','database','devices','directory','dns','docs','doctor','exec-policy','gateway','health','hooks','infer','capability','logs','mcp','message','migrate','models','node','nodes','onboard','pairing','plugins','promos','proxy','qr','reset','resume','sandbox','secrets','security','sessions','setup','skills','status','storage','system','telemetry','transcripts','triage','tui','terminal','chat','uninstall','update','users','webhooks','worker','worktrees','-V','--version','--container','--dev','--profile','--log-level','--no-color')
          $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
             [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
          }
@@ -5259,83 +5171,6 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 }
             }
 
-            if ($commandPath -eq 'fleet') {
-                $completions = @('backup','create','doctor','list','ls','logs','restart','restore','rm','start','status','stop','upgrade')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet create') {
-                $completions = @('--image','--runtime','--port','--memory','--cpus','--disk','--network','--pids-limit','--env','--gateway-token','--no-start','--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet backup') {
-                $completions = @('--out','--max-bytes','--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet restore') {
-                $completions = @('--from','--force','--max-bytes','--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet doctor') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet list') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet ls') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet status') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet logs') {
-                $completions = @('--follow','--timestamps','--tail','--since')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet upgrade') {
-                $completions = @('--image')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'fleet rm') {
-                $completions = @('--purge-data','--force')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
             if ($commandPath -eq 'worktrees') {
                 $completions = @('create','gc','list','recover-removal','remove','restore','retire-snapshot')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
@@ -5386,7 +5221,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'worktrees gc') {
-                $completions = @('--json')
+                $completions = @('--job','--retry-deferred','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -5771,7 +5606,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'hooks relay') {
-                $completions = @('--provider','--relay-id','--state-db','--generation','--event','--pre-tool-use-unavailable','--timeout')
+                $completions = @('--provider','--relay-id','--state-db','--remote-credential','--generation','--event','--pre-tool-use-unavailable','--timeout')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -6233,7 +6068,7 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
             }
 
             if ($commandPath -eq 'skills') {
-                $completions = @('check','curator','info','install','library','list','search','update','verify','workshop','--agent','--json')
+                $completions = @('check','info','install','library','list','search','update','verify','workshop','--agent','--json')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -6379,43 +6214,8 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 }
             }
 
-            if ($commandPath -eq 'skills curator') {
-                $completions = @('pin','restore','status','unpin','--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'skills curator status') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'skills curator pin') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'skills curator unpin') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'skills curator restore') {
-                $completions = @('--json')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
             if ($commandPath -eq 'skills workshop') {
-                $completions = @('apply','evaluate','inspect','list','propose-create','propose-update','quarantine','reject','revise','--agent')
+                $completions = @('archive','changes','list','restore','show','--agent')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
@@ -6428,57 +6228,29 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
                 }
             }
 
-            if ($commandPath -eq 'skills workshop inspect') {
-                $completions = @('--json','--agent')
+            if ($commandPath -eq 'skills workshop changes') {
+                $completions = @('--limit','--json','--agent')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
-            if ($commandPath -eq 'skills workshop propose-create') {
-                $completions = @('--name','--description','--proposal','--proposal-dir','--goal','--evidence','--json','--agent')
+            if ($commandPath -eq 'skills workshop show') {
+                $completions = @('--file','--version','--json','--agent')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
-            if ($commandPath -eq 'skills workshop propose-update') {
-                $completions = @('--proposal','--proposal-dir','--description','--goal','--evidence','--json','--agent')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'skills workshop revise') {
-                $completions = @('--proposal','--proposal-dir','--description','--goal','--evidence','--json','--agent')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'skills workshop evaluate') {
-                $completions = @('--correlation-id','--json','--agent')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'skills workshop apply') {
-                $completions = @('--json','--agent')
-                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
-                }
-            }
-
-            if ($commandPath -eq 'skills workshop reject') {
+            if ($commandPath -eq 'skills workshop archive') {
                 $completions = @('--reason','--json','--agent')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
-            if ($commandPath -eq 'skills workshop quarantine') {
-                $completions = @('--reason','--json','--agent')
+            if ($commandPath -eq 'skills workshop restore') {
+                $completions = @('--version','--json','--agent')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }

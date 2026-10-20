@@ -57,7 +57,7 @@ _openclaw_completion() {
     done
     cur="${words[cword]}"
     word_prefix="${words[cword+1]}"
-    opts="acp agent agents approvals exec-approvals attach audit backup channels clawbot completion config configure connect cron automations daemon dashboard database devices directory dns docs doctor exec-policy fleet gateway health hooks infer capability logs mcp message migrate models node nodes onboard pairing plugins promos proxy qr reset resume sandbox secrets security sessions setup skills status storage system telemetry transcripts triage tui terminal chat uninstall update users webhooks worker worktrees -V --version --container --dev --profile --log-level --no-color"
+    opts="acp agent agents approvals exec-approvals attach audit backup channels clawbot completion config configure connect cron automations daemon dashboard database devices directory dns docs doctor exec-policy gateway health hooks infer capability logs mcp message migrate models node nodes onboard pairing plugins promos proxy qr reset resume sandbox secrets security sessions setup skills status storage system telemetry transcripts triage tui terminal chat uninstall update users webhooks worker worktrees -V --version --container --dev --profile --log-level --no-color"
     value_options="--container --profile --log-level"
     required_value_options="--container --profile --log-level"
     command_path=""
@@ -950,8 +950,8 @@ _openclaw_completion() {
           "gateway install")
             command_path="${candidate_path}"
             opts="--port --runtime --runtime-path --token --wrapper --allow-unconfigured --force --json"
-            value_options="--container --profile --log-level --bind --auth --password --password-file --tailscale --task-supervisor-child --ws-log --raw-stream-path --port --runtime --runtime-path --expected-runtime-pin --token --wrapper --update-executor"
-            required_value_options="--container --profile --log-level --bind --auth --password --password-file --tailscale --task-supervisor-child --ws-log --raw-stream-path --port --runtime --runtime-path --expected-runtime-pin --token --wrapper --update-executor"
+            value_options="--container --profile --log-level --bind --auth --password --password-file --tailscale --task-supervisor-child --ws-log --raw-stream-path --port --runtime --runtime-path --expected-runtime-pin --restore-service-cli --token --wrapper --update-executor"
+            required_value_options="--container --profile --log-level --bind --auth --password --password-file --tailscale --task-supervisor-child --ws-log --raw-stream-path --port --runtime --runtime-path --expected-runtime-pin --restore-service-cli --token --wrapper --update-executor"
             ;;
           "gateway uninstall")
             command_path="${candidate_path}"
@@ -1076,8 +1076,8 @@ _openclaw_completion() {
           "daemon install")
             command_path="${candidate_path}"
             opts="--port --runtime --runtime-path --token --wrapper --allow-unconfigured --force --json"
-            value_options="--container --profile --log-level --port --runtime --runtime-path --expected-runtime-pin --token --wrapper --update-executor"
-            required_value_options="--container --profile --log-level --port --runtime --runtime-path --expected-runtime-pin --token --wrapper --update-executor"
+            value_options="--container --profile --log-level --port --runtime --runtime-path --expected-runtime-pin --restore-service-cli --token --wrapper --update-executor"
+            required_value_options="--container --profile --log-level --port --runtime --runtime-path --expected-runtime-pin --restore-service-cli --token --wrapper --update-executor"
             ;;
           "daemon uninstall")
             command_path="${candidate_path}"
@@ -2075,84 +2075,6 @@ _openclaw_completion() {
             value_options="--container --profile --log-level --session --agent"
             required_value_options="--container --profile --log-level --session --agent"
             ;;
-          "fleet")
-            command_path="${candidate_path}"
-            opts="backup create doctor list ls logs restart restore rm start status stop upgrade"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
-          "fleet create")
-            command_path="${candidate_path}"
-            opts="--image --runtime --port --memory --cpus --disk --network --pids-limit --env --gateway-token --no-start --json"
-            value_options="--container --profile --log-level --image --runtime --port --memory --cpus --disk --network --pids-limit --env --gateway-token"
-            required_value_options="--container --profile --log-level --image --runtime --port --memory --cpus --disk --network --pids-limit --env --gateway-token"
-            ;;
-          "fleet backup")
-            command_path="${candidate_path}"
-            opts="--out --max-bytes --json"
-            value_options="--container --profile --log-level --out --max-bytes"
-            required_value_options="--container --profile --log-level --out --max-bytes"
-            ;;
-          "fleet restore")
-            command_path="${candidate_path}"
-            opts="--from --force --max-bytes --json"
-            value_options="--container --profile --log-level --from --max-bytes"
-            required_value_options="--container --profile --log-level --from --max-bytes"
-            ;;
-          "fleet doctor")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
-          "fleet list"|"fleet ls")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
-          "fleet status")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
-          "fleet logs")
-            command_path="${candidate_path}"
-            opts="--follow --timestamps --tail --since"
-            value_options="--container --profile --log-level --tail --since"
-            required_value_options="--container --profile --log-level --tail --since"
-            ;;
-          "fleet start")
-            command_path="${candidate_path}"
-            opts=""
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
-          "fleet stop")
-            command_path="${candidate_path}"
-            opts=""
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
-          "fleet restart")
-            command_path="${candidate_path}"
-            opts=""
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
-          "fleet upgrade")
-            command_path="${candidate_path}"
-            opts="--image"
-            value_options="--container --profile --log-level --image"
-            required_value_options="--container --profile --log-level --image"
-            ;;
-          "fleet rm")
-            command_path="${candidate_path}"
-            opts="--purge-data --force"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
-            ;;
           "worktrees")
             command_path="${candidate_path}"
             opts="create gc list recover-removal remove restore retire-snapshot"
@@ -2197,9 +2119,9 @@ _openclaw_completion() {
             ;;
           "worktrees gc")
             command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level"
-            required_value_options="--container --profile --log-level"
+            opts="--job --retry-deferred --json"
+            value_options="--container --profile --log-level --job"
+            required_value_options="--container --profile --log-level --job"
             ;;
           "attach")
             command_path="${candidate_path}"
@@ -2407,9 +2329,9 @@ _openclaw_completion() {
             ;;
           "hooks relay")
             command_path="${candidate_path}"
-            opts="--provider --relay-id --state-db --generation --event --pre-tool-use-unavailable --timeout"
-            value_options="--container --profile --log-level --agent --provider --relay-id --state-db --generation --event --pre-tool-use-unavailable --timeout"
-            required_value_options="--container --profile --log-level --agent --provider --relay-id --state-db --generation --event --pre-tool-use-unavailable --timeout"
+            opts="--provider --relay-id --state-db --remote-credential --generation --event --pre-tool-use-unavailable --timeout"
+            value_options="--container --profile --log-level --agent --provider --relay-id --state-db --remote-credential --generation --event --pre-tool-use-unavailable --timeout"
+            required_value_options="--container --profile --log-level --agent --provider --relay-id --state-db --remote-credential --generation --event --pre-tool-use-unavailable --timeout"
             ;;
           "hooks install")
             command_path="${candidate_path}"
@@ -2803,7 +2725,7 @@ _openclaw_completion() {
             ;;
           "skills")
             command_path="${candidate_path}"
-            opts="check curator info install library list search update verify workshop --agent --json"
+            opts="check info install library list search update verify workshop --agent --json"
             value_options="--container --profile --log-level --agent"
             required_value_options="--container --profile --log-level --agent"
             ;;
@@ -2927,39 +2849,9 @@ _openclaw_completion() {
             value_options="--container --profile --log-level --version --tag --agent"
             required_value_options="--container --profile --log-level --version --tag --agent"
             ;;
-          "skills curator")
-            command_path="${candidate_path}"
-            opts="pin restore status unpin --json"
-            value_options="--container --profile --log-level --agent"
-            required_value_options="--container --profile --log-level --agent"
-            ;;
-          "skills curator status")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level --agent"
-            required_value_options="--container --profile --log-level --agent"
-            ;;
-          "skills curator pin")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level --agent"
-            required_value_options="--container --profile --log-level --agent"
-            ;;
-          "skills curator unpin")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level --agent"
-            required_value_options="--container --profile --log-level --agent"
-            ;;
-          "skills curator restore")
-            command_path="${candidate_path}"
-            opts="--json"
-            value_options="--container --profile --log-level --agent"
-            required_value_options="--container --profile --log-level --agent"
-            ;;
           "skills workshop")
             command_path="${candidate_path}"
-            opts="apply evaluate inspect list propose-create propose-update quarantine reject revise --agent"
+            opts="archive changes list restore show --agent"
             value_options="--container --profile --log-level --agent"
             required_value_options="--container --profile --log-level --agent"
             ;;
@@ -2969,53 +2861,29 @@ _openclaw_completion() {
             value_options="--container --profile --log-level --agent"
             required_value_options="--container --profile --log-level --agent"
             ;;
-          "skills workshop inspect")
+          "skills workshop changes")
             command_path="${candidate_path}"
-            opts="--json --agent"
-            value_options="--container --profile --log-level --agent"
-            required_value_options="--container --profile --log-level --agent"
+            opts="--limit --json --agent"
+            value_options="--container --profile --log-level --limit --agent"
+            required_value_options="--container --profile --log-level --limit --agent"
             ;;
-          "skills workshop propose-create")
+          "skills workshop show")
             command_path="${candidate_path}"
-            opts="--name --description --proposal --proposal-dir --goal --evidence --json --agent"
-            value_options="--container --profile --log-level --name --description --proposal --proposal-dir --goal --evidence --agent"
-            required_value_options="--container --profile --log-level --name --description --proposal --proposal-dir --goal --evidence --agent"
+            opts="--file --version --json --agent"
+            value_options="--container --profile --log-level --file --version --agent"
+            required_value_options="--container --profile --log-level --file --version --agent"
             ;;
-          "skills workshop propose-update")
-            command_path="${candidate_path}"
-            opts="--proposal --proposal-dir --description --goal --evidence --json --agent"
-            value_options="--container --profile --log-level --proposal --proposal-dir --description --goal --evidence --agent"
-            required_value_options="--container --profile --log-level --proposal --proposal-dir --description --goal --evidence --agent"
-            ;;
-          "skills workshop revise")
-            command_path="${candidate_path}"
-            opts="--proposal --proposal-dir --description --goal --evidence --json --agent"
-            value_options="--container --profile --log-level --proposal --proposal-dir --description --goal --evidence --agent"
-            required_value_options="--container --profile --log-level --proposal --proposal-dir --description --goal --evidence --agent"
-            ;;
-          "skills workshop evaluate")
-            command_path="${candidate_path}"
-            opts="--correlation-id --json --agent"
-            value_options="--container --profile --log-level --correlation-id --agent"
-            required_value_options="--container --profile --log-level --correlation-id --agent"
-            ;;
-          "skills workshop apply")
-            command_path="${candidate_path}"
-            opts="--json --agent"
-            value_options="--container --profile --log-level --agent"
-            required_value_options="--container --profile --log-level --agent"
-            ;;
-          "skills workshop reject")
+          "skills workshop archive")
             command_path="${candidate_path}"
             opts="--reason --json --agent"
             value_options="--container --profile --log-level --reason --agent"
             required_value_options="--container --profile --log-level --reason --agent"
             ;;
-          "skills workshop quarantine")
+          "skills workshop restore")
             command_path="${candidate_path}"
-            opts="--reason --json --agent"
-            value_options="--container --profile --log-level --reason --agent"
-            required_value_options="--container --profile --log-level --reason --agent"
+            opts="--version --json --agent"
+            value_options="--container --profile --log-level --version --agent"
+            required_value_options="--container --profile --log-level --version --agent"
             ;;
           "skills list")
             command_path="${candidate_path}"
