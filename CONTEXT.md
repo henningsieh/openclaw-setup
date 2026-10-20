@@ -528,6 +528,33 @@ Other OpenCode Go models use different protocols per the OpenCode docs
 endpoint table (`anthropic-messages` for Qwen 3.8 Flash and MiniMax M3,
 `openai-responses` for Grok and the GPT Luna models).
 
+### Memory-wiki CLI needs an explicit agent
+
+`openclaw.json` sets `agents.ownership: "explicit"` — a `const` in the config
+schema meaning that ambient channels, heartbeat, system-agent consults, Talk,
+cron, and **bare CLI operations must resolve a surface-specific owner or fail
+closed**. Consequences for the memory-wiki CLI:
+
+- `openclaw wiki compile` (without `--agent`) fails with *"No default
+  memory-wiki agent is configured. Pass --agent <id>…"*.
+- The legacy single-agent marker `agents.entries.<id>.default: true` is
+  **rejected by the config validator** in explicit mode ("Legacy
+  agents.entries default markers need explicit surface owners"), so no config
+  key can make the bare command work.
+- The supported owner knob for ambient system-agent surfaces is
+  `agents.defaults.systemAgent.agentId` (set to `shelldon`); it covers
+  `models.list`, `models.authStatus`, `skills.status`,
+  `doctor.memory.status`, `infer` without `--agent`, Custodian consults,
+  Talk, heartbeat, and cron. The wiki CLI resolves its own agent and wants
+  `--agent` explicitly.
+- Convenience wrapper: `~/.local/bin/openclaw-wiki <subcommand>` injects
+  `--agent shelldon` (override with `OPENCLAW_WIKI_AGENT`). The vault is
+  global (`plugins.entries.memory-wiki.config.vault.scope: "global"`, path
+  `~/.openclaw/wiki/main`), so the agent id selects the owning agent context,
+  not a different vault.
+- The weekly wiki-curation job therefore calls
+  `openclaw wiki compile --agent shelldon`.
+
 ### Markus Lanz delivery failure mode
 
 `lanz-guests.js` writes the show to `lanz-guests.db` *before* the agent sends
