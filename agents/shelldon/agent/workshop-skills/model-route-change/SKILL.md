@@ -66,6 +66,12 @@ description: "Change a default/fallback model route, fix a missing /models entry
    [control-ui-provider-absent.md](references/control-ui-provider-absent.md) and follow it. Finish
    only when the affected selector shows them.
 
+   **When one agent's model call fails while the default agent's call to the same provider
+   succeeds**, read [secondary-agent-provider-gaps.md](references/secondary-agent-provider-gaps.md).
+   That gap is two-layered — the agent's own credential store and the agent's own model
+   catalog — and the error text changes shape as each layer closes, so diagnose the new
+   error instead of re-reporting the old one.
+
 3. **Only when a route change was requested, set primary and fallbacks through the CLI.**
    `openclaw models set <provider/model>`, then
    `openclaw models fallbacks clear` and `openclaw models fallbacks add <model>` per entry. A

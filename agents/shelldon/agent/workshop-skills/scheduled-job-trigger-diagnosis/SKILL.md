@@ -86,16 +86,28 @@ payload script is the only thing you execute.
    verified cause here was a bulk sweep that archived the sessions and disabled the jobs
    together (step 0), so read the session's `archivedAt` and compare it with the job's
    `updatedAtMs` before naming a cause. Unarchive it (no restart needed). The CLI has no
-   `unarchive` subcommand; `sessions.patch` is the Control UI's own path:
+   `unarchive` subcommand; `sessions.patch` is the Control UI's own path, reached over the
+   gateway RPC:
 
    ```bash
    # sessionId from: openclaw sessions list --agent <agentId> --json
-   openclaw gateway call sessions.patch --params '{"key":"<sessionKey>","archived":false,"expectedSessionId":"<sessionId>"}'
+   openclaw gateway call sessions.patch --params '{"key":"<sessionKey>","archived":false,"expectedSessionId":"<sessionId>"}' --json
    ```
 
    To clear several at once, the `sessions` tool's `patch` takes a `targets` array of
    `{sessionKey, expectedSessionId}` — verified restoring four cron sessions in one call
    (`{"status":"updated","succeeded":[0,1,2,3],"failed":[]}`).
+
+   **Issue both calls from the CLI: the `sessions` tools validate their arguments more
+   strictly than the gateway does.** The `sessions` tool's `patch` answers
+   `Invalid arguments … archived: must be boolean` for `archived:false`, and `sessions_list`
+   rejects a numeric `limit` and a `kinds` array that the CLI accepts. The CLI paths take
+   them and return the data: the `gateway call` above answers `ok:true` with
+   `archivedAt`/`archivedBy` cleared, and `openclaw sessions list --agent <agentId> --json`
+   returns a `sessions` array whose `agent:<agentId>:cron:<jobId>` rows carry the
+   `sessionId` the patch needs. That listing's `archived` field can read `null` for an
+   archived row, so confirm archived-ness from the job's `state.lastError` text, not from
+   the listing.
 
    **`expectedSessionId` is mandatory** — omit it and nothing changes; the call returns
    `INVALID_REQUEST: expectedSessionId required for session lifecycle patch`. Success shows
