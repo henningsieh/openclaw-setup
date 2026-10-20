@@ -303,9 +303,10 @@ Tracked setup artifacts:
 
 - `.gitignore`
 - `openclaw.json`, `openclaw.json.last-good`, and `openclaw.json.pre-update`
-  (credential fields use `${VAR}` references only)
-- `workspace/` (agent instructions, identity, user model, soul, compact memory
-  routing, avatar, and this document)
+  (credential fields use `${VAR}` references only; the routing identifiers
+  stay real because these are the running instance's configuration)
+- `workspace/` (agent instructions, identity, soul, compact memory routing,
+  avatar, scripts, and this document)
 
 Ignored deliberately:
 
@@ -316,8 +317,36 @@ Ignored deliberately:
   `/agents/*/codex-home/`, the regenerable `/npm/` plugin sandbox, and generated
   absolute symlinks under `/plugin-skills/`
 - `config-journal-fingerprint.key`
+- the generated memory state: `workspace/memory/**`, `workspace/DREAMS.md`,
+  `workspace-kalle-kief/memory/**`, `workspace-kalle-kief/DREAMS.md` and
+  `workspace-kalle-kief/MEMORY.md` (session corpora, dream reports, daily
+  notes, recall event streams, promoted personal memories) — runtime state that
+  is regenerated on the host and is private by nature
+- `workspace/USER.md` — the owner-facing user model with contact details and
+  platform identifiers
+- `agents/*/agent/workshop-skills/.archive/` — per-skill undo snapshots of
+  earlier versions, not skill source
 
 Keep live credentials and runtime state out of Git. Before pushing, review `git status` and the staged diff from `/home/shelldon/.openclaw`; personal data and secrets must not enter the repository.
+
+### Public-repository identifier policy
+
+The repository is public, so the tracked documentation uses role placeholders
+instead of live identifiers: `<host-ip>`, `<gateway-host>`, `<immich-host>`,
+`<coolify-host>`, `<apps-host>`, `<grow-app-host>`, `<discord-guild-id>`,
+`<discord-channel-id>`, `<discord-user-id>`, `<telegram-chat-id>`,
+`<owner-email>`, `<contact-email>`. Tracked scripts take their endpoint from the
+environment (`IMMICH_API_BASE`, `COOLIFY_API_BASE`, `GATEWAY_PUBLIC_URL`), whose
+values live in the gitignored `~/.openclaw/.env`. The live configuration keeps
+the real routing values because the gateway reads it from disk.
+
+The history was rewritten on 2026-10-20 (`git filter-repo`) to purge the
+memory corpus, `workspace/USER.md`, and every historical identifier; the
+branches `native-setup` and `feature/vault-access-broker-package` were
+force-pushed. A pre-rewrite backup bundle lives outside the repository at
+`/home/shelldon/openclaw-setup-pre-purge-2026-10-20.bundle`. The Docker-era
+`main` branch still carries the old identifiers and was deliberately left
+untouched.
 
 ## Deferred re-setup: Clawfred
 
