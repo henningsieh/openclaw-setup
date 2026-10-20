@@ -52,7 +52,7 @@
         "heartbeat": {
           "every": "30m",
           "target": "discord",
-          "to": "<discord-channel-id>",
+          "to": "1489587973715656786",
           "isolatedSession": true,
           "activeHours": {
             "start": "06:20",
@@ -311,7 +311,7 @@
     ],
     "controlUi": {
       "allowedOrigins": [
-        "https://<gateway-host>"
+        "https://ai.sieh.org"
       ]
     }
   },
@@ -351,11 +351,11 @@
       "botToken": "${TELEGRAM_BOT_TOKEN}",
       "dmPolicy": "allowlist",
       "allowFrom": [
-        "<telegram-chat-id>"
+        "8788775758"
       ],
       "groupPolicy": "allowlist",
       "groupAllowFrom": [
-        "<telegram-chat-id>"
+        "8788775758"
       ],
       "groups": {
         "*": {
@@ -379,40 +379,40 @@
         "spawnSessions": true
       },
       "guilds": {
-        "<discord-guild-id>": {
+        "1489535366854610994": {
           "requireMention": false,
           "users": [
-            "<discord-user-id>"
+            "400054493640916993"
           ],
           "channels": {
-            "<discord-channel-id>": {
+            "1489535368859488421": {
               "enabled": true,
               "users": [
-                "<discord-user-id>"
+                "400054493640916993"
               ]
             },
-            "<discord-channel-id>": {
+            "1489587973715656786": {
               "enabled": true,
               "users": [
-                "<discord-user-id>"
+                "400054493640916993"
               ]
             },
-            "<discord-channel-id>": {
+            "1514565511223181363": {
               "enabled": true,
               "users": [
-                "<discord-user-id>"
+                "400054493640916993"
               ]
             },
-            "<discord-channel-id>": {
+            "1524758094079459418": {
               "enabled": true,
               "users": [
-                "<discord-user-id>"
+                "400054493640916993"
               ]
             },
-            "<discord-channel-id>": {
+            "1552230093500325888": {
               "enabled": true,
               "users": [
-                "<discord-user-id>"
+                "400054493640916993"
               ]
             }
           }
@@ -423,7 +423,7 @@
       "execApprovals": {
         "enabled": "auto",
         "approvers": [
-          "<discord-user-id>"
+          "400054493640916993"
         ]
       }
     }
@@ -702,7 +702,7 @@
   },
   "commands": {
     "ownerAllowFrom": [
-      "telegram:<telegram-chat-id>"
+      "telegram:8788775758"
     ]
   },
   "approvals": {
@@ -712,11 +712,11 @@
       "targets": [
         {
           "channel": "telegram",
-          "to": "<telegram-chat-id>"
+          "to": "8788775758"
         },
         {
           "channel": "discord",
-          "to": "<discord-channel-id>"
+          "to": "1489535368859488421"
         }
       ]
     }
@@ -817,7 +817,7 @@
   "mcp": {
     "servers": {
       "coolify": {
-        "url": "https://<coolify-host>/mcp",
+        "url": "https://coolify.sieh.org/mcp",
         "transport": "streamable-http",
         "enabled": true,
         "headers": {
@@ -837,7 +837,7 @@
         "accountId": "default",
         "peer": {
           "kind": "channel",
-          "id": "<discord-channel-id>"
+          "id": "1552230093500325888"
         }
       }
     },
