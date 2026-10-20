@@ -82,7 +82,7 @@ class Host:
     unit: str = "openclaw-gateway.service"
     watchdog: str = "openclaw-gateway-watchdog.timer"
     local_url: str = "http://127.0.0.1:18789/"
-    public_url: str = "https://<gateway-host>/"
+    public_url: str = os.environ.get("GATEWAY_PUBLIC_URL", "https://<gateway-host>/")
     system_tmp: Path = Path("/tmp")
     cgroup_root: Path = Path("/sys/fs/cgroup")
     backup_destination: Path = Path("/mnt/openclaw-backup")

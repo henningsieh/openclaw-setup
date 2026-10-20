@@ -31,7 +31,8 @@ import sys
 import urllib.error
 import urllib.request
 
-DEFAULT_BASE = "https://<immich-host>/api"
+DEFAULT_BASE = os.environ.get("IMMICH_API_BASE", "").strip() or "https://<immich-host>/api"
+# The live base URL lives in the gitignored ~/.openclaw/.env as IMMICH_API_BASE.
 TIMEOUT = 60
 BATCH = 100
 MEDIA_EXT = {

@@ -2,8 +2,11 @@
 # Coolify API helper — source this script or run directly.
 # Uses COOLIFY_API_TOKEN from the container environment (set via .env).
 # No token file needed — MCP server also uses the same env var.
+#
+# The live base URL comes from COOLIFY_API_BASE in the gitignored
+# ~/.openclaw/.env; it is deliberately not hardcoded in this tracked file.
 
-COOLIFY_BASE="https://<coolify-host>/api/v1"
+COOLIFY_BASE="${COOLIFY_API_BASE:-https://<coolify-host>/api/v1}"
 
 coolify_call() {
   local method="$1" path="$2" data="$3"
