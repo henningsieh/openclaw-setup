@@ -11,7 +11,7 @@ Use when an agent must change its technical ID, not merely its displayed name, o
 
 2. **Inventory the complete ownership set.** Read `openclaw.json` and record the old/new IDs, `workspace`, `agentDir`, all bindings, per-agent model/auth/memory/skill settings, and any session keys. Search active config and live documentation for the old ID. Do not change model routes, fallbacks, provider auth, or session history as part of a naming task.
 
-3. **Check the supported CLI before improvising.** Run `openclaw agents --help`; this release has `add`, `bind`, `delete`, `list`, `set-identity`, and `unbind`, but no `rename`. `set-identity` is therefore not a technical rename. If no supported migration command exists, use a replacement-agent migration plan and require an explicit backup/rollback point before touching state stores.
+3. **Check the supported CLI before improvising.** Run `openclaw agents --help`; this release has `add`, `bind`, `delete`, `list`, `set-identity`, and `unbind`, but no `rename`. `set-identity` is therefore not a technical rename. If no supported migration command exists, use a replacement-agent migration plan and require an explicit backup/rollback point before touching state stores; for standing up a replacement agent from scratch, follow `agent-provisioning`.
 
 4. **Keep workspace bootstrap files readable.** Do not symlink `AGENTS.md`, `SOUL.md`, `IDENTITY.md`, or `USER.md` across workspaces: OpenClaw's workspace loader rejects symlinked bootstrap files (`symlink path component not allowed`). Use a local copy or a supported shared-reference mechanism, and verify with a real agent turn.
 

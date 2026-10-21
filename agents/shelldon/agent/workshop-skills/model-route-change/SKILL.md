@@ -118,6 +118,14 @@ description: "Change a default/fallback model route, fix a missing /models entry
    and mask the result. Finish when the probe returns the exact string on the intended provider
    and model.
 
+   **When the probe runs from inside an agent session, use the `sessions_send` tool with
+   `agentId` instead of the CLI.** Both `openclaw agent --agent <id> -m ...` and
+   `openclaw gateway call sessions.send` are refused from an agent exec with
+   "Gateway agent from agent exec would lose inter-session attribution", so the CLI cannot serve
+   as the probe there. `sessions_send` with `agentId` returns the reply and the `sessionKey` it
+   used; a turn that lands in `agent:<id>:main` is the main session, which has no channel target
+   and therefore reports `delivery.status=skipped` even though the model call succeeded.
+
 Verification: the affected agent’s selector shows the intended models (and its auth profile
 is healthy when auth was missing); `openclaw models list --agent <id> --provider <provider> --json`
 contains them; `openclaw models status --agent <id> --json --check` reports unchanged defaults for

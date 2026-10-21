@@ -33,8 +33,17 @@ transcripts, command lines, and reports; pass it through a shell variable.
 
 ## 3. Write it into the affected agent
 
+Read the source profile's `type` field first (`api_key` or `token`) and use the
+matching paste command, because the command decides the type written into the
+target store:
+
 ```bash
 printf '%s' "$KEY" | openclaw models auth paste-api-key \
+  --provider <provider> --agent <affectedAgentId> --profile-id <provider>:default
+```
+
+```bash
+printf '%s' "$KEY" | openclaw models auth paste-token \
   --provider <provider> --agent <affectedAgentId> --profile-id <provider>:default
 ```
 
@@ -48,7 +57,9 @@ that agent.
 openclaw models auth list --agent <affectedAgentId> --provider <provider>
 ```
 
-Expect a line `<provider>:default [<provider>/api_key]`. A paste warning that
+Expect a line `<provider>:default [<provider>/api_key]` for a paste-api-key
+transfer, or `<provider>:default [<provider>/token]` for a paste-token
+transfer. A paste warning that
 the running Gateway could not refresh auth concerns the live process, not the
 store — the profile is written and applies to the next run.
 
