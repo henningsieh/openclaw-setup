@@ -171,6 +171,53 @@
             "vault_fetch"
           ]
         }
+      },
+      "lint-eastwood": {
+        "name": "Lint Eastwood",
+        "workspace": "/home/shelldon/.openclaw/workspace-lint-eastwood",
+        "agentDir": "/home/shelldon/.openclaw/agents/lint-eastwood/agent",
+        "identity": {
+          "name": "Lint Eastwood – “Go ahead, make my day… and fix that semicolon.”",
+          "emoji": "🤠🔍",
+          "theme": "A laconic code sheriff, hunting bugs across the wide-open frontier of the codebase",
+          "avatar": "avatars/Lint-Eastwood.png"
+        },
+        "model": "opencode-go/muse-spark-1.3-contributor",
+        "thinkingDefault": "high",
+        "skills": [
+          "code-review",
+          "diagnosing-bugs",
+          "tdd",
+          "resolving-merge-conflicts",
+          "codebase-design",
+          "domain-modeling",
+          "research",
+          "implement",
+          "to-spec",
+          "to-tickets",
+          "triage",
+          "wayfinder",
+          "grill-with-docs",
+          "improve-codebase-architecture",
+          "github",
+          "gh-issues",
+          "discord",
+          "spike",
+          "skill-creator",
+          "tmux",
+          "node-inspect-debugger",
+          "python-debugpy",
+          "visualize",
+          "diagram-maker"
+        ],
+        "tools": {
+          "profile": "coding",
+          "alsoAllow": [
+            "message",
+            "discord",
+            "group:messaging"
+          ]
+        }
       }
     }
   },
@@ -373,7 +420,7 @@
     "discord": {
       "enabled": true,
       "token": "${DISCORD_BOT_TOKEN}",
-      "allowBots": true,
+      "allowBots": "mentions",
       "groupPolicy": "allowlist",
       "threadBindings": {
         "spawnSessions": true
@@ -388,31 +435,43 @@
             "1489535368859488421": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1489587973715656786": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1514565511223181363": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1524758094079459418": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1552230093500325888": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
+              ]
+            },
+            "1562506964578082890": {
+              "enabled": true,
+              "users": [
+                "400054493640916993",
+                "1489545158717477034"
               ]
             }
           }
@@ -811,6 +870,9 @@
     "load": {
       "allowSymlinkTargets": [
         "/home/shelldon/.openclaw/agents/shelldon/agent/workshop-skills"
+      ],
+      "extraDirs": [
+        "/home/shelldon/.openclaw/workspace/skills"
       ]
     }
   },
@@ -838,6 +900,18 @@
         "peer": {
           "kind": "channel",
           "id": "1552230093500325888"
+        }
+      }
+    },
+    {
+      "agentId": "lint-eastwood",
+      "comment": "Route #lint-eastwood channel to the Lint Eastwood coding buddy",
+      "match": {
+        "channel": "discord",
+        "accountId": "default",
+        "peer": {
+          "kind": "channel",
+          "id": "1562506964578082890"
         }
       }
     },
