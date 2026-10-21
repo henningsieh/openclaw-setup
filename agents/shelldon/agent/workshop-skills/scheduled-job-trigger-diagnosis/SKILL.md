@@ -1,12 +1,12 @@
 ---
 name: "scheduled-job-trigger-diagnosis"
-description: "A scheduled/cron automation job didn't fire, is disabled, fired at the wrong time, is blocked by an archived session, or you need to know whether it failed in the past: read the enabled flag first, then separate job status from payload delivery, debug trigger-script gating, and reach run history older than the ring buffer."
+description: "A scheduled job didn't fire, is disabled, fired at the wrong time, is blocked by an archived session, or a night's runs must all be confirmed delivered: read the enabled flag first, separate job status from payload delivery, clear archived sessions, reach history past the ring buffer."
 ---
 
 # Scheduled Job Trigger Diagnosis
 
-Use when the question is "why didn't my scheduled job run", "did it fire", or
-"has it ever failed". Heartbeats are a special case — their gating and delivery
+Use when the question is "why didn't my scheduled job run", "did it fire", "did I get
+all of tonight's messages", or "has it ever failed". Heartbeats are a special case — their gating and delivery
 semantics live in `heartbeat-schedule-setup`; this skill covers the job row,
 its trigger script, and its run history. Read-only diagnosis first; the job's own
 payload script is the only thing you execute.
@@ -116,6 +116,13 @@ payload script is the only thing you execute.
    `consecutiveErrors` keep the stale failure until that succeeding run, so the cleared
    timestamp alone is not the proof. Finish when the manual run reports `status: ok`.
 
+   **A manual trigger only enqueues, so poll for completion instead of sleeping.**
+   `openclaw automations run <jobId>` answers `{"enqueued": true, "runId": …}` and exits
+   while the job is still queued, and `automations runs` keeps the previous failure as its
+   newest entry until the run finishes. Poll `openclaw automations show <jobId>` until
+   `status` stops reading `running` (an agent-backed run took about four minutes, so a
+   45-second wait proves nothing), then read the fresh `runs` entry.
+
 3. **A `timeout` in the run record is the trigger evaluation, not the payload.**
    `cron trigger evaluation failed (timeout)` with a duration near the scheduler
    limit means the gate script did not finish — commonly host CPU starvation from
@@ -160,10 +167,30 @@ payload script is the only thing you execute.
    failures at all — e.g. count non-`ok` rows across all jobs — before reporting
    "zero failures", so a working column is not mistaken for a clean history.
 
+6. **"Did I get all my messages overnight?" is a delivery audit across every job, not one
+   job's status.** Enumerate with `openclaw automations list --all`, keep the rows whose
+   `last` falls inside the night window, then read `openclaw automations runs <jobId>` per
+   job (the id is positional; without it the CLI errors `Missing job id`). Report `status`
+   and `deliveryStatus` separately — `ok` plus `delivered` is a receipt, `ok` plus
+   `not-requested` is a job nobody would have heard from.
+
+   **Confirm the message in the channel, not from the run record.** `delivery.messageId`
+   is usually absent, so read the target with `message action=read target=channel:<id>
+   limit=30` and match `tsIso` against the message clock. Delivered text can differ from
+   `summary`: a shell-backed job posts its raw `stdout:`/`stderr:` blob, so match on time
+   and report the noisy wrapper as cosmetic rather than as a failure.
+
+   **Name every enabled job with `delivery: not-requested` as a finding.** Those failures
+   never reach any channel, so "I received everything" can be true while such a job has
+   been dead for nights; give its last successful run and the error text so the gap is
+   visible even though nothing was missing from the chat.
+
 Verification: the `enabled` flag was read first (and any disable reported with its
 timestamp before deeper diagnosis); the failing layer (disabled flag, trigger gate, run
 environment, payload, or an archived session) is named; any date gate is proven against the
 current date; an archived-session block is cleared with `sessions.patch` (with
 `expectedSessionId`) and proven by a succeeding manual run, not by the cleared timestamp; a
 history claim rests on the receipts table rather than the truncated `cron runs` window, and
-the query was shown able to surface failures.
+the query was shown able to surface failures. For an overnight-receipt question, every job
+in the window carries its own `status` and `deliveryStatus`, deliveries are matched against
+the channel clock, and delivery-less jobs are named as findings.

@@ -9,7 +9,10 @@ description: "Stale doc pointers or a referenced path that no longer exists: ver
    (`[ -e <path> ]`). A git lookup alone misleads: `git ls-files --error-unmatch <path>` and
    `git cat-file -e HEAD:<path>` both fail for a file that exists only on another branch or was
    renamed, so read them as "not at this ref", never as "does not exist". Finish when you know
-   whether the path is absent from disk or merely absent from the current ref.
+   whether the path is absent from disk or merely absent from the current ref. When the document
+   cannot be found under any name and the owner asks where it went, use the `locate-lost-document`
+   skill to prove whether it survives under another name, in git history, or only as pasted chat
+   text.
 
 2. **Before rewriting a pointer, trace the path's history for a rename.** Run
    `git log --name-status --all --format='%h %s' -- <path>`.
