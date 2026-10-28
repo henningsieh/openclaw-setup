@@ -2603,3745 +2603,3878 @@ Register-ArgumentCompleter -Native -CommandName openclaw -ScriptBlock {
     
     
             if ($commandPath -eq 'completion') {
-                $completions = @('-s','--shell','-i','--install','--write-state','-y','--yes')
+                $completions = @('-s','--shell','-i','--install','--write-state','-y','--yes','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'setup') {
-                $completions = @('--workspace','--agent-name','--team','--wizard','--baseline','--reset','--reset-scope','--non-interactive','--classic','--tui','--accept-risk','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--custom-image-input','--custom-text-input','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--tailscale','--install-daemon','--no-install-daemon','--skip-daemon','--daemon-runtime','--skip-channels','--skip-skills','--skip-bootstrap','--skip-search','--skip-health','--skip-ui','--suppress-gateway-token-output','--skip-hooks','--node-manager','--import-from','--import-source','--import-secrets','--remote-url','--remote-token','--remote-password','-m','--message','--yes','--json')
+                $completions = @('--workspace','--agent-name','--team','--wizard','--baseline','--reset','--reset-scope','--non-interactive','--classic','--tui','--accept-risk','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--custom-image-input','--custom-text-input','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--tailscale','--install-daemon','--no-install-daemon','--skip-daemon','--daemon-runtime','--skip-channels','--skip-skills','--skip-bootstrap','--skip-search','--skip-health','--skip-ui','--suppress-gateway-token-output','--skip-hooks','--node-manager','--import-from','--import-source','--import-secrets','--remote-url','--remote-token','--remote-password','-m','--message','--yes','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'crestodian') {
-                $completions = @('-m','--message','--yes','--json')
+                $completions = @('-m','--message','--yes','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'onboard') {
-                $completions = @('recommendations','--workspace','--agent-name','--team','--reset','--reset-scope','--non-interactive','--modern','--classic','--tui','--accept-risk','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--custom-image-input','--custom-text-input','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--install-daemon','--no-install-daemon','--skip-daemon','--daemon-runtime','--skip-channels','--skip-skills','--skip-bootstrap','--skip-search','--skip-health','--skip-ui','--suppress-gateway-token-output','--skip-hooks','--node-manager','--import-from','--import-source','--import-secrets','--json')
+                $completions = @('recommendations','--workspace','--agent-name','--team','--reset','--reset-scope','--non-interactive','--modern','--classic','--tui','--accept-risk','--flow','--mode','--auth-choice','--token-provider','--token','--token-profile-id','--token-expires-in','--secret-input-mode','--cloudflare-ai-gateway-account-id','--cloudflare-ai-gateway-gateway-id','--alibaba-model-studio-api-key','--anthropic-api-key','--clawrouter-api-key','--fal-api-key','--github-copilot-token','--gemini-api-key','--huggingface-api-key','--kie-api-key','--litellm-api-key','--lmstudio-api-key','--minimax-api-key','--nvidia-api-key','--ollama-cloud-api-key','--openai-api-key','--opencode-go-api-key','--openrouter-api-key','--runway-api-key','--together-api-key','--xai-api-key','--llama-server-api-key','--opencode-zen-api-key','--arceeai-api-key','--baseten-api-key','--byteplus-api-key','--cerebras-api-key','--chutes-api-key','--cohere-api-key','--cloudflare-ai-gateway-api-key','--comfy-api-key','--deepinfra-api-key','--deepseek-api-key','--featherless-api-key','--gmi-api-key','--longcat-api-key','--meta-api-key','--mistral-api-key','--novita-api-key','--groq-api-key','--kilocode-api-key','--kimi-code-api-key','--pixverse-api-key','--qianfan-api-key','--modelstudio-standard-api-key-cn','--modelstudio-standard-api-key','--modelstudio-api-key-cn','--modelstudio-api-key','--qwen-token-plan-api-key','--qwen-token-plan-api-key-cn','--radius-api-key','--fireworks-api-key','--moonshot-api-key','--tokenhub-api-key','--tokenplan-api-key','--telnyx-api-key','--venice-api-key','--ai-gateway-api-key','--vydra-api-key','--xiaomi-api-key','--xiaomi-token-plan-api-key','--zai-api-key','--synthetic-api-key','--volcengine-api-key','--stepfun-api-key','--custom-base-url','--custom-api-key','--custom-model-id','--custom-provider-id','--custom-compatibility','--custom-image-input','--custom-text-input','--gateway-port','--gateway-bind','--gateway-auth','--gateway-token','--gateway-token-ref-env','--gateway-password','--remote-url','--remote-token','--remote-password','--tailscale','--install-daemon','--no-install-daemon','--skip-daemon','--daemon-runtime','--skip-channels','--skip-skills','--skip-bootstrap','--skip-search','--skip-health','--skip-ui','--suppress-gateway-token-output','--skip-hooks','--node-manager','--import-from','--import-source','--import-secrets','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'onboard recommendations') {
-                $completions = @('acknowledge','refresh','--agent','--json')
+                $completions = @('acknowledge','refresh','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'onboard recommendations acknowledge') {
-                $completions = @('--agent','--retry')
+                $completions = @('--agent','--retry','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'onboard recommendations refresh') {
-                $completions = @('--agent')
+                $completions = @('--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'configure') {
-                $completions = @('--section')
+                $completions = @('--section','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'config') {
-                $completions = @('file','get','patch','schema','set','unset','validate','--section')
+                $completions = @('file','get','patch','schema','set','unset','validate','--section','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'config get') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'config set') {
-                $completions = @('--strict-json','--json','--expect-current-absent','--expect-current-json','--dry-run','--allow-exec','--merge','--replace','--ref-provider','--ref-source','--ref-id','--provider-source','--provider-allowlist','--provider-path','--provider-mode','--provider-timeout-ms','--provider-max-bytes','--provider-command','--provider-arg','--provider-no-output-timeout-ms','--provider-max-output-bytes','--provider-json-only','--provider-env','--provider-pass-env','--provider-trusted-dir','--batch-json','--batch-file')
+                $completions = @('--strict-json','--json','--expect-current-absent','--expect-current-json','--dry-run','--allow-exec','--merge','--replace','--ref-provider','--ref-source','--ref-id','--provider-source','--provider-allowlist','--provider-path','--provider-mode','--provider-timeout-ms','--provider-max-bytes','--provider-command','--provider-arg','--provider-no-output-timeout-ms','--provider-max-output-bytes','--provider-json-only','--provider-env','--provider-pass-env','--provider-trusted-dir','--batch-json','--batch-file','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'config patch') {
-                $completions = @('--file','--stdin','--dry-run','--allow-exec','--json','--replace-path')
+                $completions = @('--file','--stdin','--dry-run','--allow-exec','--json','--replace-path','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'config unset') {
-                $completions = @('--dry-run','--allow-exec','--json')
+                $completions = @('--dry-run','--allow-exec','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'config file') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'config schema') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'config validate') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup') {
-                $completions = @('create','disable','enable','git','list','record','restore','sqlite','verify')
+                $completions = @('create','disable','enable','git','list','record','restore','sqlite','verify','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup create') {
-                $completions = @('--output','--to','--claim-namespace','--namespace','--keep-daily','--keep-weekly','--keep-monthly','--json','--dry-run','--verify','--only-config','--no-include-workspace')
+                $completions = @('--output','--to','--claim-namespace','--namespace','--keep-daily','--keep-weekly','--keep-monthly','--json','--dry-run','--verify','--only-config','--no-include-workspace','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup verify') {
-                $completions = @('--from','--namespace','--json')
+                $completions = @('--from','--namespace','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup restore') {
-                $completions = @('--from','--namespace','--target','--json')
+                $completions = @('--from','--namespace','--target','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup list') {
-                $completions = @('--from','--namespace','--json')
+                $completions = @('--from','--namespace','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup record') {
-                $completions = @('--status','--target','--bytes','--error','--json')
+                $completions = @('--status','--target','--bytes','--error','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup sqlite') {
-                $completions = @('create','list','restore','verify')
+                $completions = @('create','list','restore','verify','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup sqlite create') {
-                $completions = @('--global','--agent','--repository','--json')
+                $completions = @('--global','--agent','--repository','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup sqlite list') {
-                $completions = @('--repository','--json')
+                $completions = @('--repository','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup sqlite verify') {
-                $completions = @('--scratch','--json')
+                $completions = @('--scratch','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup sqlite restore') {
-                $completions = @('--target','--json')
+                $completions = @('--target','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup git') {
-                $completions = @('create','init','log','restore','verify')
+                $completions = @('create','init','log','restore','verify','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup git init') {
-                $completions = @('--repository','--remote','--json')
+                $completions = @('--repository','--remote','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup git create') {
-                $completions = @('--repository','--all','--global','--agent','--push','--exclude-secrets','--json')
+                $completions = @('--repository','--all','--global','--agent','--push','--exclude-secrets','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup git log') {
-                $completions = @('--repository','--limit','--json')
+                $completions = @('--repository','--limit','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup git verify') {
-                $completions = @('--repository','--ref','--global','--agent','--json')
+                $completions = @('--repository','--ref','--global','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup git restore') {
-                $completions = @('--repository','--target','--ref','--global','--agent','--json')
+                $completions = @('--repository','--target','--ref','--global','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup enable') {
-                $completions = @('--repository','--to','--claim-namespace','--namespace','--no-include-workspace','--keep-daily','--keep-weekly','--keep-monthly','--every','--push','--exclude-secrets','--include-secrets','--global-only','--agent','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--repository','--to','--claim-namespace','--namespace','--no-include-workspace','--keep-daily','--keep-weekly','--keep-monthly','--every','--push','--exclude-secrets','--include-secrets','--global-only','--agent','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'backup disable') {
-                $completions = @('--offsite','--git','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--offsite','--git','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'database') {
-                $completions = @('ownership','preflight','preflight-agent')
+                $completions = @('ownership','preflight','preflight-agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'database preflight') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'database preflight-agent') {
-                $completions = @('--agent-id','--json')
+                $completions = @('--agent-id','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'database ownership') {
-                $completions = @('claim','status')
+                $completions = @('claim','status','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'database ownership status') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'database ownership claim') {
-                $completions = @('--manager','--json')
+                $completions = @('--manager','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'migrate') {
-                $completions = @('apply','list','plan','--from','--agent','--include-secrets','--no-auth-credentials','--overwrite','--dry-run','--yes','--skill','--plugin','--item','--backup-output','--no-backup','--force','--json','--verify-plugin-apps')
+                $completions = @('apply','list','plan','--from','--agent','--include-secrets','--no-auth-credentials','--overwrite','--dry-run','--yes','--skill','--plugin','--item','--backup-output','--no-backup','--force','--json','--verify-plugin-apps','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'migrate list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'migrate plan') {
-                $completions = @('--from','--agent','--include-secrets','--no-auth-credentials','--overwrite','--json','--skill','--plugin','--item','--verify-plugin-apps')
+                $completions = @('--from','--agent','--include-secrets','--no-auth-credentials','--overwrite','--json','--skill','--plugin','--item','--verify-plugin-apps','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'migrate apply') {
-                $completions = @('--from','--agent','--include-secrets','--no-auth-credentials','--overwrite','--json','--skill','--plugin','--item','--verify-plugin-apps','--yes','--backup-output','--no-backup','--force')
+                $completions = @('--from','--agent','--include-secrets','--no-auth-credentials','--overwrite','--json','--skill','--plugin','--item','--verify-plugin-apps','--yes','--backup-output','--no-backup','--force','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'storage') {
-                $completions = @('init','list','test','--json')
+                $completions = @('init','list','test','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'storage list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'storage init') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'storage test') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'doctor') {
-                $completions = @('--no-workspace-suggestions','--yes','--repair','--fix','--force','--non-interactive','--generate-gateway-token','--allow-exec','--deep','--lint','--post-upgrade','--session-sqlite','--state-sqlite','--session-sqlite-store','--session-sqlite-agent','--session-sqlite-all-agents','--github-issue','--json','--severity-min','--all','--skip','--only')
+                $completions = @('--no-workspace-suggestions','--yes','--repair','--fix','--force','--non-interactive','--generate-gateway-token','--allow-exec','--deep','--lint','--post-upgrade','--session-sqlite','--state-sqlite','--session-sqlite-store','--session-sqlite-agent','--session-sqlite-all-agents','--github-issue','--json','--severity-min','--all','--skip','--only','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'triage') {
-                $completions = @('--json','--no-export','--agent','--run','--non-interactive','--update-result')
+                $completions = @('--json','--no-export','--agent','--run','--non-interactive','--update-result','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'dashboard') {
-                $completions = @('--no-open','--json','--yes')
+                $completions = @('--no-open','--json','--yes','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'reset') {
-                $completions = @('--scope','--yes','--non-interactive','--dry-run')
+                $completions = @('--scope','--yes','--non-interactive','--dry-run','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'uninstall') {
-                $completions = @('--service','--state','--workspace','--app','--all','--yes','--non-interactive','--dry-run')
+                $completions = @('--service','--state','--workspace','--app','--all','--yes','--non-interactive','--dry-run','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message') {
-                $completions = @('ban','broadcast','channel','delete','edit','emoji','event','kick','member','permissions','pin','pins','poll','react','reactions','read','role','search','send','sticker','thread','timeout','unpin','voice')
+                $completions = @('ban','broadcast','channel','delete','edit','emoji','event','kick','member','permissions','pin','pins','poll','react','reactions','read','role','search','send','sticker','thread','timeout','unpin','voice','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message send') {
-                $completions = @('-m','--message','-t','--target','--media','--presentation','--delivery','--pin','--reply-to','--thread-id','--gif-playback','--force-document','--silent','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('-m','--message','-t','--target','--media','--presentation','--delivery','--pin','--reply-to','--thread-id','--gif-playback','--force-document','--silent','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message broadcast') {
-                $completions = @('--channel','--account','--json','--dry-run','--verbose','--targets','--message','--media')
+                $completions = @('--channel','--account','--json','--dry-run','--verbose','--targets','--message','--media','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message poll') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--poll-question','--poll-option','--poll-multi','--poll-duration-hours','--poll-duration-seconds','--poll-anonymous','--poll-public','-m','--message','--silent','--thread-id')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--poll-question','--poll-option','--poll-multi','--poll-duration-hours','--poll-duration-seconds','--poll-anonymous','--poll-public','-m','--message','--silent','--thread-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message react') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','--emoji','--remove','--participant','--from-me','--target-author','--target-author-uuid')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','--emoji','--remove','--participant','--from-me','--target-author','--target-author-uuid','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message reactions') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','--limit')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message read') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--limit','--message-id','--before','--after','--around','--thread-id')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--limit','--message-id','--before','--after','--around','--thread-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message edit') {
-                $completions = @('--message-id','-m','--message','-t','--target','--channel','--account','--json','--dry-run','--verbose','--thread-id')
+                $completions = @('--message-id','-m','--message','-t','--target','--channel','--account','--json','--dry-run','--verbose','--thread-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message delete') {
-                $completions = @('--message-id','-t','--target','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('--message-id','-t','--target','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message pin') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message unpin') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','--pinned-message-id')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','--pinned-message-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message pins') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--limit')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message permissions') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message search') {
-                $completions = @('--channel','--account','--json','--dry-run','--verbose','--query','--guild-id','--channel-id','--channel-ids','--author-id','--author-ids','--limit')
+                $completions = @('--channel','--account','--json','--dry-run','--verbose','--query','--guild-id','--channel-id','--channel-ids','--author-id','--author-ids','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message thread') {
-                $completions = @('create','list','reply')
+                $completions = @('create','list','reply','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message thread create') {
-                $completions = @('--thread-name','-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','-m','--message','--auto-archive-min')
+                $completions = @('--thread-name','-t','--target','--channel','--account','--json','--dry-run','--verbose','--message-id','-m','--message','--auto-archive-min','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message thread list') {
-                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--channel-id','--include-archived','--before','--limit')
+                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--channel-id','--include-archived','--before','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message thread reply') {
-                $completions = @('-m','--message','-t','--target','--channel','--account','--json','--dry-run','--verbose','--media','--reply-to')
+                $completions = @('-m','--message','-t','--target','--channel','--account','--json','--dry-run','--verbose','--media','--reply-to','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message emoji') {
-                $completions = @('list','upload')
+                $completions = @('list','upload','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message emoji list') {
-                $completions = @('--channel','--account','--json','--dry-run','--verbose','--guild-id')
+                $completions = @('--channel','--account','--json','--dry-run','--verbose','--guild-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message emoji upload') {
-                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--emoji-name','--media','--role-ids')
+                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--emoji-name','--media','--role-ids','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message sticker') {
-                $completions = @('send','upload')
+                $completions = @('send','upload','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message sticker send') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--sticker-id','-m','--message')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--sticker-id','-m','--message','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message sticker upload') {
-                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--sticker-name','--sticker-desc','--sticker-tags','--media')
+                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--sticker-name','--sticker-desc','--sticker-tags','--media','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message role') {
-                $completions = @('add','info','remove')
+                $completions = @('add','info','remove','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message role info') {
-                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message role add') {
-                $completions = @('--guild-id','--user-id','--role-id','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('--guild-id','--user-id','--role-id','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message role remove') {
-                $completions = @('--guild-id','--user-id','--role-id','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('--guild-id','--user-id','--role-id','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message channel') {
-                $completions = @('info','list')
+                $completions = @('info','list','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message channel info') {
-                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('-t','--target','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message channel list') {
-                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message member') {
-                $completions = @('info')
+                $completions = @('info','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message member info') {
-                $completions = @('--user-id','--channel','--account','--json','--dry-run','--verbose','--guild-id','--channel-id')
+                $completions = @('--user-id','--channel','--account','--json','--dry-run','--verbose','--guild-id','--channel-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message voice') {
-                $completions = @('status')
+                $completions = @('status','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message voice status') {
-                $completions = @('--guild-id','--user-id','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('--guild-id','--user-id','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message event') {
-                $completions = @('create','list')
+                $completions = @('create','list','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message event list') {
-                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose')
+                $completions = @('--guild-id','--channel','--account','--json','--dry-run','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message event create') {
-                $completions = @('--guild-id','--event-name','--start-time','--channel','--account','--json','--dry-run','--verbose','--end-time','--desc','--channel-id','--location','--event-type','--image')
+                $completions = @('--guild-id','--event-name','--start-time','--channel','--account','--json','--dry-run','--verbose','--end-time','--desc','--channel-id','--location','--event-type','--image','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message timeout') {
-                $completions = @('--guild-id','--user-id','--channel','--account','--json','--dry-run','--verbose','--duration-min','--until','--reason')
+                $completions = @('--guild-id','--user-id','--channel','--account','--json','--dry-run','--verbose','--duration-min','--until','--reason','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message kick') {
-                $completions = @('--guild-id','--user-id','--channel','--account','--json','--dry-run','--verbose','--reason')
+                $completions = @('--guild-id','--user-id','--channel','--account','--json','--dry-run','--verbose','--reason','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'message ban') {
-                $completions = @('--guild-id','--user-id','--channel','--account','--json','--dry-run','--verbose','--reason','--delete-days')
+                $completions = @('--guild-id','--user-id','--channel','--account','--json','--dry-run','--verbose','--reason','--delete-days','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp') {
-                $completions = @('add','configure','doctor','list','login','logout','probe','reload','serve','set','show','status','tools','unset')
+                $completions = @('add','configure','doctor','list','login','logout','probe','reload','serve','set','show','status','tools','unset','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp serve') {
-                $completions = @('--url','--token','--token-file','--password','--password-file','--claude-channel-mode','-v','--verbose')
+                $completions = @('--url','--token','--token-file','--password','--password-file','--claude-channel-mode','-v','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp show') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp status') {
-                $completions = @('-v','--verbose','--json')
+                $completions = @('-v','--verbose','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp probe') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp doctor') {
-                $completions = @('--probe','--json')
+                $completions = @('--probe','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp add') {
-                $completions = @('--command','--arg','--env','--cwd','--url','--transport','--header','--auth','--oauth-scope','--oauth-redirect-url','--oauth-client-metadata-url','--include','--exclude','--timeout','--connect-timeout','--parallel','--approval','--disabled','--ssl-verify','--client-cert','--client-key','--no-probe')
+                $completions = @('--command','--arg','--env','--cwd','--url','--transport','--header','--auth','--oauth-scope','--oauth-redirect-url','--oauth-client-metadata-url','--include','--exclude','--timeout','--connect-timeout','--parallel','--approval','--disabled','--ssl-verify','--client-cert','--client-key','--no-probe','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'mcp set') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp tools') {
-                $completions = @('--include','--exclude','--clear')
+                $completions = @('--include','--exclude','--clear','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp configure') {
-                $completions = @('--enable','--disable','--include','--exclude','--clear-tools','--timeout','--connect-timeout','--clear-timeouts','--parallel','--no-parallel','--approval','--auth','--clear-auth','--oauth-scope','--oauth-redirect-url','--oauth-client-metadata-url','--ssl-verify','--client-cert','--client-key','--clear-tls','--probe')
+                $completions = @('--enable','--disable','--include','--exclude','--clear-tools','--timeout','--connect-timeout','--clear-timeouts','--parallel','--no-parallel','--approval','--auth','--clear-auth','--oauth-scope','--oauth-redirect-url','--oauth-client-metadata-url','--ssl-verify','--client-cert','--client-key','--clear-tls','--probe','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'mcp login') {
-                $completions = @('--code')
+                $completions = @('--code','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'mcp logout') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'mcp reload') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'mcp unset') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'transcripts') {
-                $completions = @('list','path','show')
+                $completions = @('list','path','show','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'transcripts list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'transcripts show') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'transcripts path') {
-                $completions = @('--dir','--metadata','--transcript','--json')
+                $completions = @('--dir','--metadata','--transcript','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agent') {
-                $completions = @('exec','-m','--message','--message-file','-t','--to','--session-key','--session-id','--agent','--model','--thinking','--verbose','--channel','--reply-to','--reply-channel','--reply-account','--local','--deliver','--json','--timeout')
+                $completions = @('exec','-m','--message','--message-file','-t','--to','--session-key','--session-id','--agent','--model','--thinking','--verbose','--channel','--reply-to','--reply-channel','--reply-account','--local','--deliver','--json','--timeout','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agent exec') {
-                $completions = @('--message-file','--cwd','--state-dir','--config','--isolated','--model','--code-mode','--local-model-lean','--thinking','--fallback','--auth-env-only','--no-auth-env-only','--timeout','--json')
+                $completions = @('--message-file','--cwd','--state-dir','--config','--isolated','--model','--code-mode','--local-model-lean','--thinking','--fallback','--auth-env-only','--no-auth-env-only','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents') {
-                $completions = @('add','bind','bindings','delete','list','set-identity','team','unbind')
+                $completions = @('add','bind','bindings','delete','list','set-identity','team','unbind','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents list') {
-                $completions = @('--json','--bindings','--tree')
+                $completions = @('--json','--bindings','--tree','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents bindings') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents bind') {
-                $completions = @('--agent','--bind','--json')
+                $completions = @('--agent','--bind','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents unbind') {
-                $completions = @('--agent','--bind','--all','--json')
+                $completions = @('--agent','--bind','--all','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents add') {
-                $completions = @('--workspace','--role','--model','--agent-dir','--bind','--non-interactive','--json')
+                $completions = @('--workspace','--role','--model','--agent-dir','--bind','--non-interactive','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents team') {
-                $completions = @('create')
+                $completions = @('create','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents team create') {
-                $completions = @('--preset','--coordinator','--prefix','--workspace-root','--non-interactive','--json')
+                $completions = @('--preset','--coordinator','--prefix','--workspace-root','--non-interactive','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents set-identity') {
-                $completions = @('--agent','--workspace','--identity-file','--from-identity','--name','--theme','--emoji','--avatar','--json')
+                $completions = @('--agent','--workspace','--identity-file','--from-identity','--name','--theme','--emoji','--avatar','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'agents delete') {
-                $completions = @('--force','--json')
+                $completions = @('--force','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'audit') {
-                $completions = @('--agent','--session','--run','--execution','--kind','--status','--direction','--channel','--after','--before','--cursor','--limit','--explain','--json')
+                $completions = @('--agent','--session','--run','--execution','--kind','--status','--direction','--channel','--after','--before','--cursor','--limit','--explain','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'status') {
-                $completions = @('--json','--all','--usage','--agent','--deep','--timeout','--verbose','--debug')
+                $completions = @('--json','--all','--usage','--agent','--deep','--timeout','--verbose','--debug','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'health') {
-                $completions = @('--json','--timeout','--verbose','--debug')
+                $completions = @('--json','--timeout','--verbose','--debug','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions') {
-                $completions = @('archive','cleanup','compact','delete','export-trajectory','import','list','tail','--json','--verbose','--store','--agent','--all-agents','--active','--limit')
+                $completions = @('archive','cleanup','compact','delete','export-trajectory','import','list','tail','--json','--verbose','--store','--agent','--all-agents','--active','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions list') {
-                $completions = @('--json','--verbose','--store','--agent','--all-agents','--active','--limit')
+                $completions = @('--json','--verbose','--store','--agent','--all-agents','--active','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions cleanup') {
-                $completions = @('--store','--agent','--all-agents','--dry-run','--enforce','--fix-missing','--fix-dm-scope','--active-key','--json')
+                $completions = @('--store','--agent','--all-agents','--dry-run','--enforce','--fix-missing','--fix-dm-scope','--active-key','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions tail') {
-                $completions = @('--session-key','--tail','--follow','--store','--agent','--all-agents')
+                $completions = @('--session-key','--tail','--follow','--store','--agent','--all-agents','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions export-trajectory') {
-                $completions = @('--session-key','--output','--workspace','--store','--agent','--request-json-base64','--json')
+                $completions = @('--session-key','--output','--workspace','--store','--agent','--request-json-base64','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions archive') {
-                $completions = @('--dry-run','--agent','--url','--token','--password','--timeout','--json')
+                $completions = @('--dry-run','--agent','--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions delete') {
-                $completions = @('--dry-run','--yes','--agent','--url','--token','--password','--timeout','--json')
+                $completions = @('--dry-run','--yes','--agent','--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions import') {
-                $completions = @('--agent','--url','--token','--password','--timeout','--json','--all','--catalog','--host','--source-home','--limit','--dry-run')
+                $completions = @('--agent','--url','--token','--password','--timeout','--json','--all','--catalog','--host','--source-home','--limit','--dry-run','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sessions compact') {
-                $completions = @('--agent','--url','--token','--password','--timeout','--json','--max-lines')
+                $completions = @('--agent','--url','--token','--password','--timeout','--json','--max-lines','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'acp') {
-                $completions = @('client','--url','--token','--token-file','--password','--password-file','--session','--session-label','--require-existing','--reset-session','--no-prefix-cwd','--provenance','-v','--verbose')
+                $completions = @('client','--url','--token','--token-file','--password','--password-file','--session','--session-label','--require-existing','--reset-session','--no-prefix-cwd','--provenance','-v','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'acp client') {
-                $completions = @('--cwd','--server','--server-args','--server-verbose','-v','--verbose')
+                $completions = @('--cwd','--server','--server-args','--server-verbose','-v','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway') {
-                $completions = @('auth-token','call','diagnostics','discover','health','install','probe','restart','resume','run','stability','start','status','stop','suspend','uninstall','usage-cost','--port','--bind','--token','--auth','--password','--password-file','--tailscale','--allow-unconfigured','--dev','--ambient-channels','--dev-ambient-channels','--reset','--force','--verbose','--cli-backend-logs','--claude-cli-logs','--ws-log','--compact','--raw-stream','--raw-stream-path')
+                $completions = @('auth-token','call','diagnostics','discover','health','install','probe','restart','resume','run','stability','start','status','stop','suspend','uninstall','usage-cost','--port','--bind','--token','--auth','--password','--password-file','--tailscale','--allow-unconfigured','--dev','--ambient-channels','--dev-ambient-channels','--reset','--force','--verbose','--cli-backend-logs','--claude-cli-logs','--ws-log','--compact','--raw-stream','--raw-stream-path','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway run') {
-                $completions = @('--port','--bind','--token','--auth','--password','--password-file','--tailscale','--allow-unconfigured','--dev','--ambient-channels','--dev-ambient-channels','--reset','--force','--verbose','--cli-backend-logs','--claude-cli-logs','--ws-log','--compact','--raw-stream','--raw-stream-path')
+                $completions = @('--port','--bind','--token','--auth','--password','--password-file','--tailscale','--allow-unconfigured','--dev','--ambient-channels','--dev-ambient-channels','--reset','--force','--verbose','--cli-backend-logs','--claude-cli-logs','--ws-log','--compact','--raw-stream','--raw-stream-path','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway status') {
-                $completions = @('--url','--port','--token','--password','--timeout','--no-probe','--require-rpc','--deep','--json')
+                $completions = @('--url','--port','--token','--password','--timeout','--no-probe','--require-rpc','--deep','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway install') {
-                $completions = @('--port','--runtime','--runtime-path','--token','--wrapper','--allow-unconfigured','--force','--json')
+                $completions = @('--port','--runtime','--runtime-path','--token','--wrapper','--allow-unconfigured','--force','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway uninstall') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway start') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway stop') {
-                $completions = @('--force','--json','--disable')
+                $completions = @('--force','--json','--disable','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway restart') {
-                $completions = @('--preserve-definition','--force','--safe','--skip-deferral','--wait','--json')
+                $completions = @('--preserve-definition','--force','--safe','--skip-deferral','--wait','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway restart-handoff') {
-                $completions = @('capabilities','consume')
+                $completions = @('capabilities','consume','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway restart-handoff capabilities') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway restart-handoff consume') {
-                $completions = @('--expected-pid','--json')
+                $completions = @('--expected-pid','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway auth-token') {
-                $completions = @('--show')
+                $completions = @('--show','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway call') {
-                $completions = @('--expect-url','--params','--url','--port','--token','--password','--timeout','--expect-final','--json')
+                $completions = @('--expect-url','--params','--url','--port','--token','--password','--timeout','--expect-final','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway suspend') {
-                $completions = @('--request-id','--wait','--url','--port','--token','--password','--timeout','--expect-final','--json')
+                $completions = @('--request-id','--wait','--url','--port','--token','--password','--timeout','--expect-final','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway resume') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway usage-cost') {
-                $completions = @('--days','--agent','--all-agents','--url','--port','--token','--password','--timeout','--expect-final','--json')
+                $completions = @('--days','--agent','--all-agents','--url','--port','--token','--password','--timeout','--expect-final','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway health') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway stability') {
-                $completions = @('--limit','--type','--since-seq','--bundle','--export','--output','--url','--port','--token','--password','--timeout','--expect-final','--json')
+                $completions = @('--limit','--type','--since-seq','--bundle','--export','--output','--url','--port','--token','--password','--timeout','--expect-final','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway diagnostics') {
-                $completions = @('export')
+                $completions = @('export','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway diagnostics export') {
-                $completions = @('--output','--log-lines','--log-bytes','--url','--token','--password','--timeout','--no-stability-bundle','--json')
+                $completions = @('--output','--log-lines','--log-bytes','--url','--token','--password','--timeout','--no-stability-bundle','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway probe') {
-                $completions = @('--url','--port','--ssh','--ssh-identity','--ssh-auto','--token','--password','--timeout','--json')
+                $completions = @('--url','--port','--ssh','--ssh-identity','--ssh-auto','--token','--password','--timeout','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'gateway discover') {
-                $completions = @('--timeout','--json')
+                $completions = @('--timeout','--json','--container','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'daemon') {
-                $completions = @('install','restart','start','status','stop','uninstall','--json')
+                $completions = @('install','restart','start','status','stop','uninstall','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'daemon status') {
-                $completions = @('--url','--port','--token','--password','--timeout','--no-probe','--require-rpc','--deep','--json')
+                $completions = @('--url','--port','--token','--password','--timeout','--no-probe','--require-rpc','--deep','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'daemon install') {
-                $completions = @('--port','--runtime','--runtime-path','--token','--wrapper','--allow-unconfigured','--force','--json')
+                $completions = @('--port','--runtime','--runtime-path','--token','--wrapper','--allow-unconfigured','--force','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'daemon uninstall') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'daemon start') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'daemon stop') {
-                $completions = @('--force','--json','--disable')
+                $completions = @('--force','--json','--disable','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'daemon restart') {
-                $completions = @('--preserve-definition','--force','--safe','--skip-deferral','--wait','--json')
+                $completions = @('--preserve-definition','--force','--safe','--skip-deferral','--wait','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'logs') {
-                $completions = @('--limit','--max-bytes','--follow','--interval','--json','--plain','--no-color','--local-time','--utc','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--limit','--max-bytes','--follow','--interval','--json','--plain','--no-color','--local-time','--utc','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'system') {
-                $completions = @('event','heartbeat','presence')
+                $completions = @('event','heartbeat','presence','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'system event') {
-                $completions = @('--text','--mode','--session-key','--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--text','--mode','--session-key','--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'system heartbeat') {
-                $completions = @('disable','enable','last')
+                $completions = @('disable','enable','last','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'system heartbeat last') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'system heartbeat enable') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'system heartbeat disable') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'system presence') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models') {
-                $completions = @('accounts','aliases','auth','fallbacks','image-fallbacks','list','refresh','scan','set','set-image','status','--json','--status-json','--status-plain','--agent')
+                $completions = @('accounts','aliases','auth','fallbacks','image-fallbacks','list','refresh','scan','set','set-image','status','--json','--status-json','--status-plain','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models accounts') {
-                $completions = @('clear-default','list','login','use','--url','--port','--token-file','--password-file','--timeout','--json')
+                $completions = @('clear-default','list','login','use','--url','--port','--token-file','--password-file','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models accounts list') {
-                $completions = @('--url','--port','--token-file','--password-file','--timeout','--json','--cursor')
+                $completions = @('--url','--port','--token-file','--password-file','--timeout','--json','--cursor','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models accounts login') {
-                $completions = @('--url','--port','--token-file','--password-file','--timeout','--json','--method')
+                $completions = @('--url','--port','--token-file','--password-file','--timeout','--json','--method','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models accounts use') {
-                $completions = @('--url','--port','--token-file','--password-file','--timeout','--json')
+                $completions = @('--url','--port','--token-file','--password-file','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models accounts clear-default') {
-                $completions = @('--url','--port','--token-file','--password-file','--timeout','--json')
+                $completions = @('--url','--port','--token-file','--password-file','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models list') {
-                $completions = @('--refresh','--all','--local','--provider','--agent','--json','--plain')
+                $completions = @('--refresh','--all','--local','--provider','--agent','--json','--plain','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models status') {
-                $completions = @('--json','--plain','--check','--probe','--probe-provider','--probe-profile','--probe-timeout','--probe-concurrency','--probe-max-tokens','--agent')
+                $completions = @('--json','--plain','--check','--probe','--probe-provider','--probe-profile','--probe-timeout','--probe-concurrency','--probe-max-tokens','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models refresh') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models set') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models set-image') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models aliases') {
-                $completions = @('add','list','remove')
+                $completions = @('add','list','remove','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models aliases list') {
-                $completions = @('--json','--plain')
+                $completions = @('--json','--plain','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models aliases add') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models aliases remove') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models fallbacks') {
-                $completions = @('add','clear','list','remove')
+                $completions = @('add','clear','list','remove','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models fallbacks list') {
-                $completions = @('--json','--plain')
+                $completions = @('--json','--plain','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models fallbacks add') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models fallbacks remove') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models fallbacks clear') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models image-fallbacks') {
-                $completions = @('add','clear','list','remove')
+                $completions = @('add','clear','list','remove','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models image-fallbacks list') {
-                $completions = @('--json','--plain')
+                $completions = @('--json','--plain','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models image-fallbacks add') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models image-fallbacks remove') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'models image-fallbacks clear') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models scan') {
-                $completions = @('--min-params','--max-age-days','--provider','--max-candidates','--timeout','--concurrency','--no-probe','--yes','--no-input','--set-default','--set-image','--json')
+                $completions = @('--min-params','--max-age-days','--provider','--max-candidates','--timeout','--concurrency','--no-probe','--yes','--no-input','--set-default','--set-image','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth') {
-                $completions = @('activate','add','list','login','login-github-copilot','logout','order','paste-api-key','paste-token','setup-token','--agent')
+                $completions = @('activate','add','list','login','login-github-copilot','logout','order','paste-api-key','paste-token','setup-token','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth list') {
-                $completions = @('--provider','--agent','--json')
+                $completions = @('--provider','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth add') {
-                $completions = @('--agent')
+                $completions = @('--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth activate') {
-                $completions = @('--agent')
+                $completions = @('--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth logout') {
-                $completions = @('--agent','--yes')
+                $completions = @('--agent','--yes','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth login') {
-                $completions = @('--agent','--provider','--method','--device-code','--profile-id','--set-default','--force')
+                $completions = @('--agent','--provider','--method','--device-code','--profile-id','--set-default','--force','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth setup-token') {
-                $completions = @('--agent','--provider','--yes')
+                $completions = @('--agent','--provider','--yes','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth paste-token') {
-                $completions = @('--agent','--provider','--profile-id','--expires-in')
+                $completions = @('--agent','--provider','--profile-id','--expires-in','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth paste-api-key') {
-                $completions = @('--agent','--provider','--profile-id')
+                $completions = @('--agent','--provider','--profile-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth login-github-copilot') {
-                $completions = @('--agent','--yes')
+                $completions = @('--agent','--yes','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth order') {
-                $completions = @('clear','get','set')
+                $completions = @('clear','get','set','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth order get') {
-                $completions = @('--provider','--agent','--json')
+                $completions = @('--provider','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth order set') {
-                $completions = @('--provider','--agent')
+                $completions = @('--provider','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'models auth order clear') {
-                $completions = @('--provider','--agent')
+                $completions = @('--provider','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'promos') {
-                $completions = @('claim','list')
+                $completions = @('claim','list','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'promos list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'promos claim') {
-                $completions = @('--api-key','--set-default')
+                $completions = @('--api-key','--set-default','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'telemetry') {
-                $completions = @('off','on','show')
+                $completions = @('off','on','show','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'telemetry show') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'telemetry on') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'telemetry off') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer') {
-                $completions = @('audio','embedding','image','inspect','list','model','tts','video','web')
+                $completions = @('audio','embedding','image','inspect','list','model','tts','video','web','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability') {
-                $completions = @('audio','embedding','image','inspect','list','model','tts','video','web')
+                $completions = @('audio','embedding','image','inspect','list','model','tts','video','web','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer inspect') {
-                $completions = @('--name','--json')
+                $completions = @('--name','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability inspect') {
-                $completions = @('--name','--json')
+                $completions = @('--name','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model') {
-                $completions = @('auth','inspect','list','providers','run','--agent')
+                $completions = @('auth','inspect','list','providers','run','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model') {
-                $completions = @('auth','inspect','list','providers','run','--agent')
+                $completions = @('auth','inspect','list','providers','run','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model run') {
-                $completions = @('--prompt','--file','--model','--thinking','--local','--gateway','--agent','--json')
+                $completions = @('--prompt','--file','--model','--thinking','--local','--gateway','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model run') {
-                $completions = @('--prompt','--file','--model','--thinking','--local','--gateway','--agent','--json')
+                $completions = @('--prompt','--file','--model','--thinking','--local','--gateway','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model inspect') {
-                $completions = @('--model','--json')
+                $completions = @('--model','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model inspect') {
-                $completions = @('--model','--json')
+                $completions = @('--model','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model auth') {
-                $completions = @('login','logout','status','--agent')
+                $completions = @('login','logout','status','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model auth') {
-                $completions = @('login','logout','status','--agent')
+                $completions = @('login','logout','status','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model auth login') {
-                $completions = @('--provider','--method','--agent')
+                $completions = @('--provider','--method','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model auth login') {
-                $completions = @('--provider','--method','--agent')
+                $completions = @('--provider','--method','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model auth logout') {
-                $completions = @('--provider','--agent','--json')
+                $completions = @('--provider','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model auth logout') {
-                $completions = @('--provider','--agent','--json')
+                $completions = @('--provider','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer model auth status') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability model auth status') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer image') {
-                $completions = @('describe','describe-many','edit','generate','providers','--agent')
+                $completions = @('describe','describe-many','edit','generate','providers','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability image') {
-                $completions = @('describe','describe-many','edit','generate','providers','--agent')
+                $completions = @('describe','describe-many','edit','generate','providers','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer image generate') {
-                $completions = @('--prompt','--model','--count','--size','--aspect-ratio','--resolution','--output-format','--background','--openai-background','--openai-moderation','--quality','--timeout-ms','--output','--agent','--json')
+                $completions = @('--prompt','--model','--count','--size','--aspect-ratio','--resolution','--output-format','--background','--openai-background','--openai-moderation','--quality','--timeout-ms','--output','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability image generate') {
-                $completions = @('--prompt','--model','--count','--size','--aspect-ratio','--resolution','--output-format','--background','--openai-background','--openai-moderation','--quality','--timeout-ms','--output','--agent','--json')
+                $completions = @('--prompt','--model','--count','--size','--aspect-ratio','--resolution','--output-format','--background','--openai-background','--openai-moderation','--quality','--timeout-ms','--output','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer image edit') {
-                $completions = @('--file','--prompt','--model','--count','--size','--aspect-ratio','--resolution','--output-format','--background','--openai-background','--openai-moderation','--quality','--timeout-ms','--output','--agent','--json')
+                $completions = @('--file','--prompt','--model','--count','--size','--aspect-ratio','--resolution','--output-format','--background','--openai-background','--openai-moderation','--quality','--timeout-ms','--output','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability image edit') {
-                $completions = @('--file','--prompt','--model','--count','--size','--aspect-ratio','--resolution','--output-format','--background','--openai-background','--openai-moderation','--quality','--timeout-ms','--output','--agent','--json')
+                $completions = @('--file','--prompt','--model','--count','--size','--aspect-ratio','--resolution','--output-format','--background','--openai-background','--openai-moderation','--quality','--timeout-ms','--output','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer image describe') {
-                $completions = @('--file','--prompt','--model','--timeout-ms','--agent','--json')
+                $completions = @('--file','--prompt','--model','--timeout-ms','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability image describe') {
-                $completions = @('--file','--prompt','--model','--timeout-ms','--agent','--json')
+                $completions = @('--file','--prompt','--model','--timeout-ms','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer image describe-many') {
-                $completions = @('--file','--prompt','--model','--timeout-ms','--agent','--json')
+                $completions = @('--file','--prompt','--model','--timeout-ms','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability image describe-many') {
-                $completions = @('--file','--prompt','--model','--timeout-ms','--agent','--json')
+                $completions = @('--file','--prompt','--model','--timeout-ms','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer image providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability image providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer audio') {
-                $completions = @('providers','transcribe','--agent')
+                $completions = @('providers','transcribe','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability audio') {
-                $completions = @('providers','transcribe','--agent')
+                $completions = @('providers','transcribe','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer audio transcribe') {
-                $completions = @('--file','--agent','--language','--prompt','--model','--json')
+                $completions = @('--file','--agent','--language','--prompt','--model','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability audio transcribe') {
-                $completions = @('--file','--agent','--language','--prompt','--model','--json')
+                $completions = @('--file','--agent','--language','--prompt','--model','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer audio providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability audio providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts') {
-                $completions = @('convert','disable','enable','personas','providers','set-persona','set-provider','status','voices')
+                $completions = @('convert','disable','enable','personas','providers','set-persona','set-provider','status','voices','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts') {
-                $completions = @('convert','disable','enable','personas','providers','set-persona','set-provider','status','voices')
+                $completions = @('convert','disable','enable','personas','providers','set-persona','set-provider','status','voices','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts convert') {
-                $completions = @('--text','--channel','--voice','--provider','--model','--output','--local','--gateway','--json')
+                $completions = @('--text','--channel','--voice','--provider','--model','--output','--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts convert') {
-                $completions = @('--text','--channel','--voice','--provider','--model','--output','--local','--gateway','--json')
+                $completions = @('--text','--channel','--voice','--provider','--model','--output','--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts voices') {
-                $completions = @('--provider','--json')
+                $completions = @('--provider','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts voices') {
-                $completions = @('--provider','--json')
+                $completions = @('--provider','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts providers') {
-                $completions = @('--agent','--local','--gateway','--json')
+                $completions = @('--agent','--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts providers') {
-                $completions = @('--agent','--local','--gateway','--json')
+                $completions = @('--agent','--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts personas') {
-                $completions = @('--local','--gateway','--json')
+                $completions = @('--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts personas') {
-                $completions = @('--local','--gateway','--json')
+                $completions = @('--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts status') {
-                $completions = @('--gateway','--json')
+                $completions = @('--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts status') {
-                $completions = @('--gateway','--json')
+                $completions = @('--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts enable') {
-                $completions = @('--local','--gateway','--json')
+                $completions = @('--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts enable') {
-                $completions = @('--local','--gateway','--json')
+                $completions = @('--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts disable') {
-                $completions = @('--local','--gateway','--json')
+                $completions = @('--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts disable') {
-                $completions = @('--local','--gateway','--json')
+                $completions = @('--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts set-provider') {
-                $completions = @('--provider','--local','--gateway','--json')
+                $completions = @('--provider','--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts set-provider') {
-                $completions = @('--provider','--local','--gateway','--json')
+                $completions = @('--provider','--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer tts set-persona') {
-                $completions = @('--persona','--off','--local','--gateway','--json')
+                $completions = @('--persona','--off','--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability tts set-persona') {
-                $completions = @('--persona','--off','--local','--gateway','--json')
+                $completions = @('--persona','--off','--local','--gateway','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer video') {
-                $completions = @('describe','generate','providers','--agent')
+                $completions = @('describe','generate','providers','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability video') {
-                $completions = @('describe','generate','providers','--agent')
+                $completions = @('describe','generate','providers','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer video generate') {
-                $completions = @('--prompt','--model','--size','--aspect-ratio','--resolution','--duration','--audio','--watermark','--timeout-ms','--output','--agent','--json')
+                $completions = @('--prompt','--model','--size','--aspect-ratio','--resolution','--duration','--audio','--watermark','--timeout-ms','--output','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability video generate') {
-                $completions = @('--prompt','--model','--size','--aspect-ratio','--resolution','--duration','--audio','--watermark','--timeout-ms','--output','--agent','--json')
+                $completions = @('--prompt','--model','--size','--aspect-ratio','--resolution','--duration','--audio','--watermark','--timeout-ms','--output','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer video describe') {
-                $completions = @('--file','--agent','--model','--json')
+                $completions = @('--file','--agent','--model','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability video describe') {
-                $completions = @('--file','--agent','--model','--json')
+                $completions = @('--file','--agent','--model','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer video providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability video providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer web') {
-                $completions = @('fetch','providers','search')
+                $completions = @('fetch','providers','search','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability web') {
-                $completions = @('fetch','providers','search')
+                $completions = @('fetch','providers','search','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer web search') {
-                $completions = @('--query','--provider','--limit','--json')
+                $completions = @('--query','--provider','--limit','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability web search') {
-                $completions = @('--query','--provider','--limit','--json')
+                $completions = @('--query','--provider','--limit','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer web fetch') {
-                $completions = @('--url','--provider','--format','--json')
+                $completions = @('--url','--provider','--format','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability web fetch') {
-                $completions = @('--url','--provider','--format','--json')
+                $completions = @('--url','--provider','--format','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer web providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability web providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer embedding') {
-                $completions = @('create','providers','--agent')
+                $completions = @('create','providers','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability embedding') {
-                $completions = @('create','providers','--agent')
+                $completions = @('create','providers','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer embedding create') {
-                $completions = @('--text','--provider','--model','--agent','--json')
+                $completions = @('--text','--provider','--model','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability embedding create') {
-                $completions = @('--text','--provider','--model','--agent','--json')
+                $completions = @('--text','--provider','--model','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'infer embedding providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'capability embedding providers') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals') {
-                $completions = @('allowlist','get','grants','pending','resolve','set')
+                $completions = @('allowlist','get','grants','pending','resolve','set','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals') {
-                $completions = @('allowlist','get','grants','pending','resolve','set')
+                $completions = @('allowlist','get','grants','pending','resolve','set','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals pending') {
-                $completions = @('--url','--token','--timeout','--json')
+                $completions = @('--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals pending') {
-                $completions = @('--url','--token','--timeout','--json')
+                $completions = @('--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals resolve') {
-                $completions = @('--reason','--expires-in-days','--url','--token','--timeout','--json')
+                $completions = @('--reason','--expires-in-days','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals resolve') {
-                $completions = @('--reason','--expires-in-days','--url','--token','--timeout','--json')
+                $completions = @('--reason','--expires-in-days','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals grants') {
-                $completions = @('list','revoke')
+                $completions = @('list','revoke','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals grants') {
-                $completions = @('list','revoke')
+                $completions = @('list','revoke','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals grants list') {
-                $completions = @('--limit','--url','--token','--timeout','--json')
+                $completions = @('--limit','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals grants list') {
-                $completions = @('--limit','--url','--token','--timeout','--json')
+                $completions = @('--limit','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals grants revoke') {
-                $completions = @('--url','--token','--timeout','--json')
+                $completions = @('--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals grants revoke') {
-                $completions = @('--url','--token','--timeout','--json')
+                $completions = @('--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals get') {
-                $completions = @('--node','--gateway','--url','--token','--timeout','--json')
+                $completions = @('--node','--gateway','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals get') {
-                $completions = @('--node','--gateway','--url','--token','--timeout','--json')
+                $completions = @('--node','--gateway','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals set') {
-                $completions = @('--node','--gateway','--file','--stdin','--url','--token','--timeout','--json')
+                $completions = @('--node','--gateway','--file','--stdin','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals set') {
-                $completions = @('--node','--gateway','--file','--stdin','--url','--token','--timeout','--json')
+                $completions = @('--node','--gateway','--file','--stdin','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals allowlist') {
-                $completions = @('add','remove')
+                $completions = @('add','remove','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals allowlist') {
-                $completions = @('add','remove')
+                $completions = @('add','remove','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals allowlist add') {
-                $completions = @('--node','--gateway','--agent','--url','--token','--timeout','--json')
+                $completions = @('--node','--gateway','--agent','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals allowlist add') {
-                $completions = @('--node','--gateway','--agent','--url','--token','--timeout','--json')
+                $completions = @('--node','--gateway','--agent','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'approvals allowlist remove') {
-                $completions = @('--node','--gateway','--agent','--url','--token','--timeout','--json')
+                $completions = @('--node','--gateway','--agent','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-approvals allowlist remove') {
-                $completions = @('--node','--gateway','--agent','--url','--token','--timeout','--json')
+                $completions = @('--node','--gateway','--agent','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-policy') {
-                $completions = @('preset','set','show')
+                $completions = @('preset','set','show','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-policy show') {
-                $completions = @('--agent','--session','--verbose','--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--agent','--session','--verbose','--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-policy preset') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'exec-policy set') {
-                $completions = @('--host','--security','--ask','--ask-fallback','--json')
+                $completions = @('--host','--security','--ask','--ask-fallback','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes') {
-                $completions = @('approve','camera','describe','invoke','list','location','notify','pending','push','reject','remove','rename','screen','status')
+                $completions = @('approve','camera','describe','invoke','list','location','notify','pending','push','reject','remove','rename','screen','status','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes status') {
-                $completions = @('--connected','--last-connected','--url','--token','--timeout','--json')
+                $completions = @('--connected','--last-connected','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes describe') {
-                $completions = @('--node','--url','--token','--timeout','--json')
+                $completions = @('--node','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes list') {
-                $completions = @('--connected','--last-connected','--url','--token','--timeout','--json')
+                $completions = @('--connected','--last-connected','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes pending') {
-                $completions = @('--url','--token','--timeout','--json')
+                $completions = @('--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes approve') {
-                $completions = @('--url','--token','--timeout','--json')
+                $completions = @('--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes reject') {
-                $completions = @('--url','--token','--timeout','--json')
+                $completions = @('--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes remove') {
-                $completions = @('--node','--url','--token','--timeout','--json')
+                $completions = @('--node','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes rename') {
-                $completions = @('--node','--name','--url','--token','--timeout','--json')
+                $completions = @('--node','--name','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes invoke') {
-                $completions = @('--node','--command','--params','--invoke-timeout','--idempotency-key','--url','--token','--timeout','--json')
+                $completions = @('--node','--command','--params','--invoke-timeout','--idempotency-key','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes notify') {
-                $completions = @('--node','--title','--body','--sound','--priority','--delivery','--invoke-timeout','--url','--token','--timeout','--json')
+                $completions = @('--node','--title','--body','--sound','--priority','--delivery','--invoke-timeout','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes push') {
-                $completions = @('--node','--title','--body','--environment','--url','--token','--timeout','--json')
+                $completions = @('--node','--title','--body','--environment','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes camera') {
-                $completions = @('clip','list','snap')
+                $completions = @('clip','list','snap','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes camera list') {
-                $completions = @('--node','--url','--token','--timeout','--json')
+                $completions = @('--node','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes camera snap') {
-                $completions = @('--node','--facing','--device-id','--max-width','--quality','--delay-ms','--invoke-timeout','--url','--token','--timeout','--json')
+                $completions = @('--node','--facing','--device-id','--max-width','--quality','--delay-ms','--invoke-timeout','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes camera clip') {
-                $completions = @('--node','--facing','--device-id','--duration','--no-audio','--invoke-timeout','--url','--token','--timeout','--json')
+                $completions = @('--node','--facing','--device-id','--duration','--no-audio','--invoke-timeout','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes screen') {
-                $completions = @('record')
+                $completions = @('record','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes screen record') {
-                $completions = @('--node','--screen','--duration','--fps','--no-audio','--out','--invoke-timeout','--url','--token','--timeout','--json')
+                $completions = @('--node','--screen','--duration','--fps','--no-audio','--out','--invoke-timeout','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes location') {
-                $completions = @('get')
+                $completions = @('get','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'nodes location get') {
-                $completions = @('--node','--max-age','--accuracy','--location-timeout','--invoke-timeout','--url','--token','--timeout','--json')
+                $completions = @('--node','--max-age','--accuracy','--location-timeout','--invoke-timeout','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices') {
-                $completions = @('approve','clear','join-code','list','reject','remove','rename','revoke','rotate')
+                $completions = @('approve','clear','join-code','list','reject','remove','rename','revoke','rotate','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices list') {
-                $completions = @('--url','--token','--password','--timeout','--json')
+                $completions = @('--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices join-code') {
-                $completions = @('--url','--token','--password','--timeout','--json')
+                $completions = @('--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices remove') {
-                $completions = @('--url','--token','--password','--timeout','--json')
+                $completions = @('--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices clear') {
-                $completions = @('--pending','--yes','--url','--token','--password','--timeout','--json')
+                $completions = @('--pending','--yes','--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices approve') {
-                $completions = @('--latest','--url','--token','--password','--timeout','--json')
+                $completions = @('--latest','--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices reject') {
-                $completions = @('--url','--token','--password','--timeout','--json')
+                $completions = @('--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices rename') {
-                $completions = @('--device','--name','--url','--token','--password','--timeout','--json')
+                $completions = @('--device','--name','--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices rotate') {
-                $completions = @('--device','--role','--scope','--no-scopes','--url','--token','--password','--timeout','--json')
+                $completions = @('--device','--role','--scope','--no-scopes','--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'devices revoke') {
-                $completions = @('--device','--role','--url','--token','--password','--timeout','--json')
+                $completions = @('--device','--role','--url','--token','--password','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'users') {
-                $completions = @('link-email','list','merge')
+                $completions = @('link-email','list','merge','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'users list') {
-                $completions = @('--url','--token','--timeout','--json')
+                $completions = @('--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'users link-email') {
-                $completions = @('--to','--url','--token','--timeout','--json')
+                $completions = @('--to','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'users merge') {
-                $completions = @('--into','--url','--token','--timeout','--json')
+                $completions = @('--into','--url','--token','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node') {
-                $completions = @('identity','install','restart','run','start','status','stop','uninstall','--commands','--all-commands')
+                $completions = @('identity','install','restart','run','start','status','stop','uninstall','--commands','--all-commands','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node worker') {
-                $completions = @('--desktop-sharing','--no-desktop-sharing')
+                $completions = @('--desktop-sharing','--no-desktop-sharing','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node run') {
-                $completions = @('--commands','--all-commands','--pair','--pair-if-needed','--host','--port','--context-path','--tls','--no-tls','--tls-fingerprint','--node-id','--display-name','--session-host','--share-installed-apps','--no-share-installed-apps')
+                $completions = @('--commands','--all-commands','--pair','--pair-if-needed','--host','--port','--context-path','--tls','--no-tls','--tls-fingerprint','--node-id','--display-name','--session-host','--share-installed-apps','--no-share-installed-apps','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node status') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node identity') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node install') {
-                $completions = @('--commands','--all-commands','--host','--port','--context-path','--tls','--no-tls','--tls-fingerprint','--node-id','--display-name','--share-installed-apps','--no-share-installed-apps','--runtime','--runtime-path','--force','--json')
+                $completions = @('--commands','--all-commands','--host','--port','--context-path','--tls','--no-tls','--tls-fingerprint','--node-id','--display-name','--share-installed-apps','--no-share-installed-apps','--runtime','--runtime-path','--force','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node uninstall') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node stop') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node start') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'node restart') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'connect') {
-                $completions = @('--commands','--all-commands','--service','--ephemeral','--session-host','--target-file','--display-name')
+                $completions = @('--commands','--all-commands','--service','--ephemeral','--session-host','--target-file','--display-name','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'worker') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sandbox') {
-                $completions = @('explain','list','recreate')
+                $completions = @('explain','list','recreate','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sandbox list') {
-                $completions = @('--json','--browser')
+                $completions = @('--json','--browser','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sandbox recreate') {
-                $completions = @('--all','--session','--agent','--browser','--force')
+                $completions = @('--all','--session','--agent','--browser','--force','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'sandbox explain') {
-                $completions = @('--session','--agent','--json')
+                $completions = @('--session','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees') {
-                $completions = @('create','gc','list','recover-removal','remove','restore','retire-snapshot')
+                $completions = @('create','gc','list','recover-removal','remove','restore','retire-snapshot','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees create') {
-                $completions = @('--name','--base-ref','--source-profile','--json')
+                $completions = @('--name','--base-ref','--source-profile','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees remove') {
-                $completions = @('--force','--if-lossless','--exact-state','--json')
+                $completions = @('--force','--if-lossless','--exact-state','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees retire-snapshot') {
-                $completions = @('--expected-ref','--expected-oid','--removed-at','--retained-ref','--retained-oid','--json')
+                $completions = @('--expected-ref','--expected-oid','--removed-at','--retained-ref','--retained-oid','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees recover-removal') {
-                $completions = @('--snapshot','--json')
+                $completions = @('--snapshot','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees restore') {
-                $completions = @('--recover-exact-state','--json')
+                $completions = @('--recover-exact-state','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'worktrees gc') {
-                $completions = @('--job','--retry-deferred','--json')
+                $completions = @('--job','--retry-deferred','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'attach') {
-                $completions = @('--session','--url','--token','--password','--tls-fingerprint','--ttl','--bin','--print-config')
+                $completions = @('--session','--url','--token','--password','--tls-fingerprint','--ttl','--bin','--print-config','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'resume') {
-                $completions = @('--handoff','--url','--token','--password','--tls-fingerprint')
+                $completions = @('--handoff','--url','--token','--password','--tls-fingerprint','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'tui') {
-                $completions = @('--local','--url','--token','--password','--tls-fingerprint','--session','--deliver','--thinking','--message','--timeout-ms','--history-limit')
+                $completions = @('--local','--url','--token','--password','--tls-fingerprint','--session','--deliver','--thinking','--message','--timeout-ms','--history-limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'terminal') {
-                $completions = @('--local','--url','--token','--password','--tls-fingerprint','--session','--deliver','--thinking','--message','--timeout-ms','--history-limit')
+                $completions = @('--local','--url','--token','--password','--tls-fingerprint','--session','--deliver','--thinking','--message','--timeout-ms','--history-limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'chat') {
-                $completions = @('--local','--url','--token','--password','--tls-fingerprint','--session','--deliver','--thinking','--message','--timeout-ms','--history-limit')
+                $completions = @('--local','--url','--token','--password','--tls-fingerprint','--session','--deliver','--thinking','--message','--timeout-ms','--history-limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron') {
-                $completions = @('add','create','disable','edit','enable','get','list','rm','remove','delete','run','runs','scratch','show','status','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('add','create','disable','edit','enable','get','list','rm','remove','delete','run','runs','scratch','show','status','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations') {
-                $completions = @('add','create','disable','edit','enable','get','list','rm','remove','delete','run','runs','scratch','show','status','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('add','create','disable','edit','enable','get','list','rm','remove','delete','run','runs','scratch','show','status','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron status') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations status') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron list') {
-                $completions = @('--all','--agent','--query','--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--all','--agent','--query','--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations list') {
-                $completions = @('--all','--agent','--query','--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--all','--agent','--query','--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron add') {
-                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--declaration-key','--disabled','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--declaration-key','--disabled','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron create') {
-                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--declaration-key','--disabled','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--declaration-key','--disabled','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations add') {
-                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--declaration-key','--disabled','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--declaration-key','--disabled','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations create') {
-                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--declaration-key','--disabled','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--declaration-key','--disabled','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron rm') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron remove') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron delete') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations rm') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations remove') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations delete') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron enable') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations enable') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron disable') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations disable') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron get') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations get') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron show') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations show') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron runs') {
-                $completions = @('--json','--id','--all','--run-id','--status','--delivery-status','--query','--offset','--sort','--limit','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--id','--all','--run-id','--status','--delivery-status','--query','--offset','--sort','--limit','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations runs') {
-                $completions = @('--json','--id','--all','--run-id','--status','--delivery-status','--query','--offset','--sort','--limit','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--id','--all','--run-id','--status','--delivery-status','--query','--offset','--sort','--limit','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron run') {
-                $completions = @('--json','--due','--wait','--wait-timeout','--poll-interval','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--due','--wait','--wait-timeout','--poll-interval','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations run') {
-                $completions = @('--json','--due','--wait','--wait-timeout','--poll-interval','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--due','--wait','--wait-timeout','--poll-interval','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron scratch') {
-                $completions = @('--json','--set','--file','--unset','--expected-revision','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--set','--file','--unset','--expected-revision','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations scratch') {
-                $completions = @('--json','--set','--file','--unset','--expected-revision','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--set','--file','--unset','--expected-revision','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'cron edit') {
-                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--clear-display-name','--enable','--disable','--clear-agent','--clear-session-key','--clear-pacing','--clear-trigger','--clear-thinking','--clear-fallbacks','--clear-model','--no-light-context','--clear-tools','--clear-channel','--clear-to','--clear-thread-id','--clear-account','--no-best-effort-deliver','--failure-alert','--no-failure-alert','--failure-alert-after','--failure-alert-channel','--failure-alert-to','--failure-alert-cooldown','--failure-alert-include-skipped','--failure-alert-exclude-skipped','--failure-alert-mode','--failure-alert-account-id','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--clear-display-name','--enable','--disable','--clear-agent','--clear-session-key','--clear-pacing','--clear-trigger','--clear-thinking','--clear-fallbacks','--clear-model','--no-light-context','--clear-tools','--clear-channel','--clear-to','--clear-thread-id','--clear-account','--no-best-effort-deliver','--failure-alert','--no-failure-alert','--failure-alert-after','--failure-alert-channel','--failure-alert-to','--failure-alert-cooldown','--failure-alert-include-skipped','--failure-alert-exclude-skipped','--failure-alert-mode','--failure-alert-account-id','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'automations edit') {
-                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--clear-display-name','--enable','--disable','--clear-agent','--clear-session-key','--clear-pacing','--clear-trigger','--clear-thinking','--clear-fallbacks','--clear-model','--no-light-context','--clear-tools','--clear-channel','--clear-to','--clear-thread-id','--clear-account','--no-best-effort-deliver','--failure-alert','--no-failure-alert','--failure-alert-after','--failure-alert-channel','--failure-alert-to','--failure-alert-cooldown','--failure-alert-include-skipped','--failure-alert-exclude-skipped','--failure-alert-mode','--failure-alert-account-id','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--name','--display-name','--description','--delete-after-run','--keep-after-run','--agent','--session','--session-key','--wake','--at','--every','--pacing-min','--pacing-max','--cron','--on-exit','--on-exit-cwd','--stream-command','--stream-cwd','--stream-mode','--stream-match','--stream-batch-ms','--stream-max-batch-bytes','--tz','--stagger','--exact','--trigger-script','--trigger-once','--system-event','--message','--script','--script-timeout-seconds','--script-tool-budget','--command','--command-argv','--command-cwd','--command-env','--command-input','--thinking','--model','--fallbacks','--timeout-seconds','--no-output-timeout-seconds','--output-max-bytes','--light-context','--tools','--announce','--deliver','--no-deliver','--webhook','--channel','--to','--thread-id','--account','--best-effort-deliver','--clear-display-name','--enable','--disable','--clear-agent','--clear-session-key','--clear-pacing','--clear-trigger','--clear-thinking','--clear-fallbacks','--clear-model','--no-light-context','--clear-tools','--clear-channel','--clear-to','--clear-thread-id','--clear-account','--no-best-effort-deliver','--failure-alert','--no-failure-alert','--failure-alert-after','--failure-alert-channel','--failure-alert-to','--failure-alert-cooldown','--failure-alert-include-skipped','--failure-alert-exclude-skipped','--failure-alert-mode','--failure-alert-account-id','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'dns') {
-                $completions = @('setup')
+                $completions = @('setup','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'dns setup') {
-                $completions = @('--domain','--apply')
+                $completions = @('--domain','--apply','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'docs') {
-                $completions = @('--json','--limit')
+                $completions = @('--json','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'proxy') {
-                $completions = @('blob','coverage','purge','query','run','sessions','start','validate')
+                $completions = @('blob','coverage','purge','query','run','sessions','start','validate','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'proxy start') {
-                $completions = @('--host','--port')
+                $completions = @('--host','--port','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'proxy run') {
-                $completions = @('--host','--port')
+                $completions = @('--host','--port','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'proxy validate') {
-                $completions = @('--json','--proxy-url','--proxy-ca-file','--allowed-url','--denied-url','--apns-reachable','--apns-authority','--timeout-ms')
+                $completions = @('--json','--proxy-url','--proxy-ca-file','--allowed-url','--denied-url','--apns-reachable','--apns-authority','--timeout-ms','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'proxy coverage') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'proxy sessions') {
-                $completions = @('--json','--limit')
+                $completions = @('--json','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'proxy query') {
-                $completions = @('--preset','--json','--session')
+                $completions = @('--preset','--json','--session','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'proxy blob') {
-                $completions = @('--id')
+                $completions = @('--id','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'proxy purge') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks') {
-                $completions = @('check','disable','enable','info','install','list','update','--agent','--json')
+                $completions = @('check','disable','enable','info','install','list','update','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks list') {
-                $completions = @('--agent','--eligible','--json','-v','--verbose')
+                $completions = @('--agent','--eligible','--json','-v','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks info') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks check') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks enable') {
-                $completions = @('--agent')
+                $completions = @('--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks disable') {
-                $completions = @('--agent')
+                $completions = @('--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks relay') {
-                $completions = @('--provider','--relay-id','--state-db','--remote-credential','--generation','--event','--pre-tool-use-unavailable','--timeout')
+                $completions = @('--provider','--relay-id','--state-db','--remote-credential','--generation','--event','--pre-tool-use-unavailable','--timeout','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks install') {
-                $completions = @('-l','--link','--pin','--force','--acknowledge-install-policy-warning')
+                $completions = @('-l','--link','--pin','--force','--acknowledge-install-policy-warning','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'hooks update') {
-                $completions = @('--all','--dry-run','--acknowledge-install-policy-warning')
+                $completions = @('--all','--dry-run','--acknowledge-install-policy-warning','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'webhooks') {
-                $completions = @('gmail')
+                $completions = @('gmail','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'webhooks gmail') {
-                $completions = @('run','setup')
+                $completions = @('run','setup','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'webhooks gmail setup') {
-                $completions = @('--account','--project','--topic','--subscription','--label','--hook-url','--hook-token','--push-token','--bind','--port','--path','--include-body','--max-bytes','--renew-minutes','--tailscale','--tailscale-path','--tailscale-target','--push-endpoint','--json')
+                $completions = @('--account','--project','--topic','--subscription','--label','--hook-url','--hook-token','--push-token','--bind','--port','--path','--include-body','--max-bytes','--renew-minutes','--tailscale','--tailscale-path','--tailscale-target','--push-endpoint','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'webhooks gmail run') {
-                $completions = @('--account','--topic','--subscription','--label','--hook-url','--hook-token','--push-token','--bind','--port','--path','--include-body','--max-bytes','--renew-minutes','--tailscale','--tailscale-path','--tailscale-target')
+                $completions = @('--account','--topic','--subscription','--label','--hook-url','--hook-token','--push-token','--bind','--port','--path','--include-body','--max-bytes','--renew-minutes','--tailscale','--tailscale-path','--tailscale-target','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'qr') {
-                $completions = @('--remote','--url','--public-url','--token','--password','--limited','--voice-node','--setup-code-only','--no-ascii','--json')
+                $completions = @('--remote','--url','--public-url','--token','--password','--limited','--voice-node','--setup-code-only','--no-ascii','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'clawbot') {
-                $completions = @('qr')
+                $completions = @('qr','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'clawbot qr') {
-                $completions = @('--remote','--url','--public-url','--token','--password','--limited','--voice-node','--setup-code-only','--no-ascii','--json')
+                $completions = @('--remote','--url','--public-url','--token','--password','--limited','--voice-node','--setup-code-only','--no-ascii','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'pairing') {
-                $completions = @('approve','list')
+                $completions = @('approve','list','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'pairing list') {
-                $completions = @('--channel','--account','--json')
+                $completions = @('--channel','--account','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'pairing approve') {
-                $completions = @('--channel','--account','--notify')
+                $completions = @('--channel','--account','--notify','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins') {
-                $completions = @('build','disable','doctor','enable','init','inspect','info','install','list','marketplace','pack','registry','reload','search','uninstall','update','validate')
+                $completions = @('build','disable','doctor','enable','init','inspect','info','install','list','marketplace','pack','registry','reload','search','uninstall','update','validate','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins list') {
-                $completions = @('--json','--enabled','--verbose')
+                $completions = @('--json','--enabled','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins search') {
-                $completions = @('--limit','--json')
+                $completions = @('--limit','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins inspect') {
-                $completions = @('--all','--runtime','--json')
+                $completions = @('--all','--runtime','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins info') {
-                $completions = @('--all','--runtime','--json')
+                $completions = @('--all','--runtime','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins enable') {
-                $completions = @('--accept-capabilities')
+                $completions = @('--accept-capabilities','--container','--dev','--profile','--log-level','--no-color')
+                $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+                    [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
+                }
+            }
+
+            if ($commandPath -eq 'plugins disable') {
+                $completions = @('--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins reload') {
-                $completions = @('--accept-capabilities','--wait','--json')
+                $completions = @('--accept-capabilities','--wait','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins uninstall') {
-                $completions = @('--keep-files','--keep-config','--force','--dry-run')
+                $completions = @('--keep-files','--keep-config','--force','--dry-run','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins install') {
-                $completions = @('-l','--link','--force','--pin','--no-enable','--accept-capabilities','--dangerously-force-unsafe-install','--acknowledge-install-policy-warning','--marketplace')
+                $completions = @('-l','--link','--force','--pin','--no-enable','--accept-capabilities','--dangerously-force-unsafe-install','--acknowledge-install-policy-warning','--marketplace','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins update') {
-                $completions = @('--all','--dry-run','--accept-capabilities','--dangerously-force-unsafe-install','--acknowledge-install-policy-warning')
+                $completions = @('--all','--dry-run','--accept-capabilities','--dangerously-force-unsafe-install','--acknowledge-install-policy-warning','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins registry') {
-                $completions = @('--json','--refresh')
+                $completions = @('--json','--refresh','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins doctor') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins build') {
-                $completions = @('--root','--entry','--check')
+                $completions = @('--root','--entry','--check','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins validate') {
-                $completions = @('--root','--entry','--json')
+                $completions = @('--root','--entry','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins pack') {
-                $completions = @('--root','--out','--json')
+                $completions = @('--root','--out','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins init') {
-                $completions = @('--directory','--name','--type','--force')
+                $completions = @('--directory','--name','--type','--force','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins marketplace') {
-                $completions = @('entries','list','refresh')
+                $completions = @('entries','list','refresh','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins marketplace entries') {
-                $completions = @('--feed-profile','--feed-url','--offline','--json')
+                $completions = @('--feed-profile','--feed-url','--offline','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins marketplace refresh') {
-                $completions = @('--feed-profile','--feed-url','--expected-sha256','--json')
+                $completions = @('--feed-profile','--feed-url','--expected-sha256','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'plugins marketplace list') {
-                $completions = @('--json')
+                $completions = @('--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels') {
-                $completions = @('add','capabilities','dead-letters','list','login','logout','logs','remove','resolve','status','--agent')
+                $completions = @('add','capabilities','dead-letters','list','login','logout','logs','remove','resolve','status','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels list') {
-                $completions = @('--all','--json')
+                $completions = @('--all','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels status') {
-                $completions = @('--channel','--probe','--timeout','--json')
+                $completions = @('--channel','--probe','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels capabilities') {
-                $completions = @('--agent','--channel','--account','--target','--timeout','--json')
+                $completions = @('--agent','--channel','--account','--target','--timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels resolve') {
-                $completions = @('--channel','--account','--agent','--kind','--json')
+                $completions = @('--channel','--account','--agent','--kind','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels logs') {
-                $completions = @('--channel','--lines','--json')
+                $completions = @('--channel','--lines','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels dead-letters') {
-                $completions = @('list','resubmit','--account')
+                $completions = @('list','resubmit','--account','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels dead-letters list') {
-                $completions = @('--channel','--account','--limit','--json')
+                $completions = @('--channel','--account','--limit','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels dead-letters resubmit') {
-                $completions = @('--channel','--account','--json')
+                $completions = @('--channel','--account','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels add') {
-                $completions = @('--channel','--agent','--account','--name','--advertised-url','--peer-name','--peer-token','--token','--token-file','--use-env','--audience-type','--audience','--webhook-path','--webhook-url','--private-key','--relay-urls','--relay-url','--bot-token','--http-url','--base-url','--url','--secret','--password','--secret-file','--homeserver','--user-id','--access-token','--device-name','--avatar-url','--initial-sync-limit','--proxy','--dangerously-allow-private-network','--profile','--channel-access-token','--channel-secret','--code','--workspace','--default-to','--allow-from','--agent-activity','--account-sid','--auth-token','--from-number','--messaging-service-sid','--public-webhook-url','--dm-policy','--ship','--group-channels','--dm-allowlist','--auto-discover-channels','--no-auto-discover-channels','--owner-ship','--cli-path','--db-path','--service','--region','--host','--port','--tls','--nick','--username','--realname','--channels','--signal-number','--signal-transport','--http-host','--http-port','--app-token','--user-token','--signing-secret','--identity','--mode','--auth-dir')
+                $completions = @('--channel','--agent','--account','--name','--advertised-url','--peer-name','--peer-token','--token','--token-file','--use-env','--audience-type','--audience','--webhook-path','--webhook-url','--private-key','--relay-urls','--relay-url','--bot-token','--http-url','--base-url','--url','--secret','--password','--secret-file','--homeserver','--user-id','--access-token','--device-name','--avatar-url','--initial-sync-limit','--proxy','--dangerously-allow-private-network','--profile','--channel-access-token','--channel-secret','--code','--workspace','--default-to','--allow-from','--agent-activity','--account-sid','--auth-token','--from-number','--messaging-service-sid','--public-webhook-url','--dm-policy','--ship','--group-channels','--dm-allowlist','--auto-discover-channels','--no-auto-discover-channels','--owner-ship','--cli-path','--db-path','--service','--region','--host','--port','--tls','--nick','--username','--realname','--channels','--signal-number','--signal-transport','--http-host','--http-port','--app-token','--user-token','--signing-secret','--identity','--mode','--auth-dir','--container','--dev','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels remove') {
-                $completions = @('--agent','--channel','--account','--delete')
+                $completions = @('--agent','--channel','--account','--delete','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels login') {
-                $completions = @('--agent','--channel','--account','--verbose')
+                $completions = @('--agent','--channel','--account','--verbose','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'channels logout') {
-                $completions = @('--agent','--channel','--account')
+                $completions = @('--agent','--channel','--account','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'directory') {
-                $completions = @('groups','peers','self')
+                $completions = @('groups','peers','self','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'directory self') {
-                $completions = @('--channel','--account','--json')
+                $completions = @('--channel','--account','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'directory peers') {
-                $completions = @('list')
+                $completions = @('list','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'directory peers list') {
-                $completions = @('--channel','--account','--json','--query','--limit')
+                $completions = @('--channel','--account','--json','--query','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'directory groups') {
-                $completions = @('list','members')
+                $completions = @('list','members','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'directory groups list') {
-                $completions = @('--channel','--account','--json','--query','--limit')
+                $completions = @('--channel','--account','--json','--query','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'directory groups members') {
-                $completions = @('--group-id','--channel','--account','--json','--limit')
+                $completions = @('--group-id','--channel','--account','--json','--limit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'security') {
-                $completions = @('audit')
+                $completions = @('audit','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'security audit') {
-                $completions = @('--deep','--auth','--token','--password','--fix','--json')
+                $completions = @('--deep','--auth','--token','--password','--fix','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets') {
-                $completions = @('apply','audit','configure','reload','store')
+                $completions = @('apply','audit','configure','reload','store','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets store') {
-                $completions = @('get','import','list','rm','set')
+                $completions = @('get','import','list','rm','set','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets store list') {
-                $completions = @('--scope','--json','--plain')
+                $completions = @('--scope','--json','--plain','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets store set') {
-                $completions = @('--value','--value-file','--kind','--allow-host','--clear-allowed-hosts','--scope','--dry-run')
+                $completions = @('--value','--value-file','--kind','--allow-host','--clear-allowed-hosts','--scope','--dry-run','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets store get') {
-                $completions = @('--scope','--json','--plain')
+                $completions = @('--scope','--json','--plain','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets store rm') {
-                $completions = @('--scope','--dry-run','--yes')
+                $completions = @('--scope','--dry-run','--yes','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets store import') {
-                $completions = @('--from','--kind','--scope','--dry-run','--yes')
+                $completions = @('--from','--kind','--scope','--dry-run','--yes','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets reload') {
-                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final')
+                $completions = @('--json','--url','--port','--token','--password','--timeout','--expect-final','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets audit') {
-                $completions = @('--check','--allow-exec','--json')
+                $completions = @('--check','--allow-exec','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets configure') {
-                $completions = @('--apply','--yes','--providers-only','--skip-provider-setup','--agent','--allow-exec','--plan-out','--json')
+                $completions = @('--apply','--yes','--providers-only','--skip-provider-setup','--agent','--allow-exec','--plan-out','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'secrets apply') {
-                $completions = @('--from','--dry-run','--allow-exec','--json')
+                $completions = @('--from','--dry-run','--allow-exec','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills') {
-                $completions = @('check','info','install','library','list','search','update','verify','workshop','--agent','--json')
+                $completions = @('check','info','install','library','list','search','update','verify','workshop','--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library') {
-                $completions = @('attach','create','detach','disable','enable','import','list','read','refresh','remove','rollback','share','transfer','unshare','update','--url','--port','--token','--password','--timeout','--expect-final','--json')
+                $completions = @('attach','create','detach','disable','enable','import','list','read','refresh','remove','rollback','share','transfer','unshare','update','--url','--port','--token','--password','--timeout','--expect-final','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library list') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--scope','--session')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--scope','--session','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library read') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--revision','--session')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--revision','--session','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library create') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--slug')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--slug','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library update') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--slug','--delete-file')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--slug','--delete-file','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library import') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--slug','--clawhub','--version')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--slug','--clawhub','--version','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library remove') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library share') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library unshare') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library transfer') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library enable') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library disable') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library rollback') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--revision')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--expected-revision','--revision','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library attach') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--session','--skill-id','--revision')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--session','--skill-id','--revision','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library detach') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--session','--skill-id')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--session','--skill-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills library refresh') {
-                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--session','--skill-id')
+                $completions = @('--url','--port','--token','--password','--timeout','--expect-final','--json','--session','--skill-id','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills search') {
-                $completions = @('--limit','--json')
+                $completions = @('--limit','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills install') {
-                $completions = @('--version','--force','--force-install','--acknowledge-install-policy-warning','--global','--agent','--as')
+                $completions = @('--version','--force','--force-install','--acknowledge-install-policy-warning','--global','--agent','--as','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills update') {
-                $completions = @('--all','--force','--force-install','--acknowledge-install-policy-warning','--global','--agent')
+                $completions = @('--all','--force','--force-install','--acknowledge-install-policy-warning','--global','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills verify') {
-                $completions = @('--version','--tag','--card','--json','--global','--agent')
+                $completions = @('--version','--tag','--card','--json','--global','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills workshop') {
-                $completions = @('archive','changes','list','restore','show','--agent')
+                $completions = @('archive','changes','list','restore','show','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills workshop list') {
-                $completions = @('--json','--agent')
+                $completions = @('--json','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills workshop changes') {
-                $completions = @('--limit','--json','--agent')
+                $completions = @('--limit','--json','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills workshop show') {
-                $completions = @('--file','--version','--json','--agent')
+                $completions = @('--file','--version','--json','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills workshop archive') {
-                $completions = @('--reason','--json','--agent')
+                $completions = @('--reason','--json','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills workshop restore') {
-                $completions = @('--version','--json','--agent')
+                $completions = @('--version','--json','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills list') {
-                $completions = @('--json','--eligible','-v','--verbose','--agent')
+                $completions = @('--json','--eligible','-v','--verbose','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills info') {
-                $completions = @('--json','--agent')
+                $completions = @('--json','--agent','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'skills check') {
-                $completions = @('--agent','--json')
+                $completions = @('--agent','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update') {
-                $completions = @('adopt-immutable','cleanup','recover','repair','status','wizard','--json','--no-restart','--dry-run','--admission','--channel','--tag','--timeout','--drain-timeout','--sha','--yes','--reapply-local-overrides','--accept-capabilities')
+                $completions = @('adopt-immutable','cleanup','recover','repair','status','wizard','--json','--no-restart','--dry-run','--admission','--channel','--tag','--timeout','--drain-timeout','--sha','--yes','--reapply-local-overrides','--accept-capabilities','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update adopt-immutable') {
-                $completions = @('--root','--service','--account','--state-dir','--config','--runtime','--profile','--enable-activation','--previous-updater-stopped','--json')
+                $completions = @('--root','--service','--account','--state-dir','--config','--runtime','--profile','--enable-activation','--previous-updater-stopped','--json','--container','--dev','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update recover') {
-                $completions = @('--root','--timeout','--drain-timeout','--json')
+                $completions = @('--root','--timeout','--drain-timeout','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update admit') {
-                $completions = @('--context')
+                $completions = @('--context','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update cleanup') {
-                $completions = @('--dry-run','--json','--yes')
+                $completions = @('--dry-run','--json','--yes','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update repair') {
-                $completions = @('--json','--channel','--timeout','--yes','--accept-capabilities','--no-restart')
+                $completions = @('--json','--channel','--timeout','--yes','--accept-capabilities','--no-restart','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update finalize') {
-                $completions = @('--json','--channel','--timeout','--yes','--accept-capabilities','--no-restart')
+                $completions = @('--json','--channel','--timeout','--yes','--accept-capabilities','--no-restart','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update migration-plan') {
-                $completions = @('--snapshot-home','--snapshot-config','--snapshot-state','--dry-run','--json')
+                $completions = @('--snapshot-home','--snapshot-config','--snapshot-state','--dry-run','--json','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update wizard') {
-                $completions = @('--accept-capabilities','--timeout')
+                $completions = @('--accept-capabilities','--timeout','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }
             }
 
             if ($commandPath -eq 'update status') {
-                $completions = @('--json','--timeout')
+                $completions = @('--json','--timeout','--container','--dev','--profile','--log-level','--no-color')
                 $completions | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
                     [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterName', $_)
                 }

@@ -91,7 +91,12 @@ _openclaw_completion() {
     "(--shell -s)"{--shell,-s}"[Shell to generate completion for (default: detected)]:shell:(zsh bash powershell fish)" \
     "(--install -i)"{--install,-i}"[Install completion script to shell profile]" \
     "--write-state[Write completion scripts to \$OPENCLAW_STATE_DIR/completions (no stdout)]" \
-    "(--yes -y)"{--yes,-y}"[Skip confirmation (non-interactive)]"
+    "(--yes -y)"{--yes,-y}"[Skip confirmation (non-interactive)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_setup() {
@@ -217,25 +222,45 @@ _openclaw_setup() {
     "--remote-password[Remote Gateway password (optional)]:remotePassword:" \
     "(--message -m)"{--message,-m}"[Run one OpenClaw request]:message:" \
     "--yes[Approve persistent config writes for one --message request]" \
-    "--json[Output system overview or onboarding summary as JSON]"
+    "--json[Output system overview or onboarding summary as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_crestodian() {
   _arguments -C \
     "(--message -m)"{--message,-m}"[Run one OpenClaw request]:message:" \
     "--yes[Approve persistent config writes for one --message request]" \
-    "--json[Output system overview or onboarding summary as JSON]"
+    "--json[Output system overview or onboarding summary as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_onboard_recommendations_acknowledge() {
   _arguments -C \
     "--agent[Agent whose onboarding recommendations should be used]:agent:" \
-    "--retry[Leave failed recommendation IDs pending for a later run]:retry:"
+    "--retry[Leave failed recommendation IDs pending for a later run]:retry:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_onboard_recommendations_refresh() {
   _arguments -C \
-    "--agent[Agent whose onboarding recommendations should be used]:agent:"
+    "--agent[Agent whose onboarding recommendations should be used]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_onboard_recommendations() {
@@ -245,6 +270,11 @@ _openclaw_onboard_recommendations() {
   _arguments -C \
     "--agent[Agent whose onboarding recommendations should be used]:agent:" \
     "--json[Output stored recommendation matches as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'acknowledge[Mark the stored onboarding recommendation offer as answered]' 'refresh[Clear stored app recommendations so the next onboarding run rescans]'" \
     "*::arg:->args"
 
@@ -382,6 +412,11 @@ _openclaw_onboard() {
     "--import-source[Source agent home for --import-from]:importSource:" \
     "--import-secrets[Import supported secrets during onboarding migration]" \
     "--json[Output JSON summary]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'recommendations[Read the app recommendations stored during onboarding]'" \
     "*::arg:->args"
 
@@ -396,12 +431,22 @@ _openclaw_onboard() {
 
 _openclaw_configure() {
   _arguments -C \
-    "--section[Configuration sections (repeatable). Options: workspace, model, web, gateway, daemon, channels, plugins, skills, health]:section:"
+    "--section[Configuration sections (repeatable). Options: workspace, model, web, gateway, daemon, channels, plugins, skills, health]:section:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_config_get() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_config_set() {
@@ -432,7 +477,12 @@ _openclaw_config_set() {
     "--provider-pass-env[Provider builder (exec): pass host env var (repeatable)]:providerPassEnv:" \
     "--provider-trusted-dir[Provider builder (exec): trusted directory (repeatable)]:providerTrustedDir:" \
     "--batch-json[Batch mode: JSON array of set operations]:batchJson:" \
-    "--batch-file[Batch mode: read JSON array of set operations from file]:batchFile:"
+    "--batch-file[Batch mode: read JSON array of set operations from file]:batchFile:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_config_patch() {
@@ -442,29 +492,54 @@ _openclaw_config_patch() {
     "--dry-run[Validate changes without writing openclaw.json (checks schema and SecretRef resolvability; exec SecretRefs are skipped unless --allow-exec is set)]" \
     "--allow-exec[Dry-run only: allow exec SecretRef resolvability checks (may execute provider commands)]" \
     "--json[Output dry-run result as JSON]" \
-    "--replace-path[Replace the object or array at this dot/bracket path instead of recursively applying it (repeatable)]:replacePath:"
+    "--replace-path[Replace the object or array at this dot/bracket path instead of recursively applying it (repeatable)]:replacePath:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_config_unset() {
   _arguments -C \
     "--dry-run[validate the removal without writing the config file]" \
     "--allow-exec[allow exec SecretRef providers during --dry-run]" \
-    "--json[print dry-run result as JSON]"
+    "--json[print dry-run result as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_config_file() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_config_schema() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_config_validate() {
   _arguments -C \
-    "--json[Output validation result as JSON]"
+    "--json[Output validation result as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_config() {
@@ -473,6 +548,11 @@ _openclaw_config() {
   
   _arguments -C \
     "--section[Configuration sections for guided setup (repeatable). Use with no subcommand.]:section:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'file[Print the active config file path]' 'get[Get a config value by dot path]' 'patch[Patch config from a JSON5 object in one validated write.
 Objects merge recursively, arrays/scalars replace, and null deletes a path.
 Examples:
@@ -513,14 +593,24 @@ _openclaw_backup_create() {
     "--dry-run[Print the backup plan without writing the archive]" \
     "--verify[Verify the archive after writing it]" \
     "--only-config[Back up only the active JSON config file]" \
-    "--no-include-workspace[Exclude workspace directories from the backup]"
+    "--no-include-workspace[Exclude workspace directories from the backup]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_verify() {
   _arguments -C \
     "--from[Read a backup key or latest from a storage location]:from:" \
     "--namespace[Backup namespace (default: sanitized hostname)]:namespace:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_restore() {
@@ -528,14 +618,24 @@ _openclaw_backup_restore() {
     "--from[Read a backup key or latest from a storage location]:from:" \
     "--namespace[Backup namespace (default: sanitized hostname)]:namespace:" \
     "--target[Fresh target directory; non-empty directories are refused]:target:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_list() {
   _arguments -C \
     "--from[Storage location name]:from:" \
     "--namespace[Backup namespace (default: sanitized hostname)]:namespace:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_record() {
@@ -544,7 +644,12 @@ _openclaw_backup_record() {
     "--target[External backup target label]:target:" \
     "--bytes[Backup size in bytes]:bytes:" \
     "--error[Failure details]:error:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_sqlite_create() {
@@ -552,25 +657,45 @@ _openclaw_backup_sqlite_create() {
     "--global[Snapshot the shared OpenClaw state database]" \
     "--agent[Snapshot one per-agent OpenClaw database]:agent:" \
     "--repository[Snapshot repository directory]:repository:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_sqlite_list() {
   _arguments -C \
     "--repository[Snapshot repository directory]:repository:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_sqlite_verify() {
   _arguments -C \
     "--scratch[Existing private directory for verification copies]:scratch:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_sqlite_restore() {
   _arguments -C \
     "--target[Fresh target path; existing files and sidecars are refused]:target:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_sqlite() {
@@ -578,7 +703,11 @@ _openclaw_backup_sqlite() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'create[Create a compact, verified snapshot of an OpenClaw SQLite database]' 'list[List committed snapshots in a repository]' 'restore[Restore a verified snapshot to a new SQLite database path]' 'verify[Verify a snapshot manifest, artifact hash, SQLite integrity, and database owner]'" \
     "*::arg:->args"
 
@@ -598,7 +727,12 @@ _openclaw_backup_git_init() {
   _arguments -C \
     "--repository[Git backup repository directory]:repository:" \
     "--remote[Add the remote as origin]:remote:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_git_create() {
@@ -609,14 +743,24 @@ _openclaw_backup_git_create() {
     "--agent[Back up an agent database (repeatable)]:agent:" \
     "--push[Push the current branch to origin]" \
     "--exclude-secrets[Omit credential-bearing database tables]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_git_log() {
   _arguments -C \
     "--repository[Git backup repository directory]:repository:" \
     "--limit[Maximum commits to show]:limit:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_git_verify() {
@@ -625,7 +769,12 @@ _openclaw_backup_git_verify() {
     "--ref[Commit or ref to verify]:ref:" \
     "--global[Verify the shared state database]" \
     "--agent[Verify one agent database]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_git_restore() {
@@ -635,7 +784,12 @@ _openclaw_backup_git_restore() {
     "--ref[Commit or ref to restore]:ref:" \
     "--global[Restore the shared state database]" \
     "--agent[Restore one agent database]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_git() {
@@ -643,7 +797,11 @@ _openclaw_backup_git() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'create[Dump selected OpenClaw databases and commit one Git revision]' 'init[Initialize or adopt an operator-owned Git backup repository]' 'log[Show Git backup commits]' 'restore[Restore one database snapshot from a Git ref to a fresh SQLite file]' 'verify[Restore and verify one database snapshot from a Git ref]'" \
     "*::arg:->args"
 
@@ -681,7 +839,12 @@ _openclaw_backup_enable() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup_disable() {
@@ -693,7 +856,12 @@ _openclaw_backup_disable() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_backup() {
@@ -701,7 +869,11 @@ _openclaw_backup() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'create[Write a backup archive for config, credentials, sessions, and workspaces]' 'disable[Remove both scheduled backup modes, or the selected mode]' 'enable[Provision a Gateway automation for offsite or Git backups]' 'git[Create and restore deterministic versioned SQLite dumps in Git]' 'list[List archives in a storage location]' 'record[Record an external backup job outcome]' 'restore[Restore a verified backup archive to a fresh staging directory]' 'sqlite[Create, list, verify, and restore SQLite snapshots]' 'verify[Validate a backup archive and its embedded manifest]'" \
     "*::arg:->args"
 
@@ -724,24 +896,44 @@ _openclaw_backup() {
 
 _openclaw_database_preflight() {
   _arguments -C \
-    "--json[emit machine-readable JSON]"
+    "--json[emit machine-readable JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_database_preflight_agent() {
   _arguments -C \
     "--agent-id[exact canonical agent owner ID]:agentId:" \
-    "--json[emit machine-readable JSON]"
+    "--json[emit machine-readable JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_database_ownership_status() {
   _arguments -C \
-    "--json[emit machine-readable JSON]"
+    "--json[emit machine-readable JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_database_ownership_claim() {
   _arguments -C \
     "--manager[stable external manager identifier]:manager:" \
-    "--json[emit machine-readable JSON]"
+    "--json[emit machine-readable JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_database_ownership() {
@@ -749,7 +941,11 @@ _openclaw_database_ownership() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'claim[Claim shared-state writes for the active external supervisor]' 'status[Show durable shared-state write ownership]'" \
     "*::arg:->args"
 
@@ -768,7 +964,11 @@ _openclaw_database() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'ownership[Inspect or claim write ownership]' 'preflight[Compare one copied SQLite file with this release'\''s state schema]' 'preflight-agent[Compare one copied agent SQLite file with this release'\''s agent schema and owner]'" \
     "*::arg:->args"
 
@@ -785,7 +985,12 @@ _openclaw_database() {
 
 _openclaw_migrate_list() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_migrate_plan() {
@@ -799,7 +1004,12 @@ _openclaw_migrate_plan() {
     "--skill[Select one skill to migrate by name or item id; repeat for multiple skills]:skill:" \
     "--plugin[Select one Codex plugin to migrate by name or item id; repeat for multiple plugins]:plugin:" \
     "--item[Select one exact migration item id; repeat for multiple items]:item:" \
-    "--verify-plugin-apps[Codex only: verify source plugin app accessibility with app/installed before planning native plugin activation]"
+    "--verify-plugin-apps[Codex only: verify source plugin app accessibility with app/installed before planning native plugin activation]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_migrate_apply() {
@@ -817,7 +1027,12 @@ _openclaw_migrate_apply() {
     "--yes[Apply without prompting]" \
     "--backup-output[Pre-migration backup archive path or directory]:backupOutput:" \
     "--no-backup[Skip the pre-migration OpenClaw backup]" \
-    "--force[Allow dangerous options such as --no-backup]"
+    "--force[Allow dangerous options such as --no-backup]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_migrate() {
@@ -840,6 +1055,11 @@ _openclaw_migrate() {
     "--force[Allow dangerous options such as --no-backup]" \
     "--json[Output JSON]" \
     "--verify-plugin-apps[Codex only: verify source plugin app accessibility with app/installed before planning native plugin activation]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'apply[Apply a migration after a verified backup]' 'list[List migration providers]' 'plan[Preview a migration without changing OpenClaw state]'" \
     "*::arg:->args"
 
@@ -856,17 +1076,32 @@ _openclaw_migrate() {
 
 _openclaw_storage_list() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_storage_init() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_storage_test() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_storage() {
@@ -875,6 +1110,11 @@ _openclaw_storage() {
   
   _arguments -C \
     "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'init[Initialize a new location or verify its existing marker and encryption key]' 'list[List storage locations and check their availability]' 'test[Write, read, verify, and delete a temporary check object]'" \
     "*::arg:->args"
 
@@ -912,7 +1152,12 @@ _openclaw_doctor() {
     "--severity-min[With --lint: drop findings below this severity (info|warning|error)]:severityMin:" \
     "--all[With --lint: run all registered checks, including opt-in checks]" \
     "--skip[With --lint: skip a specific check id (repeatable)]:skip:" \
-    "--only[With --lint: run only the specified check id (repeatable)]:only:"
+    "--only[With --lint: run only the specified check id (repeatable)]:only:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_triage() {
@@ -922,14 +1167,24 @@ _openclaw_triage() {
     "--agent[Select a coding agent (agy|claude|codex|cursor|grok|kimi|muse|opencode|pi|qwen)]:agent:" \
     "--run[Run one embedded agent turn after verifying model inference]" \
     "--non-interactive[Prepare diagnostics without prompting or starting an agent]" \
-    "--update-result[Include update-failure diagnostics from this JSON artifact]:updateResult:"
+    "--update-result[Include update-failure diagnostics from this JSON artifact]:updateResult:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_dashboard() {
   _arguments -C \
     "--no-open[Print URL but do not launch a browser]" \
     "--json[Output dashboard connection details as JSON]" \
-    "--yes[Start/install the gateway without prompting when needed]"
+    "--yes[Start/install the gateway without prompting when needed]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_reset() {
@@ -937,7 +1192,12 @@ _openclaw_reset() {
     "--scope[config|config+creds+sessions|full (default: interactive prompt)]:scope:" \
     "--yes[Skip confirmation prompts]" \
     "--non-interactive[Disable prompts (requires --scope + --yes)]" \
-    "--dry-run[Print actions without removing files]"
+    "--dry-run[Print actions without removing files]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_uninstall() {
@@ -949,7 +1209,12 @@ _openclaw_uninstall() {
     "--all[Remove service + state + workspace + app]" \
     "--yes[Skip confirmation prompts]" \
     "--non-interactive[Disable prompts (requires --yes)]" \
-    "--dry-run[Print actions without removing files]"
+    "--dry-run[Print actions without removing files]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_send() {
@@ -969,7 +1234,12 @@ _openclaw_message_send() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_broadcast() {
@@ -981,7 +1251,12 @@ _openclaw_message_broadcast() {
     "--verbose[Verbose logging]" \
     "--targets[Recipient/channel targets (same format as --target); accepts ids or names when the directory is available.]:targets:" \
     "--message[Message to send]:message:" \
-    "--media[Media URL]:media:"
+    "--media[Media URL]:media:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_poll() {
@@ -1001,7 +1276,12 @@ _openclaw_message_poll() {
     "--poll-public[Send a non-anonymous poll (Telegram)]" \
     "(--message -m)"{--message,-m}"[Optional message body]:message:" \
     "--silent[Send poll silently without notification (Telegram + Discord where supported)]" \
-    "--thread-id[Thread id (Telegram forum topic / Slack thread ts)]:threadId:"
+    "--thread-id[Thread id (Telegram forum topic / Slack thread ts)]:threadId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_react() {
@@ -1018,7 +1298,12 @@ _openclaw_message_react() {
     "--participant[WhatsApp reaction participant]:participant:" \
     "--from-me[WhatsApp reaction fromMe]" \
     "--target-author[Signal reaction target author (uuid or phone)]:targetAuthor:" \
-    "--target-author-uuid[Signal reaction target author uuid]:targetAuthorUuid:"
+    "--target-author-uuid[Signal reaction target author uuid]:targetAuthorUuid:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_reactions() {
@@ -1030,7 +1315,12 @@ _openclaw_message_reactions() {
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
     "--message-id[Message id]:messageId:" \
-    "--limit[Result limit]:limit:"
+    "--limit[Result limit]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_read() {
@@ -1047,7 +1337,12 @@ _openclaw_message_read() {
     "--after[Read/search after id]:after:" \
     "--around[Read around id]:around:" \
     "--thread-id[Thread id (Slack thread timestamp)]:threadId:" \
-    "!--include-thread[]"
+    "!--include-thread[]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_edit() {
@@ -1060,7 +1355,12 @@ _openclaw_message_edit() {
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
-    "--thread-id[Thread id (Telegram forum thread)]:threadId:"
+    "--thread-id[Thread id (Telegram forum thread)]:threadId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_delete() {
@@ -1071,7 +1371,12 @@ _openclaw_message_delete() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_pin() {
@@ -1082,7 +1387,12 @@ _openclaw_message_pin() {
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
-    "--message-id[Message id]:messageId:"
+    "--message-id[Message id]:messageId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_unpin() {
@@ -1094,7 +1404,12 @@ _openclaw_message_unpin() {
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
     "--message-id[Message id (or pinned message resource id for MSTeams)]:messageId:" \
-    "--pinned-message-id[Pinned message resource id (MSTeams: from pin or list-pins, not the chat message id)]:pinnedMessageId:"
+    "--pinned-message-id[Pinned message resource id (MSTeams: from pin or list-pins, not the chat message id)]:pinnedMessageId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_pins() {
@@ -1105,7 +1420,12 @@ _openclaw_message_pins() {
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
-    "--limit[Result limit]:limit:"
+    "--limit[Result limit]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_permissions() {
@@ -1115,7 +1435,12 @@ _openclaw_message_permissions() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_search() {
@@ -1131,7 +1456,12 @@ _openclaw_message_search() {
     "--channel-ids[Channel id (repeat)]:channelIds:" \
     "--author-id[Author id]:authorId:" \
     "--author-ids[Author id (repeat)]:authorIds:" \
-    "--limit[Result limit]:limit:"
+    "--limit[Result limit]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_thread_create() {
@@ -1145,7 +1475,12 @@ _openclaw_message_thread_create() {
     "--verbose[Verbose logging]" \
     "--message-id[Message id (optional)]:messageId:" \
     "(--message -m)"{--message,-m}"[Initial thread message text]:message:" \
-    "--auto-archive-min[Thread auto-archive minutes]:autoArchiveMin:"
+    "--auto-archive-min[Thread auto-archive minutes]:autoArchiveMin:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_thread_list() {
@@ -1159,7 +1494,12 @@ _openclaw_message_thread_list() {
     "--channel-id[Channel id]:channelId:" \
     "--include-archived[Include archived threads]" \
     "--before[Read/search before id]:before:" \
-    "--limit[Result limit]:limit:"
+    "--limit[Result limit]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_thread_reply() {
@@ -1172,7 +1512,12 @@ _openclaw_message_thread_reply() {
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
     "--media[Attach media (image/audio/video/document). Accepts local paths or URLs.]:media:" \
-    "--reply-to[Reply-to message id]:replyTo:"
+    "--reply-to[Reply-to message id]:replyTo:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_thread() {
@@ -1180,7 +1525,11 @@ _openclaw_message_thread() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'create[Create a thread]' 'list[List threads]' 'reply[Reply in a thread]'" \
     "*::arg:->args"
 
@@ -1202,7 +1551,12 @@ _openclaw_message_emoji_list() {
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
-    "--guild-id[Guild id (Discord)]:guildId:"
+    "--guild-id[Guild id (Discord)]:guildId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_emoji_upload() {
@@ -1215,7 +1569,12 @@ _openclaw_message_emoji_upload() {
     "--verbose[Verbose logging]" \
     "--emoji-name[Emoji name]:emojiName:" \
     "--media[Emoji media (path or URL)]:media:" \
-    "--role-ids[Role id (repeat)]:roleIds:"
+    "--role-ids[Role id (repeat)]:roleIds:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_emoji() {
@@ -1223,7 +1582,11 @@ _openclaw_message_emoji() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'list[List emojis]' 'upload[Upload an emoji]'" \
     "*::arg:->args"
 
@@ -1246,7 +1609,12 @@ _openclaw_message_sticker_send() {
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
     "--sticker-id[Sticker id (repeat)]:stickerId:" \
-    "(--message -m)"{--message,-m}"[Optional message body]:message:"
+    "(--message -m)"{--message,-m}"[Optional message body]:message:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_sticker_upload() {
@@ -1260,7 +1628,12 @@ _openclaw_message_sticker_upload() {
     "--sticker-name[Sticker name]:stickerName:" \
     "--sticker-desc[Sticker description]:stickerDesc:" \
     "--sticker-tags[Sticker tags]:stickerTags:" \
-    "--media[Sticker media (path or URL)]:media:"
+    "--media[Sticker media (path or URL)]:media:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_sticker() {
@@ -1268,7 +1641,11 @@ _openclaw_message_sticker() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'send[Send stickers]' 'upload[Upload a sticker]'" \
     "*::arg:->args"
 
@@ -1289,7 +1666,12 @@ _openclaw_message_role_info() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_role_add() {
@@ -1301,7 +1683,12 @@ _openclaw_message_role_add() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_role_remove() {
@@ -1313,7 +1700,12 @@ _openclaw_message_role_remove() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_role() {
@@ -1321,7 +1713,11 @@ _openclaw_message_role() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add role to a member]' 'info[List roles]' 'remove[Remove role from a member]'" \
     "*::arg:->args"
 
@@ -1343,7 +1739,12 @@ _openclaw_message_channel_info() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_channel_list() {
@@ -1353,7 +1754,12 @@ _openclaw_message_channel_list() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_channel() {
@@ -1361,7 +1767,11 @@ _openclaw_message_channel() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'info[Fetch channel info]' 'list[List channels]'" \
     "*::arg:->args"
 
@@ -1384,7 +1794,12 @@ _openclaw_message_member_info() {
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
     "--guild-id[Guild id (Discord)]:guildId:" \
-    "--channel-id[Room id (Matrix) or Graph team-id/channel-id (Microsoft Teams)]:channelId:"
+    "--channel-id[Room id (Matrix) or Graph team-id/channel-id (Microsoft Teams)]:channelId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_member() {
@@ -1392,7 +1807,11 @@ _openclaw_message_member() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'info[Fetch member info]'" \
     "*::arg:->args"
 
@@ -1413,7 +1832,12 @@ _openclaw_message_voice_status() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_voice() {
@@ -1421,7 +1845,11 @@ _openclaw_message_voice() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'status[Fetch voice status]'" \
     "*::arg:->args"
 
@@ -1441,7 +1869,12 @@ _openclaw_message_event_list() {
     "--account[Channel account id (accountId)]:account:" \
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
-    "--verbose[Verbose logging]"
+    "--verbose[Verbose logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_event_create() {
@@ -1459,7 +1892,12 @@ _openclaw_message_event_create() {
     "--channel-id[Channel id]:channelId:" \
     "--location[Event location]:location:" \
     "--event-type[Event type]:eventType:" \
-    "--image[Cover image URL or local file path]:image:"
+    "--image[Cover image URL or local file path]:image:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_event() {
@@ -1467,7 +1905,11 @@ _openclaw_message_event() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'create[Create a scheduled event]' 'list[List scheduled events]'" \
     "*::arg:->args"
 
@@ -1492,7 +1934,12 @@ _openclaw_message_timeout() {
     "--verbose[Verbose logging]" \
     "--duration-min[Timeout duration minutes]:durationMin:" \
     "--until[Timeout until]:until:" \
-    "--reason[Moderation reason]:reason:"
+    "--reason[Moderation reason]:reason:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_kick() {
@@ -1504,7 +1951,12 @@ _openclaw_message_kick() {
     "--json[Output result as JSON]" \
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
-    "--reason[Moderation reason]:reason:"
+    "--reason[Moderation reason]:reason:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message_ban() {
@@ -1517,7 +1969,12 @@ _openclaw_message_ban() {
     "--dry-run[Print payload and skip sending]" \
     "--verbose[Verbose logging]" \
     "--reason[Moderation reason]:reason:" \
-    "--delete-days[Ban delete message days]:deleteDays:"
+    "--delete-days[Ban delete message days]:deleteDays:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_message() {
@@ -1525,7 +1982,11 @@ _openclaw_message() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'ban[Ban a member]' 'broadcast[Broadcast a message to multiple targets]' 'channel[Channel actions]' 'delete[Delete a message]' 'edit[Edit a message]' 'emoji[Emoji actions]' 'event[Event actions]' 'kick[Kick a member]' 'member[Member actions]' 'permissions[Fetch channel permissions]' 'pin[Pin a message]' 'pins[List pinned messages]' 'poll[Send a poll]' 'react[Add or remove a reaction]' 'reactions[List reactions on a message]' 'read[Read recent messages]' 'role[Role actions]' 'search[Search messages]' 'send[Send a message]' 'sticker[Sticker actions]' 'thread[Thread actions]' 'timeout[Timeout a member]' 'unpin[Unpin a message]' 'voice[Voice actions]'" \
     "*::arg:->args"
 
@@ -1569,34 +2030,64 @@ _openclaw_mcp_serve() {
     "--password[Gateway password (if required)]:password:" \
     "--password-file[Read gateway password from file]:passwordFile:" \
     "--claude-channel-mode[Claude channel notification mode: auto, on, or off]:claudeChannelMode:" \
-    "(--verbose -v)"{--verbose,-v}"[Verbose logging to stderr]"
+    "(--verbose -v)"{--verbose,-v}"[Verbose logging to stderr]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_list() {
   _arguments -C \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_show() {
   _arguments -C \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_status() {
   _arguments -C \
     "(--verbose -v)"{--verbose,-v}"[Show transport, auth, timeout, and filter details]" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_probe() {
   _arguments -C \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_doctor() {
   _arguments -C \
     "--probe[Also connect to each checked server]" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_add() {
@@ -1622,19 +2113,33 @@ _openclaw_mcp_add() {
     "--ssl-verify[Verify HTTPS certificates: true or false]:sslVerify:" \
     "--client-cert[HTTP mutual TLS client certificate path]:clientCert:" \
     "--client-key[HTTP mutual TLS client key path]:clientKey:" \
-    "--no-probe[Save without connecting first]"
+    "--no-probe[Save without connecting first]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_set() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_tools() {
   _arguments -C \
     "--include[Comma-separated MCP tool names or '*' globs to expose]:include:" \
     "--exclude[Comma-separated MCP tool names or '*' globs to hide]:exclude:" \
-    "--clear[Clear this server's MCP tool filter]"
+    "--clear[Clear this server's MCP tool filter]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_configure() {
@@ -1659,27 +2164,49 @@ _openclaw_mcp_configure() {
     "--client-cert[HTTP mutual TLS client certificate path]:clientCert:" \
     "--client-key[HTTP mutual TLS client key path]:clientKey:" \
     "--clear-tls[Clear TLS verification and mTLS overrides]" \
-    "--probe[Check the updated server before saving]"
+    "--probe[Check the updated server before saving]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_login() {
   _arguments -C \
-    "--code[Authorization code from the OAuth redirect]:code:"
+    "--code[Authorization code from the OAuth redirect]:code:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_logout() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_reload() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp_unset() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_mcp() {
@@ -1687,7 +2214,11 @@ _openclaw_mcp() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add one MCP server from flags and check it before saving]' 'configure[Update MCP server operator controls without replacing the server]' 'doctor[Check configured MCP servers for static setup problems]' 'list[List OpenClaw-managed MCP servers from mcp.servers]' 'login[Authorize an OAuth MCP server]' 'logout[Clear stored OAuth credentials for an MCP server]' 'probe[Connect to configured MCP servers and list available capabilities]' 'reload[Dispose cached MCP runtimes so new config is used on the next turn]' 'serve[Expose OpenClaw channels over MCP stdio]' 'set[Set one OpenClaw-managed MCP server from a JSON object]' 'show[Show one OpenClaw-managed MCP server or the full mcp.servers config]' 'status[Show configured MCP server transport status without connecting]' 'tools[Update per-server MCP tool include/exclude filters]' 'unset[Remove one OpenClaw-managed MCP server]'" \
     "*::arg:->args"
 
@@ -1715,12 +2246,22 @@ _openclaw_mcp() {
 
 _openclaw_transcripts_list() {
   _arguments -C \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_transcripts_show() {
   _arguments -C \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_transcripts_path() {
@@ -1728,7 +2269,12 @@ _openclaw_transcripts_path() {
     "--dir[Materialize all artifacts and print the session directory]" \
     "--metadata[Materialize and print metadata.json]" \
     "--transcript[Materialize and print transcript.jsonl]" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_transcripts() {
@@ -1736,7 +2282,11 @@ _openclaw_transcripts() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'list[List stored transcript sessions]' 'path[Materialize and print a stored transcripts artifact path]' 'show[Print and materialize a transcript summary]'" \
     "*::arg:->args"
 
@@ -1766,7 +2316,12 @@ _openclaw_agent_exec() {
     "--auth-env-only[Use provider credentials from environment variables only]" \
     "--no-auth-env-only[Allow stored and external CLI credential discovery]" \
     "--timeout[Agent deadline in seconds]:timeout:" \
-    "--json[Emit the stable agent-exec JSON envelope]"
+    "--json[Emit the stable agent-exec JSON envelope]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agent() {
@@ -1791,6 +2346,11 @@ _openclaw_agent() {
     "--deliver[Send the agent's reply back to the selected channel]" \
     "--json[Output result as JSON]" \
     "--timeout[Override agent command timeout (seconds, default 600 or config value)]:timeout:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'exec[Run one isolated headless embedded agent turn]'" \
     "*::arg:->args"
 
@@ -1807,20 +2367,35 @@ _openclaw_agents_list() {
   _arguments -C \
     "--json[Output JSON instead of text]" \
     "--bindings[Include routing bindings]" \
-    "--tree[Render agent creation hierarchy]"
+    "--tree[Render agent creation hierarchy]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agents_bindings() {
   _arguments -C \
     "--agent[Filter by agent id]:agent:" \
-    "--json[Output JSON instead of text]"
+    "--json[Output JSON instead of text]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agents_bind() {
   _arguments -C \
     "--agent[Agent id (defaults to current default agent)]:agent:" \
     "--bind[Binding to add (repeatable). If omitted, accountId is resolved by channel defaults/hooks.]::bind:" \
-    "--json[Output JSON summary]"
+    "--json[Output JSON summary]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agents_unbind() {
@@ -1828,7 +2403,12 @@ _openclaw_agents_unbind() {
     "--agent[Agent id (defaults to current default agent)]:agent:" \
     "--bind[Binding to remove (repeatable)]::bind:" \
     "--all[Remove all bindings for this agent]" \
-    "--json[Output JSON summary]"
+    "--json[Output JSON summary]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agents_add() {
@@ -1839,7 +2419,12 @@ _openclaw_agents_add() {
     "--agent-dir[Agent state directory for this agent]:agentDir:" \
     "--bind[Route channel binding (repeatable)]::bind:" \
     "--non-interactive[Disable prompts; requires --workspace unless --role is set]" \
-    "--json[Output JSON summary]"
+    "--json[Output JSON summary]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agents_team_create() {
@@ -1849,7 +2434,12 @@ _openclaw_agents_team_create() {
     "--prefix[Prefix every team agent id with <p>-]:prefix:" \
     "--workspace-root[Parent directory for separate team workspaces]:workspaceRoot:" \
     "--non-interactive[Disable prompts]" \
-    "--json[Output JSON summary]"
+    "--json[Output JSON summary]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agents_team() {
@@ -1857,7 +2447,11 @@ _openclaw_agents_team() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'create[Create a coordinator and specialists from a bundled preset]'" \
     "*::arg:->args"
 
@@ -1880,13 +2474,23 @@ _openclaw_agents_set_identity() {
     "--theme[Identity theme]:theme:" \
     "--emoji[Identity emoji]:emoji:" \
     "--avatar[Identity avatar (workspace path, http(s) URL, or data URI)]:avatar:" \
-    "--json[Output JSON summary]"
+    "--json[Output JSON summary]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agents_delete() {
   _arguments -C \
     "--force[Skip confirmation]" \
-    "--json[Output JSON summary]"
+    "--json[Output JSON summary]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_agents() {
@@ -1894,7 +2498,11 @@ _openclaw_agents() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add a new isolated agent]' 'bind[Add routing bindings for an agent]' 'bindings[List routing bindings]' 'delete[Delete an agent and prune workspace/state]' 'list[List configured agents]' 'set-identity[Update an agent identity (name/theme/emoji/avatar)]' 'team[Create a coordinated team of agents]' 'unbind[Remove routing bindings for an agent]'" \
     "*::arg:->args"
 
@@ -1929,7 +2537,12 @@ _openclaw_audit() {
     "--cursor[Continue from a previous result cursor]:cursor:" \
     "--limit[Maximum records (1-500; decisions 1-100)]:limit:" \
     "--explain[Inspect execution identity and run-admission reasoning]" \
-    "--json[Output a bounded JSON page]"
+    "--json[Output a bounded JSON page]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_status() {
@@ -1941,7 +2554,12 @@ _openclaw_status() {
     "--deep[Check channels (WhatsApp Web + Telegram + Discord + Slack + Signal)]" \
     "--timeout[Check timeout in milliseconds]:timeout:" \
     "--verbose[Verbose logging]" \
-    "--debug[Alias for --verbose]"
+    "--debug[Alias for --verbose]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_health() {
@@ -1949,7 +2567,12 @@ _openclaw_health() {
     "--json[Output JSON instead of text]" \
     "--timeout[Connection timeout in milliseconds]:timeout:" \
     "--verbose[Verbose logging]" \
-    "--debug[Alias for --verbose]"
+    "--debug[Alias for --verbose]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions_list() {
@@ -1960,7 +2583,12 @@ _openclaw_sessions_list() {
     "--agent[Agent id to inspect (required for multiple explicit agents)]:agent:" \
     "--all-agents[Aggregate sessions across all configured agents]" \
     "--active[Only show sessions updated within the past N minutes]:active:" \
-    "--limit[Max sessions to show (default: 100; use \"all\" for full output)]:limit:"
+    "--limit[Max sessions to show (default: 100; use \"all\" for full output)]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions_cleanup() {
@@ -1973,7 +2601,12 @@ _openclaw_sessions_cleanup() {
     "--fix-missing[Remove store entries whose transcript files are missing (bypasses age/count retention)]" \
     "--fix-dm-scope[Retire stale direct-DM session rows that no longer match session.dmScope=main]" \
     "--active-key[Protect this session key from budget-eviction]:activeKey:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions_tail() {
@@ -1983,7 +2616,12 @@ _openclaw_sessions_tail() {
     "--follow[Continue following for new trajectory events]" \
     "--store[Session store selector path (orders by activity without Gateway lookup)]:store:" \
     "--agent[Agent id to inspect (required for multiple explicit agents)]:agent:" \
-    "--all-agents[Aggregate sessions across all configured agents]"
+    "--all-agents[Aggregate sessions across all configured agents]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions_export_trajectory() {
@@ -1994,7 +2632,12 @@ _openclaw_sessions_export_trajectory() {
     "--store[Legacy session store selector path]:store:" \
     "--agent[Agent id for resolving the default session store]:agent:" \
     "--request-json-base64[Base64url-encoded export request]:requestJsonBase64:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions_archive() {
@@ -2005,7 +2648,12 @@ _openclaw_sessions_archive() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[RPC timeout in milliseconds]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions_delete() {
@@ -2017,7 +2665,12 @@ _openclaw_sessions_delete() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[RPC timeout in milliseconds]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions_import() {
@@ -2033,7 +2686,12 @@ _openclaw_sessions_import() {
     "--host[Source host (single transcript default: discover the Gateway host)]:host:" \
     "--source-home[Source home for a single transcript]:sourceHome:" \
     "--limit[Maximum number of sessions to import with --all]:limit:" \
-    "--dry-run[List the transcripts that would be imported without writing]"
+    "--dry-run[List the transcripts that would be imported without writing]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions_compact() {
@@ -2044,7 +2702,12 @@ _openclaw_sessions_compact() {
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[RPC timeout in milliseconds]:timeout:" \
     "--json[Output JSON]" \
-    "--max-lines[Truncate to the last N transcript lines instead of LLM summarization]:maxLines:"
+    "--max-lines[Truncate to the last N transcript lines instead of LLM summarization]:maxLines:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sessions() {
@@ -2059,6 +2722,11 @@ _openclaw_sessions() {
     "--all-agents[Aggregate sessions across all configured agents]" \
     "--active[Only show sessions updated within the past N minutes]:active:" \
     "--limit[Max sessions to show (default: 100; use \"all\" for full output)]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'archive[Archive stored sessions via the running gateway]' 'cleanup[Run session-store maintenance (local destructive cleanup requires offline ownership)]' 'compact[Compact a stored session transcript via the running gateway]' 'delete[Delete stored sessions and their live artifacts via the running gateway. Retained archives can remain searchable.]' 'export-trajectory[Export a redacted trajectory bundle for a stored session]' 'import[Preserve native catalog transcripts in ordinary OpenClaw sessions]' 'list[List stored conversation sessions]' 'tail[Tail human-readable session trajectory progress]'" \
     "*::arg:->args"
 
@@ -2084,7 +2752,12 @@ _openclaw_acp_client() {
     "--server[ACP server command (default: openclaw)]:server:" \
     "--server-args[Extra arguments for the ACP server]:serverArgs:" \
     "--server-verbose[Enable verbose logging on the ACP server]" \
-    "(--verbose -v)"{--verbose,-v}"[Verbose client logging]"
+    "(--verbose -v)"{--verbose,-v}"[Verbose client logging]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_acp() {
@@ -2104,6 +2777,11 @@ _openclaw_acp() {
     "--no-prefix-cwd[Do not prefix prompts with the working directory]" \
     "--provenance[ACP provenance mode: off, meta, or meta+receipt]:provenance:" \
     "(--verbose -v)"{--verbose,-v}"[Verbose logging to stderr]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'client[Run an interactive ACP client against the local ACP bridge]'" \
     "*::arg:->args"
 
@@ -2141,7 +2819,11 @@ _openclaw_gateway_run() {
     "--ws-log[WebSocket log style (\"auto\"|\"full\"|\"compact\")]:wsLog:" \
     "--compact[Alias for \"--ws-log compact\"]" \
     "--raw-stream[Log raw model stream events to jsonl]" \
-    "--raw-stream-path[Raw stream jsonl path]:rawStreamPath:"
+    "--raw-stream-path[Raw stream jsonl path]:rawStreamPath:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_status() {
@@ -2154,7 +2836,11 @@ _openclaw_gateway_status() {
     "--no-probe[Skip RPC check]" \
     "--require-rpc[Exit non-zero when the RPC check fails]" \
     "--deep[Scan system-level services]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_install() {
@@ -2169,17 +2855,29 @@ _openclaw_gateway_install() {
     "--allow-unconfigured[Allow the service to start without gateway.mode=local]" \
     "--force[Reinstall if already installed (may restart a running Gateway)]" \
     "--json[Output JSON]" \
-    "!--update-executor[Private update executor]:updateExecutor:(check run)"
+    "!--update-executor[Private update executor]:updateExecutor:(check run)" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_uninstall() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_start() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_stop() {
@@ -2187,7 +2885,11 @@ _openclaw_gateway_stop() {
     "!--update-executor[Private update executor]:updateExecutor:(check run)" \
     "--force[Allow stop from a non-interactive shell]" \
     "--json[Output JSON]" \
-    "--disable[Persistently suppress KeepAlive/RunAtLoad so the gateway does not respawn until next start (launchd only)]"
+    "--disable[Persistently suppress KeepAlive/RunAtLoad so the gateway does not respawn until next start (launchd only)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_restart() {
@@ -2198,18 +2900,30 @@ _openclaw_gateway_restart() {
     "--safe[Request an OpenClaw-aware restart after active work drains (bounded wait; may force after the timeout expires)]" \
     "--skip-deferral[Bypass the safe-restart active-work deferral gate; close-stage reply drain still applies; requires --safe]" \
     "--wait[Wait duration before restart (ms, 10s, 5m; 0 waits indefinitely). For non-safe restarts (plain restart); not compatible with --force or --safe]:wait:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_restart_handoff_capabilities() {
   _arguments -C \
-    "--json[Explicit machine-output spelling (command results are JSON by default)]"
+    "--json[Explicit machine-output spelling (command results are JSON by default)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_restart_handoff_consume() {
   _arguments -C \
     "--expected-pid[PID of the exited gateway process]::expectedPid:" \
-    "--json[Explicit machine-output spelling (command results are JSON by default)]"
+    "--json[Explicit machine-output spelling (command results are JSON by default)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_restart_handoff() {
@@ -2217,7 +2931,10 @@ _openclaw_gateway_restart_handoff() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'capabilities[Report the gateway restart-handoff machine contract]' 'consume[Atomically consume a gateway restart handoff]'" \
     "*::arg:->args"
 
@@ -2233,7 +2950,11 @@ _openclaw_gateway_restart_handoff() {
 
 _openclaw_gateway_auth_token() {
   _arguments -C \
-    "--show[Print the token to an interactive terminal]"
+    "--show[Print the token to an interactive terminal]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_call() {
@@ -2246,7 +2967,11 @@ _openclaw_gateway_call() {
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_suspend() {
@@ -2259,7 +2984,11 @@ _openclaw_gateway_suspend() {
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_resume() {
@@ -2270,7 +2999,11 @@ _openclaw_gateway_resume() {
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_usage_cost() {
@@ -2284,7 +3017,11 @@ _openclaw_gateway_usage_cost() {
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_health() {
@@ -2295,7 +3032,11 @@ _openclaw_gateway_health() {
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_stability() {
@@ -2312,7 +3053,11 @@ _openclaw_gateway_stability() {
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_diagnostics_export() {
@@ -2325,7 +3070,11 @@ _openclaw_gateway_diagnostics_export() {
     "--password[Gateway password for health snapshot]:password:" \
     "--timeout[Status/health snapshot timeout in ms]:timeout:" \
     "--no-stability-bundle[Skip persisted stability bundle lookup]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_diagnostics() {
@@ -2333,7 +3082,10 @@ _openclaw_gateway_diagnostics() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'export[Write a shareable, payload-free diagnostics .zip]'" \
     "*::arg:->args"
 
@@ -2356,13 +3108,21 @@ _openclaw_gateway_probe() {
     "--token[Gateway token (applies to all checks)]:token:" \
     "--password[Gateway password (applies to all checks)]:password:" \
     "--timeout[Overall check budget in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway_discover() {
   _arguments -C \
     "--timeout[Per-command timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_gateway() {
@@ -2394,6 +3154,10 @@ _openclaw_gateway() {
     "--compact[Alias for \"--ws-log compact\"]" \
     "--raw-stream[Log raw model stream events to jsonl]" \
     "--raw-stream-path[Raw stream jsonl path]:rawStreamPath:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'auth-token[Reveal the configured shared Gateway token]' 'call[Call a Gateway method]' 'diagnostics[Export local support diagnostics]' 'discover[Discover gateways via Bonjour (local + wide-area if configured)]' 'health[Fetch Gateway health]' 'install[Install and start the Gateway service (launchd/systemd/schtasks)]' 'probe[Show gateway reachability, auth capability, and read-check summary (local + remote)]' 'restart[Restart the Gateway service (launchd/systemd/schtasks)]' 'resume[Release a cooperative Gateway suspension]' 'run[Run the WebSocket Gateway (foreground)]' 'stability[Fetch payload-free Gateway stability diagnostics]' 'start[Start the Gateway service (launchd/systemd/schtasks)]' 'status[Show gateway service status + check connectivity/capability]' 'stop[Stop the Gateway service (launchd/systemd/schtasks)]' 'suspend[Prepare the Gateway for cooperative host suspension]' 'uninstall[Uninstall the Gateway service (launchd/systemd/schtasks)]' 'usage-cost[Fetch usage cost summary from session logs]'" \
     "*::arg:->args"
 
@@ -2433,7 +3197,12 @@ _openclaw_daemon_status() {
     "--no-probe[Skip RPC check]" \
     "--require-rpc[Exit non-zero when the RPC check fails]" \
     "--deep[Scan system-level services]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_daemon_install() {
@@ -2448,17 +3217,32 @@ _openclaw_daemon_install() {
     "--allow-unconfigured[Allow the service to start without gateway.mode=local]" \
     "--force[Reinstall if already installed (may restart a running Gateway)]" \
     "--json[Output JSON]" \
-    "!--update-executor[Private update executor]:updateExecutor:(check run)"
+    "!--update-executor[Private update executor]:updateExecutor:(check run)" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_daemon_uninstall() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_daemon_start() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_daemon_stop() {
@@ -2466,7 +3250,12 @@ _openclaw_daemon_stop() {
     "!--update-executor[Private update executor]:updateExecutor:(check run)" \
     "--force[Allow stop from a non-interactive shell]" \
     "--json[Output JSON]" \
-    "--disable[Persistently suppress KeepAlive/RunAtLoad so the gateway does not respawn until next start (launchd only)]"
+    "--disable[Persistently suppress KeepAlive/RunAtLoad so the gateway does not respawn until next start (launchd only)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_daemon_restart() {
@@ -2477,7 +3266,12 @@ _openclaw_daemon_restart() {
     "--safe[Request an OpenClaw-aware restart after active work drains (bounded wait; may force after the timeout expires)]" \
     "--skip-deferral[Bypass the safe-restart active-work deferral gate; close-stage reply drain still applies; requires --safe]" \
     "--wait[Wait duration before restart (ms, 10s, 5m; 0 waits indefinitely). For non-safe restarts (plain restart); not compatible with --force or --safe]:wait:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_daemon() {
@@ -2486,6 +3280,11 @@ _openclaw_daemon() {
   
   _arguments -C \
     "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'install[Install and start the Gateway service (launchd/systemd/schtasks)]' 'restart[Restart the Gateway service (launchd/systemd/schtasks)]' 'start[Start the Gateway service (launchd/systemd/schtasks)]' 'status[Show service install status + check connectivity/capability]' 'stop[Stop the Gateway service (launchd/systemd/schtasks)]' 'uninstall[Uninstall the Gateway service (launchd/systemd/schtasks)]'" \
     "*::arg:->args"
 
@@ -2519,7 +3318,11 @@ _openclaw_logs() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:"
 }
 
 _openclaw_system_event() {
@@ -2533,7 +3336,12 @@ _openclaw_system_event() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_system_heartbeat_last() {
@@ -2544,7 +3352,12 @@ _openclaw_system_heartbeat_last() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_system_heartbeat_enable() {
@@ -2555,7 +3368,12 @@ _openclaw_system_heartbeat_enable() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_system_heartbeat_disable() {
@@ -2566,7 +3384,12 @@ _openclaw_system_heartbeat_disable() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_system_heartbeat() {
@@ -2574,7 +3397,11 @@ _openclaw_system_heartbeat() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'disable[Disable heartbeats]' 'enable[Enable heartbeats]' 'last[Show the last heartbeat event]'" \
     "*::arg:->args"
 
@@ -2597,7 +3424,12 @@ _openclaw_system_presence() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_system() {
@@ -2605,7 +3437,11 @@ _openclaw_system() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'event[Enqueue a system event and optionally trigger a heartbeat]' 'heartbeat[Heartbeat controls]' 'presence[List system presence entries]'" \
     "*::arg:->args"
 
@@ -2628,7 +3464,12 @@ _openclaw_models_accounts_list() {
     "--password-file[Read the Gateway password from a file]:passwordFile:" \
     "--timeout[Gateway connection and request timeout in ms]:timeout:" \
     "--json[Output JSON]" \
-    "--cursor[Continue from nextCursor in the previous page]:cursor:"
+    "--cursor[Continue from nextCursor in the previous page]:cursor:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_accounts_login() {
@@ -2639,7 +3480,12 @@ _openclaw_models_accounts_login() {
     "--password-file[Read the Gateway password from a file]:passwordFile:" \
     "--timeout[Gateway connection and request timeout in ms]:timeout:" \
     "--json[Output JSON]" \
-    "--method[Choose a sign-in method instead of prompting]:method:"
+    "--method[Choose a sign-in method instead of prompting]:method:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_accounts_use() {
@@ -2649,7 +3495,12 @@ _openclaw_models_accounts_use() {
     "--token-file[Read the Gateway token from a file]:tokenFile:" \
     "--password-file[Read the Gateway password from a file]:passwordFile:" \
     "--timeout[Gateway connection and request timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_accounts_clear_default() {
@@ -2659,7 +3510,12 @@ _openclaw_models_accounts_clear_default() {
     "--token-file[Read the Gateway token from a file]:tokenFile:" \
     "--password-file[Read the Gateway password from a file]:passwordFile:" \
     "--timeout[Gateway connection and request timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_accounts() {
@@ -2673,6 +3529,11 @@ _openclaw_models_accounts() {
     "--password-file[Read the Gateway password from a file]:passwordFile:" \
     "--timeout[Gateway connection and request timeout in ms]:timeout:" \
     "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'clear-default[Clear a personal default without deleting credentials or changing existing sessions]' 'list[List one page of your saved accounts]' 'login[Add a personal account using this Gateway'\''s provider and sign-in methods]' 'use[Select one of your accounts for new sessions]'" \
     "*::arg:->args"
 
@@ -2696,7 +3557,12 @@ _openclaw_models_list() {
     "--provider[Filter by provider id]:provider:" \
     "--agent[Agent id to inspect (overrides OPENCLAW_AGENT_DIR)]:agent:" \
     "--json[Output JSON]" \
-    "--plain[Plain line output]"
+    "--plain[Plain line output]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_status() {
@@ -2710,38 +3576,69 @@ _openclaw_models_status() {
     "--probe-timeout[Timeout per check in ms]:probeTimeout:" \
     "--probe-concurrency[Concurrent checks]:probeConcurrency:" \
     "--probe-max-tokens[Maximum tokens per check (best-effort)]:probeMaxTokens:" \
-    "--agent[Agent id to inspect (overrides OPENCLAW_AGENT_DIR)]:agent:"
+    "--agent[Agent id to inspect (overrides OPENCLAW_AGENT_DIR)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_refresh() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_set() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_set_image() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_aliases_list() {
   _arguments -C \
     "--json[Output JSON]" \
-    "--plain[Plain output]"
+    "--plain[Plain output]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_aliases_add() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_aliases_remove() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_aliases() {
@@ -2749,7 +3646,11 @@ _openclaw_models_aliases() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add or update a model alias]' 'list[List model aliases]' 'remove[Remove a model alias]'" \
     "*::arg:->args"
 
@@ -2767,22 +3668,39 @@ _openclaw_models_aliases() {
 _openclaw_models_fallbacks_list() {
   _arguments -C \
     "--json[Output JSON]" \
-    "--plain[Plain output]"
+    "--plain[Plain output]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_fallbacks_add() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_fallbacks_remove() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_fallbacks_clear() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_fallbacks() {
@@ -2790,7 +3708,11 @@ _openclaw_models_fallbacks() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add a fallback model]' 'clear[Clear all fallback models]' 'list[List fallback models]' 'remove[Remove a fallback model]'" \
     "*::arg:->args"
 
@@ -2809,22 +3731,39 @@ _openclaw_models_fallbacks() {
 _openclaw_models_image_fallbacks_list() {
   _arguments -C \
     "--json[Output JSON]" \
-    "--plain[Plain output]"
+    "--plain[Plain output]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_image_fallbacks_add() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_image_fallbacks_remove() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_image_fallbacks_clear() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_image_fallbacks() {
@@ -2832,7 +3771,11 @@ _openclaw_models_image_fallbacks() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add an image fallback model]' 'clear[Clear all image fallback models]' 'list[List image fallback models]' 'remove[Remove an image fallback model]'" \
     "*::arg:->args"
 
@@ -2861,30 +3804,55 @@ _openclaw_models_scan() {
     "--no-input[Disable prompts (use defaults)]" \
     "--set-default[Also set agents.defaults.model primary to the first selection (fallbacks are replaced either way)]" \
     "--set-image[Also set agents.defaults.imageModel primary to the first image selection]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_list() {
   _arguments -C \
     "--provider[Filter by provider id]:provider:" \
     "--agent[Agent id (default: configured system agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_add() {
   _arguments -C \
-    "--agent[Agent id (default: configured default agent)]:agent:"
+    "--agent[Agent id (default: configured default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_activate() {
   _arguments -C \
-    "--agent[Agent id (default: the only configured agent)]:agent:"
+    "--agent[Agent id (default: the only configured agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_logout() {
   _arguments -C \
     "--agent[Agent id (default: configured default agent)]:agent:" \
-    "--yes[Skip the confirmation prompt]"
+    "--yes[Skip the confirmation prompt]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_login() {
@@ -2895,14 +3863,24 @@ _openclaw_models_auth_login() {
     "--device-code[Use the provider device-code auth method]" \
     "--profile-id[Auth profile id override for single-profile login methods]:profileId:" \
     "--set-default[Apply the provider's default model recommendation]" \
-    "--force[Remove existing profiles for the provider before logging in (use when a cached OAuth profile is stuck or you want to switch accounts)]"
+    "--force[Remove existing profiles for the provider before logging in (use when a cached OAuth profile is stuck or you want to switch accounts)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_setup_token() {
   _arguments -C \
     "--agent[Agent id (default: configured default agent)]:agent:" \
     "--provider[Provider id]:provider:" \
-    "--yes[Skip confirmation]"
+    "--yes[Skip confirmation]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_paste_token() {
@@ -2910,39 +3888,69 @@ _openclaw_models_auth_paste_token() {
     "--agent[Agent id (default: configured default agent)]:agent:" \
     "--provider[Provider id (e.g. anthropic)]:provider:" \
     "--profile-id[Auth profile id (default: <provider>:manual)]:profileId:" \
-    "--expires-in[Optional expiry duration (e.g. 365d, 12h). Stored as absolute expiresAt.]:expiresIn:"
+    "--expires-in[Optional expiry duration (e.g. 365d, 12h). Stored as absolute expiresAt.]:expiresIn:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_paste_api_key() {
   _arguments -C \
     "--agent[Agent id (default: configured default agent)]:agent:" \
     "--provider[Provider id (e.g. openai)]:provider:" \
-    "--profile-id[Auth profile id (default: <provider>:manual)]:profileId:"
+    "--profile-id[Auth profile id (default: <provider>:manual)]:profileId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_login_github_copilot() {
   _arguments -C \
     "--agent[Agent id (default: configured default agent)]:agent:" \
-    "--yes[Overwrite existing profile without prompting]"
+    "--yes[Overwrite existing profile without prompting]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_order_get() {
   _arguments -C \
     "--provider[Provider id (e.g. anthropic)]:provider:" \
     "--agent[Agent id (default: configured system agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_order_set() {
   _arguments -C \
     "--provider[Provider id (e.g. anthropic)]:provider:" \
-    "--agent[Agent id (default: configured default agent)]:agent:"
+    "--agent[Agent id (default: configured default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_order_clear() {
   _arguments -C \
     "--provider[Provider id (e.g. anthropic)]:provider:" \
-    "--agent[Agent id (default: configured default agent)]:agent:"
+    "--agent[Agent id (default: configured default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_models_auth_order() {
@@ -2950,7 +3958,11 @@ _openclaw_models_auth_order() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'clear[Clear per-agent auth profile order override]' 'get[Show per-agent auth profile order override]' 'set[Set per-agent auth profile order override]'" \
     "*::arg:->args"
 
@@ -2971,6 +3983,11 @@ _openclaw_models_auth() {
   
   _arguments -C \
     "--agent[Agent id for auth commands]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'activate[Test a saved sign-in and use it for this agent]' 'add[Interactive auth helper (provider auth or paste token)]' 'list[List saved auth profiles]' 'login[Sign in for system/agent use on this machine (OAuth/API key)]' 'login-github-copilot[Login to GitHub Copilot via GitHub device flow (TTY required)]' 'logout[Remove a saved auth profile (see \`models auth list\` for ids)]' 'order[Manage per-agent auth profile order overrides]' 'paste-api-key[Save an API key in an auth profile and update config]' 'paste-token[Save a token in an auth profile and update config]' 'setup-token[Run a provider CLI to create/sync a token (TTY required)]'" \
     "*::arg:->args"
 
@@ -3001,6 +4018,11 @@ _openclaw_models() {
     "--status-json[Output JSON (alias for \`models status --json\`)]" \
     "--status-plain[Plain output (alias for \`models status --plain\`)]" \
     "--agent[Agent id to inspect (overrides OPENCLAW_AGENT_DIR)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'accounts[Manage your personal model accounts on the Gateway]' 'aliases[Manage model aliases]' 'auth[Manage system/agent credentials on this machine]' 'fallbacks[Manage model fallback list]' 'image-fallbacks[Manage image model fallback list]' 'list[List models (configured by default)]' 'refresh[Refresh the hosted model catalog]' 'scan[Scan OpenRouter free models for tools + images]' 'set[Set the default model]' 'set-image[Set the image model]' 'status[Show configured model state]'" \
     "*::arg:->args"
 
@@ -3025,13 +4047,23 @@ _openclaw_models() {
 
 _openclaw_promos_list() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_promos_claim() {
   _arguments -C \
     "--api-key[Provider API key for non-interactive setup]:apiKey:" \
-    "--set-default[Set the promotion's suggested model as default without asking]"
+    "--set-default[Set the promotion's suggested model as default without asking]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_promos() {
@@ -3039,7 +4071,11 @@ _openclaw_promos() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'claim[Claim a promotion: set up provider auth and register its models]' 'list[List active promotions]'" \
     "*::arg:->args"
 
@@ -3055,17 +4091,30 @@ _openclaw_promos() {
 
 _openclaw_telemetry_show() {
   _arguments -C \
-    "--json[Print the request and payload as JSON]"
+    "--json[Print the request and payload as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_telemetry_on() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_telemetry_off() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_telemetry() {
@@ -3073,7 +4122,11 @@ _openclaw_telemetry() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'off[Disable anonymous feature statistics]' 'on[Enable anonymous feature statistics]' 'show[Preview the daily update request from this CLI process]'" \
     "*::arg:->args"
 
@@ -3090,13 +4143,23 @@ _openclaw_telemetry() {
 
 _openclaw_infer_list() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_inspect() {
   _arguments -C \
     "--name[Capability id]:name:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_model_run() {
@@ -3108,44 +4171,79 @@ _openclaw_infer_model_run() {
     "--local[Force local execution]" \
     "--gateway[Force gateway execution]" \
     "--agent[Agent whose model and credentials own the run (default: agents.defaults.systemAgent.agentId, then the sole agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_model_list() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_model_inspect() {
   _arguments -C \
     "--model[Model id]:model:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_model_providers() {
   _arguments -C \
     "--agent[Agent whose provider state should be inspected]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_model_auth_login() {
   _arguments -C \
     "--provider[Provider id]:provider:" \
     "--method[Provider auth method id]:method:" \
-    "--agent[Agent id (default: configured default agent)]:agent:"
+    "--agent[Agent id (default: configured default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_model_auth_logout() {
   _arguments -C \
     "--provider[Provider id]:provider:" \
     "--agent[Agent id (default: agents.defaults.systemAgent.agentId, then the sole agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_model_auth_status() {
   _arguments -C \
     "--agent[Agent id (default: configured default agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_model_auth() {
@@ -3154,6 +4252,11 @@ _openclaw_infer_model_auth() {
   
   _arguments -C \
     "--agent[Agent id (default: configured default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'login[Run provider auth login]' 'logout[Remove saved auth profiles for one provider]' 'status[Show configured auth state]'" \
     "*::arg:->args"
 
@@ -3174,6 +4277,11 @@ _openclaw_infer_model() {
   
   _arguments -C \
     "--agent[Agent whose model and auth state should be used]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'auth[Provider auth helpers]' 'inspect[Inspect one model catalog entry]' 'list[List known models]' 'providers[List model providers from the catalog]' 'run[Run a one-shot model turn]'" \
     "*::arg:->args"
 
@@ -3206,7 +4314,12 @@ _openclaw_infer_image_generate() {
     "--timeout-ms[Provider request timeout in milliseconds]:timeoutMs:" \
     "--output[Output path]:output:" \
     "--agent[Agent whose saved provider auth is used (default: agents.defaults.systemAgent.agentId, then the sole agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_image_edit() {
@@ -3226,7 +4339,12 @@ _openclaw_infer_image_edit() {
     "--timeout-ms[Provider request timeout in milliseconds]:timeoutMs:" \
     "--output[Output path]:output:" \
     "--agent[Agent whose saved provider auth is used (default: agents.defaults.systemAgent.agentId, then the sole agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_image_describe() {
@@ -3236,7 +4354,12 @@ _openclaw_infer_image_describe() {
     "--model[Model override]:model:" \
     "--timeout-ms[Provider request timeout in milliseconds]:timeoutMs:" \
     "--agent[Agent whose saved provider auth is used (default: agents.defaults.systemAgent.agentId, then the sole agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_image_describe_many() {
@@ -3246,13 +4369,23 @@ _openclaw_infer_image_describe_many() {
     "--model[Model override]:model:" \
     "--timeout-ms[Provider request timeout in milliseconds]:timeoutMs:" \
     "--agent[Agent whose saved provider auth is used (default: agents.defaults.systemAgent.agentId, then the sole agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_image_providers() {
   _arguments -C \
     "--agent[Agent whose provider state should be inspected]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_image() {
@@ -3261,6 +4394,11 @@ _openclaw_infer_image() {
   
   _arguments -C \
     "--agent[Agent whose model and auth state should be used]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'describe[Describe one image file]' 'describe-many[Describe multiple image files]' 'edit[Edit images with one or more input files]' 'generate[Generate images]' 'providers[List image generation providers]'" \
     "*::arg:->args"
 
@@ -3284,13 +4422,23 @@ _openclaw_infer_audio_transcribe() {
     "--language[Language hint]:language:" \
     "--prompt[Prompt hint]:prompt:" \
     "--model[Model override]:model:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_audio_providers() {
   _arguments -C \
     "--agent[Agent whose provider state should be inspected]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_audio() {
@@ -3299,6 +4447,11 @@ _openclaw_infer_audio() {
   
   _arguments -C \
     "--agent[Agent whose model and auth state should be used]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'providers[List audio transcription providers]' 'transcribe[Transcribe one audio file]'" \
     "*::arg:->args"
 
@@ -3322,13 +4475,23 @@ _openclaw_infer_tts_convert() {
     "--output[Output path]:output:" \
     "--local[Force local execution]" \
     "--gateway[Force gateway execution]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts_voices() {
   _arguments -C \
     "--provider[Speech provider id]:provider:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts_providers() {
@@ -3336,34 +4499,59 @@ _openclaw_infer_tts_providers() {
     "--agent[Agent whose provider state should be inspected]:agent:" \
     "--local[Force local execution]" \
     "--gateway[Force gateway execution]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts_personas() {
   _arguments -C \
     "--local[Force local execution]" \
     "--gateway[Force gateway execution]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts_status() {
   _arguments -C \
     "--gateway[Force gateway execution]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts_enable() {
   _arguments -C \
     "--local[Force local execution]" \
     "--gateway[Force gateway execution]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts_disable() {
   _arguments -C \
     "--local[Force local execution]" \
     "--gateway[Force gateway execution]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts_set_provider() {
@@ -3371,7 +4559,12 @@ _openclaw_infer_tts_set_provider() {
     "--provider[Speech provider id]:provider:" \
     "--local[Force local execution]" \
     "--gateway[Force gateway execution]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts_set_persona() {
@@ -3380,7 +4573,12 @@ _openclaw_infer_tts_set_persona() {
     "--off[Disable the active TTS persona]" \
     "--local[Force local execution]" \
     "--gateway[Force gateway execution]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_tts() {
@@ -3388,7 +4586,11 @@ _openclaw_infer_tts() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'convert[Convert text to speech]' 'disable[Disable TTS]' 'enable[Enable TTS]' 'personas[List TTS personas]' 'providers[List speech providers]' 'set-persona[Set the active TTS persona]' 'set-provider[Set the active TTS provider]' 'status[Show TTS status]' 'voices[List voices for a TTS provider]'" \
     "*::arg:->args"
 
@@ -3422,7 +4624,12 @@ _openclaw_infer_video_generate() {
     "--timeout-ms[Provider request timeout in milliseconds]:timeoutMs:" \
     "--output[Output path]:output:" \
     "--agent[Agent whose saved provider auth is used (default: agents.defaults.systemAgent.agentId, then the sole agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_video_describe() {
@@ -3430,13 +4637,23 @@ _openclaw_infer_video_describe() {
     "--file[Video file]:file:" \
     "--agent[Agent whose model and auth state should be used]:agent:" \
     "--model[Model override]:model:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_video_providers() {
   _arguments -C \
     "--agent[Agent whose provider state should be inspected]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_video() {
@@ -3445,6 +4662,11 @@ _openclaw_infer_video() {
   
   _arguments -C \
     "--agent[Agent whose model and auth state should be used]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'describe[Describe one video file]' 'generate[Generate video]' 'providers[List video generation and description providers]'" \
     "*::arg:->args"
 
@@ -3464,7 +4686,12 @@ _openclaw_infer_web_search() {
     "--query[Search query]:query:" \
     "--provider[Provider id]:provider:" \
     "--limit[Result limit]:limit:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_web_fetch() {
@@ -3472,13 +4699,23 @@ _openclaw_infer_web_fetch() {
     "--url[URL]:url:" \
     "--provider[Provider id]:provider:" \
     "--format[Format hint]:format:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_web_providers() {
   _arguments -C \
     "--agent[Agent whose provider state should be inspected]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_web() {
@@ -3486,7 +4723,11 @@ _openclaw_infer_web() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'fetch[Fetch one URL]' 'providers[List web providers]' 'search[Run web search]'" \
     "*::arg:->args"
 
@@ -3507,13 +4748,23 @@ _openclaw_infer_embedding_create() {
     "--provider[Provider id]:provider:" \
     "--model[Model override]:model:" \
     "--agent[Agent whose saved provider auth is used (default: agents.defaults.systemAgent.agentId, then the sole agent)]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_embedding_providers() {
   _arguments -C \
     "--agent[Agent whose provider state should be inspected]:agent:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_infer_embedding() {
@@ -3522,6 +4773,11 @@ _openclaw_infer_embedding() {
   
   _arguments -C \
     "--agent[Agent whose model and auth state should be used]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'create[Create embeddings]' 'providers[List embedding providers]'" \
     "*::arg:->args"
 
@@ -3540,7 +4796,11 @@ _openclaw_infer() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'audio[Audio transcription]' 'embedding[Embedding providers]' 'image[Image generation and description]' 'inspect[Inspect one canonical capability id]' 'list[List canonical capability ids and supported transports]' 'model[Text inference and model catalog commands]' 'tts[Text to speech]' 'video[Video generation and description]' 'web[Web capabilities]'" \
     "*::arg:->args"
 
@@ -3566,7 +4826,12 @@ _openclaw_approvals_pending() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_approvals_resolve() {
@@ -3576,7 +4841,12 @@ _openclaw_approvals_resolve() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_approvals_grants_list() {
@@ -3585,7 +4855,12 @@ _openclaw_approvals_grants_list() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_approvals_grants_revoke() {
@@ -3593,7 +4868,12 @@ _openclaw_approvals_grants_revoke() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_approvals_grants() {
@@ -3601,7 +4881,11 @@ _openclaw_approvals_grants() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'list[List standing grants, newest first]' 'revoke[Revoke a standing grant; the next occurrence prompts again]'" \
     "*::arg:->args"
 
@@ -3622,7 +4906,12 @@ _openclaw_approvals_get() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_approvals_set() {
@@ -3634,7 +4923,12 @@ _openclaw_approvals_set() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_approvals_allowlist_add() {
@@ -3645,7 +4939,12 @@ _openclaw_approvals_allowlist_add() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_approvals_allowlist_remove() {
@@ -3656,7 +4955,12 @@ _openclaw_approvals_allowlist_remove() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_approvals_allowlist() {
@@ -3664,7 +4968,11 @@ _openclaw_approvals_allowlist() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add a glob pattern to an allowlist]' 'remove[Remove a glob pattern from an allowlist]'" \
     "*::arg:->args"
 
@@ -3683,7 +4991,11 @@ _openclaw_approvals() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'allowlist[Edit the per-agent allowlist]' 'get[Fetch exec approvals snapshot]' 'grants[Standing grants minted by allow-always on automation approvals]' 'pending[List pending exec, plugin, and system-agent approvals]' 'resolve[Resolve a pending approval]' 'set[Replace exec approvals with a JSON file]'" \
     "*::arg:->args"
 
@@ -3712,12 +5024,22 @@ _openclaw_exec_policy_show() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_exec_policy_preset() {
   _arguments -C \
-    "--json[Output as JSON]"
+    "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_exec_policy_set() {
@@ -3726,7 +5048,12 @@ _openclaw_exec_policy_set() {
     "--security[Exec security: deny|allowlist|full]:security:" \
     "--ask[Exec ask mode: off|on-miss|always]:ask:" \
     "--ask-fallback[Host approvals fallback: deny|allowlist|full]:askFallback:" \
-    "--json[Output as JSON]"
+    "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_exec_policy() {
@@ -3734,7 +5061,11 @@ _openclaw_exec_policy() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'preset[Apply a synchronized preset: \"yolo\", \"cautious\", or \"deny-all\"]' 'set[Synchronize local config and host approvals using explicit values]' 'show[Explain terminal tool access and command approvals (offline unless --session)]'" \
     "*::arg:->args"
 
@@ -3756,7 +5087,12 @@ _openclaw_nodes_status() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_describe() {
@@ -3765,7 +5101,12 @@ _openclaw_nodes_describe() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_list() {
@@ -3775,7 +5116,12 @@ _openclaw_nodes_list() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_pending() {
@@ -3783,7 +5129,12 @@ _openclaw_nodes_pending() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_approve() {
@@ -3791,7 +5142,12 @@ _openclaw_nodes_approve() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_reject() {
@@ -3799,7 +5155,12 @@ _openclaw_nodes_reject() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_remove() {
@@ -3808,7 +5169,12 @@ _openclaw_nodes_remove() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_rename() {
@@ -3818,7 +5184,12 @@ _openclaw_nodes_rename() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_invoke() {
@@ -3831,7 +5202,12 @@ _openclaw_nodes_invoke() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_notify() {
@@ -3846,7 +5222,12 @@ _openclaw_nodes_notify() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_push() {
@@ -3858,7 +5239,12 @@ _openclaw_nodes_push() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_camera_list() {
@@ -3867,7 +5253,12 @@ _openclaw_nodes_camera_list() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_camera_snap() {
@@ -3882,7 +5273,12 @@ _openclaw_nodes_camera_snap() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_camera_clip() {
@@ -3896,7 +5292,12 @@ _openclaw_nodes_camera_clip() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_camera() {
@@ -3904,7 +5305,11 @@ _openclaw_nodes_camera() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'clip[Capture a short video clip from a node camera (prints the saved path)]' 'list[List available cameras on a node]' 'snap[Capture a photo from a node camera (prints the saved path)]'" \
     "*::arg:->args"
 
@@ -3931,7 +5336,12 @@ _openclaw_nodes_screen_record() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_screen() {
@@ -3939,7 +5349,11 @@ _openclaw_nodes_screen() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'record[Capture a short screen recording from a node (prints the saved path)]'" \
     "*::arg:->args"
 
@@ -3962,7 +5376,12 @@ _openclaw_nodes_location_get() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_nodes_location() {
@@ -3970,7 +5389,11 @@ _openclaw_nodes_location() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'get[Fetch the current location from a node]'" \
     "*::arg:->args"
 
@@ -3988,7 +5411,11 @@ _openclaw_nodes() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'approve[Approve a pending pairing request]' 'camera[Capture camera media from a paired node]' 'describe[Describe a node (capabilities + supported invoke commands)]' 'invoke[Invoke a command on a paired node]' 'list[List pending and paired nodes]' 'location[Fetch location from a paired node]' 'notify[Send a local notification on a node]' 'pending[List pending pairing requests]' 'push[Send an APNs test push to an iOS node]' 'reject[Reject a pending pairing request]' 'remove[Remove a paired node entry]' 'rename[Rename a paired node (display name override)]' 'screen[Capture screen recordings from a paired node]' 'status[List known nodes with connection status and capabilities]'" \
     "*::arg:->args"
 
@@ -4020,7 +5447,12 @@ _openclaw_devices_list() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices_join_code() {
@@ -4029,7 +5461,12 @@ _openclaw_devices_join_code() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices_remove() {
@@ -4038,7 +5475,12 @@ _openclaw_devices_remove() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices_clear() {
@@ -4049,7 +5491,12 @@ _openclaw_devices_clear() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices_approve() {
@@ -4059,7 +5506,12 @@ _openclaw_devices_approve() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices_reject() {
@@ -4068,7 +5520,12 @@ _openclaw_devices_reject() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices_rename() {
@@ -4079,7 +5536,12 @@ _openclaw_devices_rename() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices_rotate() {
@@ -4092,7 +5554,12 @@ _openclaw_devices_rotate() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices_revoke() {
@@ -4103,7 +5570,12 @@ _openclaw_devices_revoke() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (password auth)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_devices() {
@@ -4111,7 +5583,11 @@ _openclaw_devices() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'approve[Approve a pending device pairing request]' 'clear[Clear paired devices from the gateway table]' 'join-code[Mint a single-use node onboarding URL (not a mobile app setup code; use \`openclaw qr\` for that)]' 'list[List pending and paired devices]' 'reject[Reject a pending device pairing request]' 'remove[Remove a paired device entry]' 'rename[Assign an operator label to a paired device]' 'revoke[Revoke a device token for a role]' 'rotate[Rotate a device token for a role]'" \
     "*::arg:->args"
 
@@ -4137,7 +5613,12 @@ _openclaw_users_list() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_users_link_email() {
@@ -4146,7 +5627,12 @@ _openclaw_users_link_email() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_users_merge() {
@@ -4155,7 +5641,12 @@ _openclaw_users_merge() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_users() {
@@ -4163,7 +5654,11 @@ _openclaw_users() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'link-email[Link an email alias to a user profile]' 'list[List durable user profiles]' 'merge[Merge a duplicate user profile into a surviving profile]'" \
     "*::arg:->args"
 
@@ -4181,7 +5676,12 @@ _openclaw_users() {
 _openclaw_node_worker() {
   _arguments -C \
     "--desktop-sharing[Enable the app's desktop viewer capability]" \
-    "--no-desktop-sharing[Disable the app's desktop viewer capability]"
+    "--no-desktop-sharing[Disable the app's desktop viewer capability]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node_run() {
@@ -4205,17 +5705,32 @@ _openclaw_node_run() {
     "!--auth-from-env[]" \
     "!--parent-stdin[]" \
     "--share-installed-apps[Share installed macOS applications with the Gateway]" \
-    "--no-share-installed-apps[Disable installed application sharing]"
+    "--no-share-installed-apps[Disable installed application sharing]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node_status() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node_identity() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node_install() {
@@ -4235,27 +5750,52 @@ _openclaw_node_install() {
     "--runtime[Service runtime (node|bun). Default: node]:runtime:" \
     "--runtime-path[Pin an absolute Node/Bun executable path]:runtimePath:" \
     "--force[Reinstall/overwrite if already installed]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node_uninstall() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node_stop() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node_start() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node_restart() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_node() {
@@ -4265,6 +5805,11 @@ _openclaw_node() {
   _arguments -C \
     "--commands[Advertise only these exact command ids (comma-separated; repeatable)]:commands:" \
     "--all-commands[Advertise the full default command surface and forget any saved --commands allowlist]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'identity[Print the node host device identity (device id + public key)]' 'install[Install the node host service (launchd/systemd/schtasks)]' 'restart[Restart the node host service (launchd/systemd/schtasks)]' 'run[Run the headless node host (foreground)]' 'start[Start the node host service (launchd/systemd/schtasks)]' 'status[Show node host status]' 'stop[Stop the node host service (launchd/systemd/schtasks)]' 'uninstall[Uninstall the node host service (launchd/systemd/schtasks)]'" \
     "*::arg:->args"
 
@@ -4293,19 +5838,34 @@ _openclaw_connect() {
     "--ephemeral[Run as an environment-managed disposable session host]" \
     "--session-host[Host worker sessions (process-scoped unless installed as a service)]" \
     "--target-file[Read the connect target from a private file and remove it]:targetFile:" \
-    "--display-name[Override the node display name]:displayName:"
+    "--display-name[Override the node display name]:displayName:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_worker() {
   _arguments -C \
     "!--internal-worker-ipc[]" \
-    "!--internal-worker-native-inference[]"
+    "!--internal-worker-native-inference[]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sandbox_list() {
   _arguments -C \
     "--json[Output result as JSON]" \
-    "--browser[List browser containers only]"
+    "--browser[List browser containers only]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sandbox_recreate() {
@@ -4314,14 +5874,24 @@ _openclaw_sandbox_recreate() {
     "--session[Recreate container for specific session]:session:" \
     "--agent[Recreate containers for specific agent]:agent:" \
     "--browser[Only recreate browser containers]" \
-    "--force[Skip confirmation prompt]"
+    "--force[Skip confirmation prompt]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sandbox_explain() {
   _arguments -C \
     "--session[Session key to inspect (defaults to agent main)]:session:" \
     "--agent[Agent id to inspect (defaults to derived agent)]:agent:" \
-    "--json[Output result as JSON]"
+    "--json[Output result as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_sandbox() {
@@ -4329,7 +5899,11 @@ _openclaw_sandbox() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'explain[Explain effective sandbox/tool policy for a session/agent]' 'list[List sandbox containers and their status]' 'recreate[Remove containers to force recreation with updated config]'" \
     "*::arg:->args"
 
@@ -4346,7 +5920,12 @@ _openclaw_sandbox() {
 
 _openclaw_worktrees_list() {
   _arguments -C \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_worktrees_create() {
@@ -4354,7 +5933,12 @@ _openclaw_worktrees_create() {
     "--name[Managed worktree name]:name:" \
     "--base-ref[Git ref to branch from]:baseRef:" \
     "--source-profile[Repository source profile; repeat to combine (default: full source)]:sourceProfile:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_worktrees_remove() {
@@ -4362,7 +5946,12 @@ _openclaw_worktrees_remove() {
     "--force[Remove even if snapshot creation fails]" \
     "--if-lossless[Remove without force only when clean and published]" \
     "--exact-state[Retire detached checkout using an owner-fenced exact-state JSON request]:exactState:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_worktrees_retire_snapshot() {
@@ -4372,26 +5961,46 @@ _openclaw_worktrees_retire_snapshot() {
     "--removed-at[Exact recorded removal time]:removedAt:" \
     "--retained-ref[Retained branch or remote-tracking source ref]:retainedRef:" \
     "--retained-oid[Exact retained source commit]:retainedOid:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_worktrees_recover_removal() {
   _arguments -C \
     "--snapshot[Expected pending snapshot commit]:snapshot:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_worktrees_restore() {
   _arguments -C \
     "--recover-exact-state[Reconcile a completed but unfinalized exact-state retirement using its original JSON request]:recoverExactState:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_worktrees_gc() {
   _arguments -C \
     "--job[Show progress for a previously queued cleanup job]:job:" \
     "--retry-deferred[Reinspect deferred checkouts and retry Git maintenance]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_worktrees() {
@@ -4399,7 +6008,11 @@ _openclaw_worktrees() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'create[Create a managed worktree]' 'gc[Queue background managed worktree cleanup or inspect its progress]' 'list[List active and restorable managed worktrees]' 'recover-removal[Resume interrupted removal from its original clean snapshot]' 'remove[Snapshot and remove a managed worktree]' 'restore[Restore a managed worktree from its snapshot]' 'retire-snapshot[Retire one removed snapshot whose source is retained elsewhere]'" \
     "*::arg:->args"
 
@@ -4427,7 +6040,12 @@ _openclaw_attach() {
     "--tls-fingerprint[Expected Gateway TLS certificate fingerprint]:tlsFingerprint:" \
     "--ttl[Grant TTL in positive base-10 integer milliseconds (default: gateway policy)]:ttl:" \
     "--bin[Claude Code binary to spawn]:bin:" \
-    "--print-config[Mint the grant + write the .mcp.json, print how to launch it, and exit without spawning]"
+    "--print-config[Mint the grant + write the .mcp.json, print how to launch it, and exit without spawning]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_resume() {
@@ -4436,7 +6054,12 @@ _openclaw_resume() {
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
-    "--tls-fingerprint[Expected Gateway TLS certificate fingerprint]:tlsFingerprint:"
+    "--tls-fingerprint[Expected Gateway TLS certificate fingerprint]:tlsFingerprint:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_tui() {
@@ -4451,7 +6074,12 @@ _openclaw_tui() {
     "--thinking[Thinking level override]:thinking:" \
     "--message[Send an initial message after connecting]:message:" \
     "--timeout-ms[Agent timeout in ms (defaults to agents.defaults.timeoutSeconds)]:timeoutMs:" \
-    "--history-limit[History entries to load]:historyLimit:"
+    "--history-limit[History entries to load]:historyLimit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_status() {
@@ -4462,7 +6090,12 @@ _openclaw_cron_status() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_list() {
@@ -4476,7 +6109,12 @@ _openclaw_cron_list() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_add() {
@@ -4543,7 +6181,12 @@ _openclaw_cron_add() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_rm() {
@@ -4554,7 +6197,12 @@ _openclaw_cron_rm() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_enable() {
@@ -4565,7 +6213,12 @@ _openclaw_cron_enable() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_disable() {
@@ -4576,7 +6229,12 @@ _openclaw_cron_disable() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_get() {
@@ -4587,7 +6245,12 @@ _openclaw_cron_get() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_show() {
@@ -4598,7 +6261,12 @@ _openclaw_cron_show() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_runs() {
@@ -4618,7 +6286,12 @@ _openclaw_cron_runs() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_run() {
@@ -4633,7 +6306,12 @@ _openclaw_cron_run() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_scratch() {
@@ -4648,7 +6326,12 @@ _openclaw_cron_scratch() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron_edit() {
@@ -4732,7 +6415,7 @@ _openclaw_cron_edit() {
     "--failure-alert-to[Failure alert destination]:failureAlertTo:" \
     "--failure-alert-cooldown[Minimum time between alerts (e.g. 1h, 30m)]:failureAlertCooldown:" \
     "--failure-alert-include-skipped[Count consecutive skipped runs toward alerts]" \
-    "--failure-alert-exclude-skipped[Alert only on execution errors]" \
+    "--failure-alert-exclude-skipped[Exclude skips except local-provider outages]" \
     "--failure-alert-mode[Failure alert delivery mode (announce or webhook)]:failureAlertMode:" \
     "--failure-alert-account-id[Account ID for failure alert channel (multi-account setups)]:failureAlertAccountId:" \
     "--url[Gateway WebSocket URL (defaults to gateway.remote.url when configured)]:url:" \
@@ -4740,7 +6423,12 @@ _openclaw_cron_edit() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_cron() {
@@ -4754,6 +6442,11 @@ _openclaw_cron() {
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add an automation]' 'create[Add an automation]' 'disable[Disable an automation]' 'edit[Edit an automation (patch fields)]' 'enable[Enable an automation]' 'get[Get an automation as JSON]' 'list[List automations]' 'rm[Remove an automation]' 'remove[Remove an automation]' 'delete[Remove an automation]' 'run[Run an automation now (debug)]' 'runs[Show automation run history]' 'scratch[Read or replace an automation'\''s private scratch]' 'show[Show an automation]' 'status[Show automations scheduler status]'" \
     "*::arg:->args"
 
@@ -4780,7 +6473,12 @@ _openclaw_cron() {
 _openclaw_dns_setup() {
   _arguments -C \
     "--domain[Wide-area discovery domain (e.g. openclaw.internal)]:domain:" \
-    "--apply[Install/update CoreDNS config and (re)start the service (requires sudo)]"
+    "--apply[Install/update CoreDNS config and (re)start the service (requires sudo)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_dns() {
@@ -4788,7 +6486,11 @@ _openclaw_dns() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'setup[Set up CoreDNS to serve your discovery domain for unicast DNS-SD (Wide-Area Bonjour)]'" \
     "*::arg:->args"
 
@@ -4804,19 +6506,34 @@ _openclaw_dns() {
 _openclaw_docs() {
   _arguments -C \
     "--json[Output JSON]" \
-    "--limit[Maximum results to return]:limit:"
+    "--limit[Maximum results to return]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy_start() {
   _arguments -C \
     "--host[Bind host]:host:" \
-    "--port[Bind port]:port:"
+    "--port[Bind port]:port:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy_run() {
   _arguments -C \
     "--host[Bind host]:host:" \
-    "--port[Bind port]:port:"
+    "--port[Bind port]:port:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy_validate() {
@@ -4828,35 +6545,64 @@ _openclaw_proxy_validate() {
     "--denied-url[Destination expected to be blocked by the proxy]:deniedUrl:" \
     "--apns-reachable[Also verify sandbox APNs HTTP/2 is reachable through the proxy]" \
     "--apns-authority[APNs authority to check with --apns-reachable]:apnsAuthority:" \
-    "--timeout-ms[Per-request timeout in milliseconds]:timeoutMs:"
+    "--timeout-ms[Per-request timeout in milliseconds]:timeoutMs:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy_coverage() {
   _arguments -C \
-    "--json[Print machine-readable JSON]"
+    "--json[Print machine-readable JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy_sessions() {
   _arguments -C \
     "--json[Print machine-readable JSON]" \
-    "--limit[Maximum sessions to show]:limit:"
+    "--limit[Maximum sessions to show]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy_query() {
   _arguments -C \
     "--preset[Query preset: double-sends, retry-storms, cache-busting, ws-duplicate-frames, missing-ack, error-bursts]:preset:" \
     "--json[Print machine-readable JSON]" \
-    "--session[Restrict to a capture session id]:session:"
+    "--session[Restrict to a capture session id]:session:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy_blob() {
   _arguments -C \
-    "--id[Blob id]:id:"
+    "--id[Blob id]:id:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy_purge() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_proxy() {
@@ -4864,7 +6610,11 @@ _openclaw_proxy() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'blob[Read a captured payload blob by id]' 'coverage[Report current debug proxy transport coverage and remaining gaps]' 'purge[Delete all captured traffic metadata and blobs]' 'query[Run a built-in query preset against captured traffic]' 'run[Run a child command with OpenClaw debug proxy capture enabled]' 'sessions[List recent capture sessions]' 'start[Start the local explicit debug proxy]' 'validate[Validate the operator-managed network proxy]'" \
     "*::arg:->args"
 
@@ -4889,29 +6639,54 @@ _openclaw_hooks_list() {
     "--agent[Agent id to inspect]:agent:" \
     "--eligible[Show only eligible hooks]" \
     "--json[Output as JSON]" \
-    "(--verbose -v)"{--verbose,-v}"[Show more details including missing requirements]"
+    "(--verbose -v)"{--verbose,-v}"[Show more details including missing requirements]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_hooks_info() {
   _arguments -C \
     "--agent[Agent id to inspect]:agent:" \
-    "--json[Output as JSON]"
+    "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_hooks_check() {
   _arguments -C \
     "--agent[Agent id to inspect]:agent:" \
-    "--json[Output as JSON]"
+    "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_hooks_enable() {
   _arguments -C \
-    "--agent[Agent id whose workspace to inspect]:agent:"
+    "--agent[Agent id whose workspace to inspect]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_hooks_disable() {
   _arguments -C \
-    "--agent[Agent id whose workspace to inspect]:agent:"
+    "--agent[Agent id whose workspace to inspect]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_hooks_relay() {
@@ -4923,7 +6698,12 @@ _openclaw_hooks_relay() {
     "--generation[Native hook relay registration generation]:generation:" \
     "--event[Native hook event]:event:" \
     "--pre-tool-use-unavailable[PreToolUse fallback mode when the originating relay is unavailable]:preToolUseUnavailable:" \
-    "--timeout[Gateway timeout in ms]:timeout:"
+    "--timeout[Gateway timeout in ms]:timeout:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_hooks_install() {
@@ -4931,14 +6711,24 @@ _openclaw_hooks_install() {
     "(--link -l)"{--link,-l}"[Link a local path instead of copying]" \
     "--pin[Record npm installs as exact resolved <name>@<version>]" \
     "--force[Confirm non-ClawHub sources and overwrite an existing hook pack]" \
-    "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]"
+    "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_hooks_update() {
   _arguments -C \
     "--all[Update all tracked hooks]" \
     "--dry-run[Show what would change without writing]" \
-    "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]"
+    "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_hooks() {
@@ -4948,6 +6738,11 @@ _openclaw_hooks() {
   _arguments -C \
     "--agent[Agent id to inspect]:agent:" \
     "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'check[Check hooks eligibility status]' 'disable[Disable a hook]' 'enable[Enable a hook]' 'info[Show detailed information about a hook]' 'install[Deprecated: install a hook pack via \`openclaw plugins install\`]' 'list[List all hooks]' 'update[Deprecated: update hook packs via \`openclaw plugins update\`]'" \
     "*::arg:->args"
 
@@ -4987,7 +6782,12 @@ _openclaw_webhooks_gmail_setup() {
     "--tailscale-path[Path for tailscale serve/funnel]:tailscalePath:" \
     "--tailscale-target[Tailscale serve/funnel target (port, host:port, or URL)]:tailscaleTarget:" \
     "--push-endpoint[Explicit Pub/Sub push endpoint]:pushEndpoint:" \
-    "--json[Output JSON summary]"
+    "--json[Output JSON summary]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_webhooks_gmail_run() {
@@ -5007,7 +6807,12 @@ _openclaw_webhooks_gmail_run() {
     "--renew-minutes[Renew watch every N minutes]:renewMinutes:" \
     "--tailscale[Expose push endpoint via tailscale (funnel|serve|off)]:tailscale:" \
     "--tailscale-path[Path for tailscale serve/funnel]:tailscalePath:" \
-    "--tailscale-target[Tailscale serve/funnel target (port, host:port, or URL)]:tailscaleTarget:"
+    "--tailscale-target[Tailscale serve/funnel target (port, host:port, or URL)]:tailscaleTarget:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_webhooks_gmail() {
@@ -5015,7 +6820,11 @@ _openclaw_webhooks_gmail() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'run[Run gog watch serve + auto-renew loop]' 'setup[Configure Gmail watch + Pub/Sub + OpenClaw hooks]'" \
     "*::arg:->args"
 
@@ -5034,7 +6843,11 @@ _openclaw_webhooks() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'gmail[Gmail Pub/Sub hooks (via gogcli)]'" \
     "*::arg:->args"
 
@@ -5058,7 +6871,12 @@ _openclaw_qr() {
     "--voice-node[Pair a voice node with node, read, and Talk access only]" \
     "--setup-code-only[Print only the setup code]" \
     "--no-ascii[Skip ASCII QR rendering]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_clawbot_qr() {
@@ -5072,7 +6890,12 @@ _openclaw_clawbot_qr() {
     "--voice-node[Pair a voice node with node, read, and Talk access only]" \
     "--setup-code-only[Print only the setup code]" \
     "--no-ascii[Skip ASCII QR rendering]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_clawbot() {
@@ -5080,7 +6903,11 @@ _openclaw_clawbot() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'qr[Generate a mobile pairing QR code and setup code]'" \
     "*::arg:->args"
 
@@ -5097,14 +6924,24 @@ _openclaw_pairing_list() {
   _arguments -C \
     "--channel[Channel (none configured)]:channel:" \
     "--account[Account id (for multi-account channels)]:account:" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_pairing_approve() {
   _arguments -C \
     "--channel[Channel (none configured)]:channel:" \
     "--account[Account id (for multi-account channels)]:account:" \
-    "--notify[Notify the requester on the same channel]"
+    "--notify[Notify the requester on the same channel]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_pairing() {
@@ -5112,7 +6949,11 @@ _openclaw_pairing() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'approve[Approve a pairing code and allow that sender]' 'list[List pending pairing requests]'" \
     "*::arg:->args"
 
@@ -5130,37 +6971,66 @@ _openclaw_plugins_list() {
   _arguments -C \
     "--json[Print JSON]" \
     "--enabled[Only show enabled plugins]" \
-    "--verbose[Show detailed entries]"
+    "--verbose[Show detailed entries]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_search() {
   _arguments -C \
     "--limit[Max results]:limit:" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_inspect() {
   _arguments -C \
     "--all[Inspect all plugins]" \
     "--runtime[Load plugin runtime for hooks/tools/diagnostics]" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_enable() {
   _arguments -C \
-    "--accept-capabilities[Accept each plugin's declared capabilities]"
+    "--accept-capabilities[Accept each plugin's declared capabilities]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_disable() {
   _arguments -C \
-    
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_reload() {
   _arguments -C \
     "--accept-capabilities[Accept changed declared capabilities]" \
     "--wait[Wait for admitted work without a deadline; Ctrl-C cancels the wait]" \
-    "--json[Print the applied runtime generation]"
+    "--json[Print the applied runtime generation]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_uninstall() {
@@ -5168,7 +7038,12 @@ _openclaw_plugins_uninstall() {
     "--keep-files[Keep installed files on disk]" \
     "--keep-config[Deprecated alias for --keep-files]" \
     "--force[Skip confirmation prompt]" \
-    "--dry-run[Show what would be removed without making changes]"
+    "--dry-run[Show what would be removed without making changes]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_install() {
@@ -5180,7 +7055,12 @@ _openclaw_plugins_install() {
     "--accept-capabilities[Accept the plugin's declared capabilities]" \
     "--dangerously-force-unsafe-install[Deprecated no-op; security.installPolicy may still block]" \
     "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]" \
-    "--marketplace[Install a Claude marketplace plugin from a local repo/path or git/GitHub source]:marketplace:"
+    "--marketplace[Install a Claude marketplace plugin from a local repo/path or git/GitHub source]:marketplace:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_update() {
@@ -5189,39 +7069,69 @@ _openclaw_plugins_update() {
     "--dry-run[Show what would change without writing]" \
     "--accept-capabilities[Accept widened plugin capabilities]" \
     "--dangerously-force-unsafe-install[Deprecated no-op; security.installPolicy may still block]" \
-    "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]"
+    "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_registry() {
   _arguments -C \
     "--json[Print JSON]" \
-    "--refresh[Rebuild the persisted registry from current plugin manifests]"
+    "--refresh[Rebuild the persisted registry from current plugin manifests]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_doctor() {
   _arguments -C \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_build() {
   _arguments -C \
     "--root[Plugin package root]:root:" \
     "--entry[Plugin entry module relative to --root]:entry:" \
-    "--check[Fail if generated metadata is out of date]"
+    "--check[Fail if generated metadata is out of date]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_validate() {
   _arguments -C \
     "--root[Plugin package root]:root:" \
     "--entry[Plugin entry module relative to --root]:entry:" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_pack() {
   _arguments -C \
     "--root[Plugin package root]:root:" \
     "--out[Output .tgz file (must not exist)]:out:" \
-    "--json[Print the artifact path, SHA256, and activation request]"
+    "--json[Print the artifact path, SHA256, and activation request]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_init() {
@@ -5229,7 +7139,12 @@ _openclaw_plugins_init() {
     "--directory[Output directory]:directory:" \
     "--name[Display name]:name:" \
     "--type[Scaffold type (tool, provider, or feature)]:type:" \
-    "--force[Overwrite an existing output directory]"
+    "--force[Overwrite an existing output directory]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_marketplace_entries() {
@@ -5237,7 +7152,12 @@ _openclaw_plugins_marketplace_entries() {
     "--feed-profile[Configured marketplace feed profile to list]:feedProfile:" \
     "--feed-url[Explicit hosted marketplace feed URL]:feedUrl:" \
     "--offline[Read the latest accepted snapshot without fetching the feed]" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_marketplace_refresh() {
@@ -5245,12 +7165,22 @@ _openclaw_plugins_marketplace_refresh() {
     "--feed-profile[Configured marketplace feed profile to refresh]:feedProfile:" \
     "--feed-url[Explicit hosted marketplace feed URL]:feedUrl:" \
     "--expected-sha256[Expected hosted feed SHA-256 payload checksum]:expectedSha256:" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_marketplace_list() {
   _arguments -C \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_plugins_marketplace() {
@@ -5258,7 +7188,11 @@ _openclaw_plugins_marketplace() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'entries[List entries from the configured OpenClaw marketplace feed]' 'list[List plugins published by a marketplace source]' 'refresh[Refresh the configured OpenClaw marketplace feed snapshot]'" \
     "*::arg:->args"
 
@@ -5278,7 +7212,11 @@ _openclaw_plugins() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'build[Build plugin metadata and native Control UI assets]' 'disable[Disable one or more plugins in config]' 'doctor[Report plugin load issues]' 'enable[Enable one or more plugins in config]' 'init[Create a plugin project]' 'inspect[Inspect plugin details]' 'info[Inspect plugin details]' 'install[Install a plugin or hook pack (path, archive, npm spec, git repo, clawhub:package, or marketplace entry)]' 'list[List discovered plugins]' 'marketplace[Inspect Claude-compatible plugin marketplaces]' 'pack[Bundle a built plugin into an exact artifact for activation approval]' 'registry[Inspect or rebuild the persisted plugin registry]' 'reload[Reload one or more plugins in the running Gateway]' 'search[Search ClawHub plugin packages]' 'uninstall[Uninstall one or more plugin packages]' 'update[Update installed plugins and tracked hook packs]' 'validate[Validate plugin metadata and native Control UI assets]'" \
     "*::arg:->args"
 
@@ -5309,7 +7247,12 @@ _openclaw_plugins() {
 _openclaw_channels_list() {
   _arguments -C \
     "--all[Include bundled and installable catalog channels]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_status() {
@@ -5317,7 +7260,12 @@ _openclaw_channels_status() {
     "--channel[Only show one channel (all|telegram|whatsapp|discord|irc|googlechat|slack|signal|imessage|feishu|nostr|buzz|msteams|mattermost|nextcloud-talk|matrix|raft|a2a|line|zalo|clickclack|x|zalouser|sms|synology-chat|tlon|qa-channel|reef|twitch)]:channel:" \
     "--probe[Check channel credentials]" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_capabilities() {
@@ -5327,7 +7275,12 @@ _openclaw_channels_capabilities() {
     "--account[Account id (only with --channel)]:account:" \
     "--target[Channel target for permission audit (Discord channel:<id>)]:target:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_resolve() {
@@ -5336,14 +7289,24 @@ _openclaw_channels_resolve() {
     "--account[Account id (accountId)]:account:" \
     "--agent[Agent owner for channel resolution]:agent:" \
     "--kind[Target kind (auto|user|group|channel)]:kind:(auto user group channel)" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_logs() {
   _arguments -C \
     "--channel[Channel (all|telegram|whatsapp|discord|irc|googlechat|slack|signal|imessage|feishu|nostr|buzz|msteams|mattermost|nextcloud-talk|matrix|raft|a2a|line|zalo|clickclack|x|zalouser|sms|synology-chat|tlon|qa-channel|reef|twitch; default: all)]:channel:" \
     "--lines[Number of lines (default: 200)]:lines:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_dead_letters_list() {
@@ -5351,14 +7314,24 @@ _openclaw_channels_dead_letters_list() {
     "--channel[Channel id]:channel:" \
     "--account[Account id]:account:" \
     "--limit[Maximum entries]:limit:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_dead_letters_resubmit() {
   _arguments -C \
     "--channel[Channel id]:channel:" \
     "--account[Account id]:account:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_dead_letters() {
@@ -5367,6 +7340,11 @@ _openclaw_channels_dead_letters() {
   
   _arguments -C \
     "--account[Account id]:account:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'list[List failed inbound events for one channel account]' 'resubmit[Re-enqueue one failed inbound event]'" \
     "*::arg:->args"
 
@@ -5454,7 +7432,11 @@ _openclaw_channels_add() {
     "--signing-secret[Slack signing secret]:signingSecret:" \
     "--identity[Slack identity]:identity:" \
     "--mode[Slack connection mode]:mode:" \
-    "--auth-dir[WhatsApp auth directory override]:authDir:"
+    "--auth-dir[WhatsApp auth directory override]:authDir:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_remove() {
@@ -5462,7 +7444,12 @@ _openclaw_channels_remove() {
     "--agent[Agent owner for channel discovery]:agent:" \
     "--channel[Channel (telegram|whatsapp|discord|irc|googlechat|slack|signal|imessage|feishu|nostr|buzz|msteams|mattermost|nextcloud-talk|matrix|raft|a2a|line|zalo|clickclack|x|zalouser|sms|synology-chat|tlon|qa-channel|reef|twitch)]:channel:" \
     "--account[Account id (default when omitted)]:account:" \
-    "--delete[Delete config entries (no prompt)]"
+    "--delete[Delete config entries (no prompt)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_login() {
@@ -5470,14 +7457,24 @@ _openclaw_channels_login() {
     "--agent[Agent owner for channel discovery]:agent:" \
     "--channel[Channel alias (auto when only one is configured)]:channel:" \
     "--account[Account id (accountId)]:account:" \
-    "--verbose[Verbose connection logs]"
+    "--verbose[Verbose connection logs]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels_logout() {
   _arguments -C \
     "--agent[Agent owner for channel discovery]:agent:" \
     "--channel[Channel alias (auto when only one is configured)]:channel:" \
-    "--account[Account id (accountId)]:account:"
+    "--account[Account id (accountId)]:account:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_channels() {
@@ -5486,6 +7483,11 @@ _openclaw_channels() {
   
   _arguments -C \
     "--agent[Agent owner for channel commands that require workspace context]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'add[Add or update a channel account]' 'capabilities[Show provider capabilities (intents/scopes + supported features)]' 'dead-letters[Inspect and resubmit failed inbound channel events]' 'list[List chat channels (configured by default; pass --all for installable catalog)]' 'login[Link a channel account (if supported)]' 'logout[Log out of a channel session (if supported)]' 'logs[Show recent channel logs from the gateway log file]' 'remove[Disable or delete a channel account]' 'resolve[Resolve channel/user names to IDs]' 'status[Show channel status (use openclaw status --deep for a full connection check)]'" \
     "*::arg:->args"
 
@@ -5511,7 +7513,12 @@ _openclaw_directory_self() {
   _arguments -C \
     "--channel[Channel (auto when only one is configured)]:channel:" \
     "--account[Account id (accountId)]:account:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_directory_peers_list() {
@@ -5520,7 +7527,12 @@ _openclaw_directory_peers_list() {
     "--account[Account id (accountId)]:account:" \
     "--json[Output JSON]" \
     "--query[Optional search query]:query:" \
-    "--limit[Limit results]:limit:"
+    "--limit[Limit results]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_directory_peers() {
@@ -5528,7 +7540,11 @@ _openclaw_directory_peers() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'list[List peers]'" \
     "*::arg:->args"
 
@@ -5547,7 +7563,12 @@ _openclaw_directory_groups_list() {
     "--account[Account id (accountId)]:account:" \
     "--json[Output JSON]" \
     "--query[Optional search query]:query:" \
-    "--limit[Limit results]:limit:"
+    "--limit[Limit results]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_directory_groups_members() {
@@ -5556,7 +7577,12 @@ _openclaw_directory_groups_members() {
     "--channel[Channel (auto when only one is configured)]:channel:" \
     "--account[Account id (accountId)]:account:" \
     "--json[Output JSON]" \
-    "--limit[Limit results]:limit:"
+    "--limit[Limit results]:limit:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_directory_groups() {
@@ -5564,7 +7590,11 @@ _openclaw_directory_groups() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'list[List groups]' 'members[List group members]'" \
     "*::arg:->args"
 
@@ -5583,7 +7613,11 @@ _openclaw_directory() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'groups[Group directory]' 'peers[Peer directory (contacts/users)]' 'self[Show the current account user]'" \
     "*::arg:->args"
 
@@ -5605,7 +7639,12 @@ _openclaw_security_audit() {
     "--token[Use explicit gateway token for deep check auth]:token:" \
     "--password[Use explicit gateway password for deep check auth]:password:" \
     "--fix[Apply safe fixes (tighten defaults + chmod state/config)]" \
-    "--json[Print JSON]"
+    "--json[Print JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_security() {
@@ -5613,7 +7652,11 @@ _openclaw_security() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'audit[Audit config + local state for common security foot-guns]'" \
     "*::arg:->args"
 
@@ -5630,7 +7673,12 @@ _openclaw_secrets_store_list() {
   _arguments -C \
     "--scope[Store scope]:scope:" \
     "--json[Output JSON]" \
-    "--plain[Output tab-separated rows]"
+    "--plain[Output tab-separated rows]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets_store_set() {
@@ -5641,21 +7689,36 @@ _openclaw_secrets_store_set() {
     "--allow-host[Allow substitution only for this exact host (repeatable)]:allowHost:" \
     "--clear-allowed-hosts[Remove all allowed hosts]" \
     "--scope[Store scope]:scope:" \
-    "--dry-run[Validate without writing]"
+    "--dry-run[Validate without writing]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets_store_get() {
   _arguments -C \
     "--scope[Store scope]:scope:" \
     "--json[Output JSON]" \
-    "--plain[Output only the env value]"
+    "--plain[Output only the env value]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets_store_rm() {
   _arguments -C \
     "--scope[Store scope]:scope:" \
     "--dry-run[Show what would be removed]" \
-    "--yes[Skip confirmation]"
+    "--yes[Skip confirmation]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets_store_import() {
@@ -5664,7 +7727,12 @@ _openclaw_secrets_store_import() {
     "--kind[Override the detected kind for all entries]:kind:" \
     "--scope[Store scope]:scope:" \
     "--dry-run[Validate without writing]" \
-    "--yes[Skip confirmation]"
+    "--yes[Skip confirmation]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets_store() {
@@ -5672,7 +7740,11 @@ _openclaw_secrets_store() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'get[Read an env-kind value; secret-kind values are write-only]' 'import[Import dotenv-formatted entries from a file or stdin]' 'list[List stored names and non-secret metadata]' 'rm[Soft-delete one or more entries]' 'set[Create or update one store entry]'" \
     "*::arg:->args"
 
@@ -5697,14 +7769,24 @@ _openclaw_secrets_reload() {
     "--token[Gateway token (if required)]:token:" \
     "--password[Gateway password (if required)]:password:" \
     "--timeout[Timeout in ms]:timeout:" \
-    "--expect-final[Wait for final response (agent)]"
+    "--expect-final[Wait for final response (agent)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets_audit() {
   _arguments -C \
     "--check[Exit non-zero when findings are present]" \
     "--allow-exec[Allow exec SecretRef resolution during audit (may execute provider commands)]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets_configure() {
@@ -5716,7 +7798,12 @@ _openclaw_secrets_configure() {
     "--agent[Agent id for auth-profiles targets (default: configured default agent)]:agent:" \
     "--allow-exec[Allow exec SecretRef preflight checks (may execute provider commands)]" \
     "--plan-out[Write generated plan JSON to a file (max 16 MiB)]:planOut:" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets_apply() {
@@ -5724,7 +7811,12 @@ _openclaw_secrets_apply() {
     "--from[Path to plan JSON (max 16 MiB)]:from:" \
     "--dry-run[Validate/preflight only]" \
     "--allow-exec[Allow exec SecretRef checks (may execute provider commands)]" \
-    "--json[Output JSON]"
+    "--json[Output JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_secrets() {
@@ -5732,7 +7824,11 @@ _openclaw_secrets() {
   local -a options
   
   _arguments -C \
-     \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'apply[Apply a previously generated secrets plan]' 'audit[Audit plaintext secrets, unresolved refs, and precedence drift]' 'configure[Interactive secrets helper (provider setup + SecretRef mapping + preflight)]' 'reload[Re-resolve secret references and atomically swap runtime snapshot]' 'store[Manage the team-scoped SQLite secret and environment store]'" \
     "*::arg:->args"
 
@@ -5759,7 +7855,12 @@ _openclaw_skills_library_list() {
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
     "--scope[Library scope]:scope:(mine team all)" \
-    "--session[Include this session’s selected revisions and attachable skills]:session:"
+    "--session[Include this session’s selected revisions and attachable skills]:session:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_read() {
@@ -5772,7 +7873,12 @@ _openclaw_skills_library_read() {
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
     "--revision[Read a retained revision]:revision:" \
-    "--session[Read an exact session pin (requires --revision)]:session:"
+    "--session[Read an exact session pin (requires --revision)]:session:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_create() {
@@ -5784,7 +7890,12 @@ _openclaw_skills_library_create() {
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
-    "--slug[Library name (lowercase letters, digits, hyphens)]:slug:"
+    "--slug[Library name (lowercase letters, digits, hyphens)]:slug:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_update() {
@@ -5798,7 +7909,12 @@ _openclaw_skills_library_update() {
     "--json[Output as JSON]" \
     "--expected-revision[Current revision from library read; conflicts never overwrite]:expectedRevision:" \
     "--slug[Change the library name]:slug:" \
-    "--delete-file[Explicitly remove a supporting file (repeatable)]:deleteFile:"
+    "--delete-file[Explicitly remove a supporting file (repeatable)]:deleteFile:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_import() {
@@ -5812,7 +7928,12 @@ _openclaw_skills_library_import() {
     "--json[Output as JSON]" \
     "--slug[Destination name in your personal library]:slug:" \
     "--clawhub[Read source from ClawHub; never publishes your files]" \
-    "--version[ClawHub version]:version:"
+    "--version[ClawHub version]:version:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_remove() {
@@ -5824,7 +7945,12 @@ _openclaw_skills_library_remove() {
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
-    "--expected-revision[Current revision from library read]:expectedRevision:"
+    "--expected-revision[Current revision from library read]:expectedRevision:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_share() {
@@ -5836,7 +7962,12 @@ _openclaw_skills_library_share() {
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
-    "--expected-revision[Current revision from library read]:expectedRevision:"
+    "--expected-revision[Current revision from library read]:expectedRevision:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_unshare() {
@@ -5848,7 +7979,12 @@ _openclaw_skills_library_unshare() {
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
-    "--expected-revision[Current revision from library read]:expectedRevision:"
+    "--expected-revision[Current revision from library read]:expectedRevision:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_transfer() {
@@ -5860,7 +7996,12 @@ _openclaw_skills_library_transfer() {
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
-    "--expected-revision[Current revision from library read]:expectedRevision:"
+    "--expected-revision[Current revision from library read]:expectedRevision:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_enable() {
@@ -5872,7 +8013,12 @@ _openclaw_skills_library_enable() {
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
-    "--expected-revision[Current revision from library read]:expectedRevision:"
+    "--expected-revision[Current revision from library read]:expectedRevision:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_disable() {
@@ -5884,7 +8030,12 @@ _openclaw_skills_library_disable() {
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
-    "--expected-revision[Current revision from library read]:expectedRevision:"
+    "--expected-revision[Current revision from library read]:expectedRevision:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_rollback() {
@@ -5897,7 +8048,12 @@ _openclaw_skills_library_rollback() {
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
     "--expected-revision[Current revision from library read]:expectedRevision:" \
-    "--revision[Retained revision to restore]:revision:"
+    "--revision[Retained revision to restore]:revision:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_attach() {
@@ -5911,7 +8067,12 @@ _openclaw_skills_library_attach() {
     "--json[Output as JSON]" \
     "--session[Exact target session key]:session:" \
     "--skill-id[Stable library skill ID]:skillId:" \
-    "--revision[Retained revision to select]:revision:"
+    "--revision[Retained revision to select]:revision:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_detach() {
@@ -5924,7 +8085,12 @@ _openclaw_skills_library_detach() {
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
     "--session[Exact target session key]:session:" \
-    "--skill-id[Stable library skill ID]:skillId:"
+    "--skill-id[Stable library skill ID]:skillId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library_refresh() {
@@ -5937,7 +8103,12 @@ _openclaw_skills_library_refresh() {
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
     "--session[Exact target session key]:session:" \
-    "--skill-id[Refresh only this selected skill; omit to refresh all]:skillId:"
+    "--skill-id[Refresh only this selected skill; omit to refresh all]:skillId:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_library() {
@@ -5952,6 +8123,11 @@ _openclaw_skills_library() {
     "--timeout[Timeout in ms]:timeout:" \
     "--expect-final[Wait for final response (agent)]" \
     "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'attach[Attach managed selections explicitly for the next session turn]' 'create[Save a private skill from SKILL.md or a complete local directory]' 'detach[Detach managed selections explicitly for the next session turn]' 'disable[Disable a managed skill]' 'enable[Enable a managed skill]' 'import[Privately import a local bundle, ZIP, or ClawHub skill]' 'list[List your own and visible shared skills]' 'read[Read the complete SKILL.md, supporting files, and revision history]' 'refresh[Refresh managed selections explicitly for the next session turn]' 'remove[Remove a managed skill]' 'rollback[Rollback a managed skill]' 'share[Share a managed skill]' 'transfer[Transfer ownership to the team (administrator only)]' 'unshare[Unshare a managed skill]' 'update[Save a revision; a single SKILL.md preserves supporting files, a directory replaces the bundle]'" \
     "*::arg:->args"
 
@@ -5981,7 +8157,12 @@ _openclaw_skills_library() {
 _openclaw_skills_search() {
   _arguments -C \
     "--limit[Max results]:limit:" \
-    "--json[Output as JSON]"
+    "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_install() {
@@ -5992,7 +8173,12 @@ _openclaw_skills_install() {
     "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]" \
     "--global[Install into the shared managed skills directory]" \
     "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:" \
-    "--as[Install a git/local skill under this slug]:as:"
+    "--as[Install a git/local skill under this slug]:as:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_update() {
@@ -6002,7 +8188,12 @@ _openclaw_skills_update() {
     "--force-install[Install a pending GitHub-backed skill before ClawHub scan completes]" \
     "--acknowledge-install-policy-warning[Acknowledge security.installPolicy warnings without prompting; blocks and failures remain terminal]" \
     "--global[Update skills in the shared managed skills directory]" \
-    "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_verify() {
@@ -6012,20 +8203,35 @@ _openclaw_skills_verify() {
     "--card[Print the generated Skill Card Markdown]" \
     "--json[Output as JSON]" \
     "--global[Resolve installed skill metadata from the shared managed skills directory]" \
-    "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_workshop_list() {
   _arguments -C \
     "--json[Output as JSON]" \
-    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_workshop_changes() {
   _arguments -C \
     "--limit[Max changes]:limit:" \
     "--json[Output as JSON]" \
-    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_workshop_show() {
@@ -6033,21 +8239,36 @@ _openclaw_skills_workshop_show() {
     "--file[Skill file to print (default SKILL.md)]:file:" \
     "--version[Print a saved version instead of the live skill]:version:" \
     "--json[Output as JSON]" \
-    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_workshop_archive() {
   _arguments -C \
     "--reason[Why the skill is archived]:reason:" \
     "--json[Output as JSON]" \
-    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_workshop_restore() {
   _arguments -C \
     "--version[Version to restore (default newest)]:version:" \
     "--json[Output as JSON]" \
-    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_workshop() {
@@ -6056,6 +8277,11 @@ _openclaw_skills_workshop() {
   
   _arguments -C \
     "--agent[Target agent (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'archive[Archive a learned skill so its agent no longer sees it]' 'changes[Show recent learned-skill changes]' 'list[List learned skills and archived skills]' 'restore[Restore an archived skill or a saved version]' 'show[Print a learned skill file]'" \
     "*::arg:->args"
 
@@ -6077,19 +8303,34 @@ _openclaw_skills_list() {
     "--json[Output as JSON]" \
     "--eligible[Show only eligible (ready to use) skills]" \
     "(--verbose -v)"{--verbose,-v}"[Show more details including missing requirements]" \
-    "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_info() {
   _arguments -C \
     "--json[Output as JSON]" \
-    "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:"
+    "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills_check() {
   _arguments -C \
     "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:" \
-    "--json[Output as JSON]"
+    "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_skills() {
@@ -6099,6 +8340,11 @@ _openclaw_skills() {
   _arguments -C \
     "--agent[Target agent workspace (defaults to cwd-inferred, then default agent)]:agent:" \
     "--json[Output as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'check[Check which skills are ready, visible, or missing requirements]' 'info[Show detailed information about a skill]' 'install[Install a skill from ClawHub, git, or a local directory]' 'library[Manage authenticated personal and team skill libraries]' 'list[List all available skills]' 'search[Search ClawHub skills]' 'update[Update ClawHub-installed skills in the active or shared managed directory]' 'verify[Verify a ClawHub skill with ClawHub]' 'workshop[Inspect, archive, and restore learned Workshop skills]'" \
     "*::arg:->args"
 
@@ -6130,7 +8376,11 @@ _openclaw_update_adopt_immutable() {
     "--profile[Existing Gateway profile]:profile:" \
     "--enable-activation[Enable native activation and recovery in the adoption record]" \
     "--previous-updater-stopped[Confirm the previous updater has settled and stopped scheduling]" \
-    "--json[Output result as JSON]"
+    "--json[Output result as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update_recover() {
@@ -6138,19 +8388,34 @@ _openclaw_update_recover() {
     "--root[Stable adopted installation root]:root:" \
     "--timeout[Bound readiness verification in seconds]:timeout:" \
     "--drain-timeout[Set the drain budget if recovery must stop an unhealthy service]:drainTimeout:" \
-    "--json[Output result as JSON]"
+    "--json[Output result as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update_admit() {
   _arguments -C \
-    "--context[Absolute path to the private admission context]:context:"
+    "--context[Absolute path to the private admission context]:context:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update_cleanup() {
   _arguments -C \
     "--dry-run[Inspect recovery metadata without writes]" \
     "--json[Output one JSON result; never implies consent]" \
-    "--yes[Acknowledge permanent loss of the selected rollback originals]"
+    "--yes[Acknowledge permanent loss of the selected rollback originals]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update_repair() {
@@ -6160,7 +8425,12 @@ _openclaw_update_repair() {
     "--timeout[Override per-phase repair deadlines in seconds]:timeout:" \
     "--yes[Skip confirmation prompts (non-interactive)]" \
     "--accept-capabilities[Accept widened plugin capabilities]" \
-    "--no-restart[Skip updater restart (package Gateways may restart themselves)]"
+    "--no-restart[Skip updater restart (package Gateways may restart themselves)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update_finalize() {
@@ -6170,7 +8440,12 @@ _openclaw_update_finalize() {
     "--timeout[Override per-phase repair deadlines in seconds]:timeout:" \
     "--yes[Skip confirmation prompts (non-interactive)]" \
     "--accept-capabilities[Accept widened plugin capabilities]" \
-    "--no-restart[Skip updater restart (package Gateways may restart themselves)]"
+    "--no-restart[Skip updater restart (package Gateways may restart themselves)]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update_migration_plan() {
@@ -6179,19 +8454,34 @@ _openclaw_update_migration_plan() {
     "--snapshot-config[Copied OpenClaw config]:snapshotConfig:" \
     "--snapshot-state[Copied OpenClaw state directory]:snapshotState:" \
     "--dry-run[Accepted for parity; migration planning is always read-only]" \
-    "--json[Output result as JSON]"
+    "--json[Output result as JSON]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update_wizard() {
   _arguments -C \
     "--accept-capabilities[Accept widened plugin capabilities]" \
-    "--timeout[Set a per-step deadline in seconds]:timeout:"
+    "--timeout[Set a per-step deadline in seconds]:timeout:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update_status() {
   _arguments -C \
     "--json[Output result as JSON]" \
-    "--timeout[Timeout for update checks in seconds (default: 3)]:timeout:"
+    "--timeout[Timeout for update checks in seconds (default: 3)]:timeout:" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]"
 }
 
 _openclaw_update() {
@@ -6211,6 +8501,11 @@ _openclaw_update() {
     "--yes[Skip confirmation prompts (non-interactive)]" \
     "--reapply-local-overrides[Replay trusted packaged dist edits when the target baseline is unchanged]" \
     "--accept-capabilities[Accept widened plugin capabilities]" \
+    "--container[Run the CLI inside a running Podman/Docker container named <name> (default: env OPENCLAW_CONTAINER)]:container:" \
+    "--dev[Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)]" \
+    "--profile[Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)]:profile:" \
+    "--log-level[Global log level override for file + console (silent|fatal|error|warn|info|debug|trace)]:logLevel:" \
+    "--no-color[Disable ANSI colors]" \
     "1: :_values 'command' 'adopt-immutable[Explicitly record ownership of an existing sealed release installation]' 'cleanup[Retire verified update recovery originals after acknowledging rollback loss]' 'recover[Resume a retained immutable activation without restarting a healthy Gateway]' 'repair[Reconcile abandoned updates or repair post-update doctor and plugin convergence]' 'status[Show update channel and version status]' 'wizard[Interactive update wizard]'" \
     "*::arg:->args"
 
