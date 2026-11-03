@@ -305,8 +305,11 @@ Tracked setup artifacts:
 - `openclaw.json`, `openclaw.json.last-good`, and `openclaw.json.pre-update`
   (credential fields use `${VAR}` references only; the routing identifiers
   stay real because these are the running instance's configuration)
-- `workspace/` (agent instructions, identity, soul, compact memory routing,
-  avatar, scripts, and this document)
+- `docs/`, `scripts/`, `tests/`, maintained plugin source and Git tooling
+- agent definitions (`AGENTS.md`, `IDENTITY.md`, `SOUL.md`, avatars), explicitly
+  selected setup/automation source under `workspace/`, and skill source under
+  `skills/`, `workspace*/skills/`, `workspace*/.agents/skills/`, and
+  `agents/*/agent/workshop-skills/`
 
 Ignored deliberately:
 
@@ -317,17 +320,24 @@ Ignored deliberately:
   `/agents/*/codex-home/`, the regenerable `/npm/` plugin sandbox, and generated
   absolute symlinks under `/plugin-skills/`
 - `config-journal-fingerprint.key`
-- the generated memory state: `workspace/memory/**`, `workspace/DREAMS.md`,
-  `workspace-kalle-kief/memory/**`, `workspace-kalle-kief/DREAMS.md` and
-  `workspace-kalle-kief/MEMORY.md` (session corpora, dream reports, daily
-  notes, recall event streams, promoted personal memories) — runtime state that
-  is regenerated on the host and is private by nature
-- `workspace/USER.md` — the owner-facing user model with contact details and
-  platform identifiers
+- workspace content by default, including every agent's `USER.md`, `MEMORY.md`,
+  daily notes, dreams, personal projects, task lists, reports, media and databases;
+  only the source exceptions above are tracked, including for future workspaces
+- generated shell completions, update reports, backup archives, sandboxes,
+  credentials and `.env` backup variants
+- `workspace-mail-reader/`, which is a separate local repository and must not
+  become an embedded gitlink in this setup repository
 - `agents/*/agent/workshop-skills/.archive/` — per-skill undo snapshots of
   earlier versions, not skill source
 
-Keep live credentials and runtime state out of Git. Before pushing, review `git status` and the staged diff from `/home/shelldon/.openclaw`; personal data and secrets must not enter the repository.
+The root `.gitignore` is an allowlist: new top-level paths stay private until
+explicitly admitted as setup source. When a tracked path becomes private, remove
+only its index entry (`git rm --cached`), preserving the working file. This does
+not erase that file from older commits.
+
+Current maintenance stays local: commit reviewed setup changes, but do not push
+without a separate owner request. Keep live credentials and runtime state out of
+Git; inspect `git status` and the staged diff before each commit.
 
 ### Public-repository identifier policy
 
