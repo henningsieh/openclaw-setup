@@ -108,12 +108,11 @@ description: "Change a default/fallback model route, fix a missing /models entry
    --prompt "Reply with exactly: ok" --json`. Finish when the id exists upstream, the catalog shows
    no duplicate, and the probe returns the exact string.
 
-3. **Only when a route change was requested, set primary and fallbacks through the CLI.**
-   `openclaw models set <provider/model>`, then
-   `openclaw models fallbacks clear` and `openclaw models fallbacks add <model>` per entry. A
-   `not in the local model catalog` warning is not proof that the route will work; run a direct probe
-   before relying on it. Finish when `openclaw models fallbacks list --json` shows exactly the intended
-   list and each model remains listed by its provider.
+3. Change only requested primary, thinking and fallback fields; preserve existing fallbacks unless the user explicitly changes them. Inspect `agents.defaults.model`, `agents.defaults.thinkingDefault`, and each `agents.entries.<id>` first. Remove a per-agent `model` or `thinkingDefault` override when the requested value should inherit the shared default. For a requested Codex route, consult the installed OpenAI runtime docs and model catalog: use the canonical `openai/<model>` reference and, when native Codex is required, set `agents.entries.<id>.models["openai/<model>"].agentRuntime.id` to `codex`.
+
+   For an atomic multi-agent change through the running Gateway, first use `gateway` `config.schema.lookup` on each affected path to verify it hot-applies, then read `gateway` `config.get` for a current `hash`. Submit a JSON merge patch with `openclaw gateway call config.patch --params '<JSON>' --timeout 60000 --json`, where the JSON object has `baseHash` equal to that hash and `raw` equal to the serialized partial patch; use `null` for an override that must be deleted. Verify `ok`, `changedPaths`, and `restart` in the response, then reread the config. Respect a no-restart instruction and do not commit when the user requests a preview first.
+
+   Verify each agent with `openclaw gateway call models.list --params '{"agentId":"<id>"}' --json`: the row tagged `default` must have the expected provider/model, `thinkingDefault`, availability, and runtime. For changed routes, use `openclaw infer model run --agent <id> --gateway --prompt 'Reply with exactly ROUTE_OK' --json`; require `ok`, the expected provider/model, and exact output with no fallback attempts. This tests the Gateway's raw model route, not the existing chat session. Check existing session selections separately and leave explicit overrides untouched unless requested.
 
    **Write every path of a multi-field change in one call, and confirm the provider id is current.**
    Chained `openclaw config set <path> <value>` calls each re-read the file, so a concurrent writer

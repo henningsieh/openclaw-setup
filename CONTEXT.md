@@ -268,14 +268,11 @@ sudo journalctl -u openclaw-gateway.service --follow
   requires the reverse-proxy IP listed narrowly (a `/24` range is rejected with
   `403 proxy_attribution_required`).
 - `gateway.controlUi.allowedOrigins`: `["https://<gateway-host>"]`.
-- Configured default model: `opencode-go/deepseek-v4.1-flash` (DeepSeek V4.1
-  Flash), thinking `high`, with `opencode-go/muse-spark-1.3-contributor`
-  (Muse Spark 1.3 Contributor) as the global fallback
-  (`agents.defaults.model.primary`, `agents.defaults.thinkingDefault`, and
-  `agents.defaults.model.fallbacks`).
-  The per-agent override (`agents.entries.shelldon.model`) is intentionally
-  absent, so Shelldon inherits this global route. The OpenCode Go API-key
-  profile is stored in the native agent auth store.
+- Shared and per-agent model defaults, thinking levels and fallbacks have one
+  source of truth in `openclaw.json`: `agents.defaults.model`,
+  `agents.defaults.thinkingDefault` and `agents.entries.<id>`. A missing
+  per-agent setting inherits its shared default. Existing session selections
+  may override those defaults.
 - The Control UI's `+` New Session flow independently remembers the latest model
   choice per Gateway user/agent. It may preselect a previously selected model;
   select `opencode-go/deepseek-v4.1-flash` explicitly if needed.
@@ -419,14 +416,8 @@ agent rather than copying Docker runtime state wholesale:
 
 ## Providers
 
-- The configured default for both agents is `opencode-go/deepseek-v4.1-flash`
-  with thinking `high` and `nvidia/nemotron-3-super-120b-a12b` as its only
-  global fallback. `agents.defaults.modelPolicy.allow` restricts the Control UI
-  model picker to seven OpenCode Go models (`deepseek-v4.1-flash`,
-  `glm-5.3-flash`, `mimo-v2.6-flash`, `minimax-m3.1-flash-free`,
-  `qwen3.8-flash`, `muse-spark-1.2-contributor`, `muse-spark-1.3-contributor`)
-  plus the untouched `google/*`, `llama-cpp/*`, `nvidia/*`, and `openai/*`
-  groups. `opencode-go/gemini-4-argon-contributor` was removed again on
+- Model picker restrictions are defined by `agents.defaults.modelPolicy.allow`
+  in `openclaw.json`. `opencode-go/gemini-4-argon-contributor` was removed on
   2026-10-20: despite the "contributor" label it costs $4/$20 per 1M tokens
   (vs. $0.10/$0.20 for the Muse Spark contributor models) and consumed the
   whole monthly Go allowance in one afternoon.
@@ -553,7 +544,7 @@ timezone use the Gateway host's local timezone, which is Europe/Berlin.
 | `🧠 Memory Dreaming Promotion` | Daily 03:00 | `opencode-go/muse-spark-1.3-contributor` (thinking `high`); fallback `opencode-go/muse-spark-1.2-contributor` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. The durable source is `plugins.entries.memory-core.config.dreaming.model`. | None |
 | `🌱 Keimungs-Check (täglich)` | Daily 05:30 | `opencode-go/muse-spark-1.3-contributor` (thinking `low`); fallback `opencode-go/muse-spark-1.2-contributor` | Agent `kalle-kief`: germination status and selection request for the five seeds. | Discord `#grow-log` (`<discord-channel-id>`) |
 | `📺 Markus Lanz Guest Lookup` | Every 30 min, Tue–Thu 11:00–19:30 | `opencode-go/muse-spark-1.3-contributor` (thinking `low`); fallback `opencode-go/muse-spark-1.2-contributor` | Runs `workspace/lanz_cron/lanz-guests.js`; the agent forwards stdout to the owner's Telegram chat. **Re-enabled 2026-10-20** (it had been disabled since 2026-10-09). | Telegram `<telegram-chat-id>` (the agent's own `message` call) |
-| `skill-collection-review-shelldon` | Every 7 days | Native managed; agent default `opencode-go/deepseek-v4.1-flash`; global fallback: `opencode-go/muse-spark-1.3-contributor` | Native managed review of the local Skill Workshop collection. | None |
+| `skill-collection-review-shelldon` | Every 7 days | Native managed; agent default and global fallback | Native managed review of the local Skill Workshop collection. | None |
 | `skill-collection-review-kalle-kief` | Every 7 days | as above, agent `kalle-kief` | Native managed review of the kalle-kief Skill Workshop collection. | None |
 
 Still disabled (kept, not deleted): none — every automation is enabled as of
@@ -612,9 +603,6 @@ silent because the database entry already exists. Recovery: delete the
 `shows` row for that date (guests cascade) and trigger the job again, e.g.
 `sqlite3 lanz-guests.db "DELETE FROM shows WHERE date='YYYY-MM-DD';"` followed
 by `openclaw cron run 4dbc748a-e3aa-4aa3-9d8f-a7bf039b5cf8 --wait`.
-
-No OpenAI model remains in any configured default or fallback chain; the
-OpenAI OAuth profile is retained solely for the `codex` plugin harness.
 
 Inspect jobs and their outcomes with `openclaw cron list --json`, `openclaw cron
 get <job-id>`, and `openclaw cron runs <job-id>`. Do not restore the retired QMD

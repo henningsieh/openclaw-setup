@@ -174,6 +174,14 @@
           "alsoAllow": [
             "vault_fetch"
           ]
+        },
+        "model": "openai/gpt-6-luna",
+        "models": {
+          "openai/gpt-6-luna": {
+            "agentRuntime": {
+              "id": "codex"
+            }
+          }
         }
       },
       "lint-eastwood": {
@@ -186,8 +194,8 @@
           "theme": "A laconic code sheriff, hunting bugs across the wide-open frontier of the codebase",
           "avatar": "avatars/Lint-Eastwood.png"
         },
-        "model": "opencode-go/deepseek-v4-pro@opencode-go:default",
-        "thinkingDefault": "high",
+        "model": "opencode-go/muse-spark-1.3-contributor",
+        "thinkingDefault": "xhigh",
         "skills": [
           "code-review",
           "diagnosing-bugs",
@@ -237,7 +245,6 @@
       "mail_reader": {
         "name": "Mail Reader",
         "workspace": "/home/shelldon/.openclaw/workspace-mail-reader",
-        "model": "opencode-go/muse-spark-1.3-contributor",
         "sandbox": {
           "mode": "all",
           "scope": "session",
