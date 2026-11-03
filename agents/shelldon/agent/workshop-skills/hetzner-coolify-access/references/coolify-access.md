@@ -6,6 +6,10 @@ Three independent paths, each verified live against the Coolify server. Pick by 
 
 - Key: `~/.openclaw/workspace/coolify-server-access/ssh_key` (ed25519). Keep keys in the workspace,
   never in a home directory — container rebuilds wipe there.
+- `~/.ssh/host-server` is not this key: the `host-server` alias in `~/.ssh/config` points at the
+  gateway host (10.0.0.2), so using it against 10.0.0.3 fails with `Permission denied` — a
+  wrong-key/wrong-host symptom, not a missing grant. Confirm the key path before reporting an
+  access problem.
 - Internal (preferred, over the `network-1` private net): `ssh -i ~/.openclaw/workspace/coolify-server-access/ssh_key root@10.0.0.3`
 - Public fallback: same command with `root@188.245.144.137`
 - Verify: returns hostname `coolify-ubuntu-4gb-nbg1-4`; `docker ps` lists `coolify`, `coolify-db`,

@@ -91,8 +91,11 @@ description: "Access or manage Hetzner servers/DNS or the Coolify host — nativ
    | grep <name>` that prints nothing may be hiding `permission denied` on
    stderr — observed false "no such container" that way. Check the exit
    code and stderr unfiltered first; `sudo -n -l` lists the granted commands
-   (here: `docker ps` allowed, `docker exec` not). Finish when access or its
-   denial is established from an unfiltered call, never from an empty grep.
+   (here: `docker ps` allowed, `docker exec` not). An empty grep also hides a
+   container whose name differs from the domain it serves — a Traefik-fronted
+   container is identified by its `Host(...)` label, so match labels before
+   declaring a service absent. Finish when access or its denial is established
+   from an unfiltered call, never from an empty grep.
 
 10. **Prefer the OpenClaw-managed MCP path; it is implicit and needs no client setup.**
     `mcp.servers.<name>` in `openclaw.json` loads the server on the gateway and exposes its tools
@@ -102,6 +105,13 @@ description: "Access or manage Hetzner servers/DNS or the Coolify host — nativ
     secret-free; the operator subcommand is what leaks). Use `openclaw mcp list` for names-only, and
     keep `mcp show` output out of any shared transcript. Finish when a live read tool answers and no
     command output you saved contains a token value.
+
+11. **A Traefik `503 no available server` for a domain on the Coolify host means the route's backing
+    container is gone, not a proxy fault.** Do not touch Traefik, DNS, or certificates before
+    looking for that container; `references/traefik-503-diagnosis.md` has the ordered commands
+    (name and label lookup, stopped-container check, `acme.json` cert probe, file-provider routes,
+    restart versus recreate, external verification). Finish when the domain answers HTTP 200 from
+    the gateway host.
 
 Verification: after any required restart, a plain exec with no manual sourcing reads both tokens;
 `hcloud server list` returns both servers; `ssh -i <coolify key> root@10.0.0.3 hostname` returns the

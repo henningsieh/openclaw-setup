@@ -1,6 +1,6 @@
 ---
 name: "scheduled-job-trigger-diagnosis"
-description: "A scheduled job didn't fire, is disabled, fired at the wrong time, is blocked by an archived session, or a night's runs must all be confirmed delivered: read the enabled flag first, separate job status from payload delivery, clear archived sessions, reach history past the ring buffer."
+description: "Create a scheduled model ping; diagnose missing, disabled, mistimed or archived jobs; audit run and delivery history."
 ---
 
 # Scheduled Job Trigger Diagnosis
@@ -9,14 +9,17 @@ Use when the question is "why didn't my scheduled job run", "did it fire", "did 
 all of tonight's messages", or "has it ever failed". Heartbeats are a special case — their gating and delivery
 semantics live in `heartbeat-schedule-setup`; this skill covers the job row,
 its trigger script, and its run history. Read-only diagnosis first; the job's own
-payload script is the only thing you execute.
+payload script is the only thing you execute. For a requested scheduled model ping,
+follow `references/model-ping.md` instead.
 
 0. **Read `enabled` and its timestamp before anything else.** `openclaw automations
    get <jobId>` (or `cron get`) returns `enabled` plus `updatedAtMs`. A job that
    is `enabled: false` produces no runs at all — no trigger evaluation, no receipt,
    nothing in `cron runs` — so every deeper check is wasted until it is back on.
    Report the flag and when it changed in your first sentence; do not describe a
-   disabled job as "not firing" and then hunt the trigger.
+   disabled job as "not firing" and then hunt the trigger. `updatedAtMs` lands after
+   the newest `cron_run_receipts` row, so the gap between them brackets when the job
+   was switched off; read both timestamps before searching sessions for the cause.
 
    The CLI verbs are `enable` / `disable` for the flag; there is **no `update`
    subcommand** and no `--enabled` flag:
@@ -82,10 +85,18 @@ payload script is the only thing you execute.
    `state.lastError` and `consecutiveErrors`. When the text reads
    `Session "agent:<agentId>:cron:<jobId>" is archived. Restore it before starting new work.`,
    the run was refused at work-start because the job's own session row has `archivedAt`
-   set — the job is fine, the session was archived. Do not assume the session cap: the
-   verified cause here was a bulk sweep that archived the sessions and disabled the jobs
-   together (step 0), so read the session's `archivedAt` and compare it with the job's
-   `updatedAtMs` before naming a cause. Unarchive it (no restart needed). The CLI has no
+   set — the job is fine, the session was archived. Name the actor and reason before fixing:
+   the row's `entry_json` in `session_nodes` (`agents/<agentId>/agent/openclaw-agent.sqlite`)
+   carries `archivedAt`, `archiveReason`, and `archivedBy`. `archiveReason` is `manual` with
+   `archivedBy: {"type":"human",…}` for a Control UI or owner CLI action, and
+   `active-session-cap`, `stale-dashboard`, `age-retention`, or `restart-recovery` for
+   automatic maintenance. Read them from a private copy of the DB (copy rules in
+   `triage-sqlite-backup-failures`), compare `archivedAt` with the job's `updatedAtMs`, and
+   check whether several jobs were archived by the same human within seconds — that is a
+   bulk UI sweep, not a scheduler or cleanup fault. Report the actor and timestamp, then
+   unarchive the one session the user asked about; no restart is needed. Do not build an
+   auto-unarchive job or guard — the owner rejected that workaround and wants the cause
+   named instead. The CLI has no
    `unarchive` subcommand; `sessions.patch` is the Control UI's own path, reached over the
    gateway RPC:
 
@@ -119,8 +130,11 @@ payload script is the only thing you execute.
    **A manual trigger only enqueues, so poll for completion instead of sleeping.**
    `openclaw automations run <jobId>` answers `{"enqueued": true, "runId": …}` and exits
    while the job is still queued, and `automations runs` keeps the previous failure as its
-   newest entry until the run finishes. Poll `openclaw automations show <jobId>` until
-   `status` stops reading `running` (an agent-backed run took about four minutes, so a
+   newest entry until the run finishes. Prefer the gateway `automations` tool's `run`
+   action with a generous `timeoutMs`: when the run finishes inside that window it
+   returns the finished run (`status`, `summary`, `deliveryStatus`) inline with no
+   polling needed. Otherwise poll `openclaw automations show <jobId>` until `status`
+   stops reading `running` (an agent-backed run took about four minutes, so a
    45-second wait proves nothing), then read the fresh `runs` entry.
 
 3. **A `timeout` in the run record is the trigger evaluation, not the payload.**
@@ -166,6 +180,17 @@ payload script is the only thing you execute.
    rules are in `triage-sqlite-backup-failures`). Prove the method can see
    failures at all — e.g. count non-`ok` rows across all jobs — before reporting
    "zero failures", so a working column is not mistaken for a clean history.
+
+   Pull run history from the CLI: `openclaw automations runs <jobId>` returns the
+   full `entries` array regardless of the caller's view, while the same action
+   through the `automations` gateway tool is view-scoped and can report an existing
+   job as not found. Redirect that JSON to a file and parse `entries` (`… >
+   /tmp/runs.json` then a small python3 loop) — piping it through `head`/`tail`
+   truncates the object mid-entry and hides runs. Convert every millisecond
+   timestamp before reasoning about it: `TZ=Europe/Berlin date -d @$((ts/1000))`.
+   When you do use the external `sqlite3` CLI on the copy, pass an absolute path
+   (`sqlite3 /tmp/dbcheck.sqlite …`); a bare filename is resolved against the state
+   directory and refused by the same guard.
 
 6. **"Did I get all my messages overnight?" is a delivery audit across every job, not one
    job's status.** Enumerate with `openclaw automations list --all`, keep the rows whose
