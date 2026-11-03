@@ -1,0 +1,16 @@
+---
+name: agent-auth-profile-activation
+description: Diagnose missing provider auth, conflicting agent profiles, and shared credentials; activate verified auth without speculative gateway restarts.
+---
+
+# Agent auth profile activation
+
+1. Read the installed `docs/auth-credential-semantics.md` (Agent copy portability), `docs/concepts/oauth.md` (Storage), and `docs/cli/models.md` before changing auth, because storage and activation semantics vary by version.
+2. Inspect the effective shared and local credential owners with `openclaw models auth list --agent <id> --json`. Shared credentials live in `state/openclaw.sqlite` after relocation; local profiles override that read-through base. After shared-state cutover, `agents.defaults.authInheritance.agentId` is upgrade-only metadata, not a live source-agent selector. An absent local profile does not prove missing effective auth.
+3. Compare `auth.profiles.<profile-id>.mode` in `openclaw.json` with each stored profile's type. `token` and `api_key` are different credential shapes even when their bytes match. Never toggle a global mode to match one agent while leaving conflicting local copies on others.
+4. Preserve the owner's requested scope. For shared identity, consolidate verified portable static profiles into the native shared store and remove redundant local overrides with OpenClaw's guarded auth writer; do not write raw SQLite, copy whole databases, or duplicate OAuth refresh credentials. Keep one canonical credential and preserve independent local accounts unless the owner requested consolidation. Keep credential values out of output, argv, Git, and chat.
+5. Use the configured provider's documented native auth flow for an actually missing or invalid credential. A successful model inventory is not an entitlement check. Provider config belongs under `models.providers`; a missing top-level `providers` field is not an auth or restart failure.
+6. Refresh running auth without restart with `openclaw gateway call models.authRefresh --params '{"agentId":"<id>","operation":"login"}' --timeout 60000 --json` for each affected configured agent, requiring `refreshed: true`. Respect any explicit prohibition on restarts. Inspect an actual refresh failure instead of assuming all auth changes need a restart.
+7. Verify `openclaw gateway call models.list --params '{"agentId":"<id>"}' --json`: require the intended provider/profile to be ready and no `auth-failed` model rows. Then run `openclaw infer model run --agent <id> --gateway --model <provider/model> --thinking off --prompt 'Reply exactly AUTH_OK' --json`; require the intended provider/model and successful text, without fallback. If an unrelated sandbox provisioning failure blocks the Gateway probe, `--local` tests that agent's effective model/auth without changing sandbox policy; report the distinction.
+8. Use `openclaw models auth activate <profile-id> --agent <id>` only when activation of a saved replacement/account is wanted. It verifies inference and can select its model/account; it is not a read-only status check. Verify the resulting model route instead of silently changing defaults during an auth-only repair.
+9. Recheck every affected agent before reporting a fleet repair complete. Distinguish persisted credentials, runtime readiness, model entitlement, and sandbox execution errors.

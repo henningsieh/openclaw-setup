@@ -40,6 +40,30 @@ description: "Change a default/fallback model route, fix a missing /models entry
    Finish when the session reports `modelOverride: null` and the configured default, and a cause is
    either established or explicitly left open pending the error text, not just the global route.
 
+   **When new sessions report thinking `off` although `agents.defaults.thinkingDefault` is `high`,
+   read the model's provider thinking profile, then declare the endpoint's real effort ladder.**
+   `openclaw gateway call sessions.list --params '{"limit":200}' --json` returns the session's
+   `thinkingLevels` and `thinkingDefault`. A profile that exposes only
+   `{id:"off",label:"always on"}` has no selectable level, so a configured `high` cannot apply.
+   For `opencode-go` models declared `reasoning: true` on `openai-completions`, OpenClaw selects
+   that fixed profile when the model entry has no `compat.supportedReasoningEfforts`. Do not stop
+   at that observation and do not read `dist/` source for a config question: the official catalog
+   is authoritative. Fetch `https://models.opencode.ai/api.json` and read
+   `opencode-go.models.<model-id>.reasoning_options` with the exact local model id as the key
+   (e.g. `muse-spark-1.3-contributor`, not `muse-spark-1.3` — a wrong key returns null and
+   the model only looks missing). Take the `effort` values verbatim (verified:
+   `deepseek-v4.1-flash` → `["low","high","max"]`; `muse-spark-1.3-contributor` →
+   `["minimal","low","medium","high","xhigh"]`). Write both keys in one batch:
+   `compat.supportsReasoningEffort: true` and
+   `compat.supportedReasoningEfforts: ["low","high","max"]` on that model entry. Verify with
+   `openclaw gateway call models.list --params '{"provider":"opencode-go"}' --json`: the model's
+   `thinkingLevels` must include `off`, the declared efforts, and harness `ultra` (`ultra`
+   is always appended and is no provider level; `off` only omits the effort), and
+   `thinkingDefault` must equal
+   the configured default (`high`). The change applies without a gateway restart. Finish when the
+   catalog values, the model profile, and the session projection agree; existing sessions keep
+   their stored `thinkingLevel` until `/think default` or an explicit `/think <level>` is sent.
+
 2. **Validate the active provider catalog before selecting a fallback.** Run
    `openclaw models list --agent <id> --provider <provider> --json`; `--all` does not escape a
    provider's active static subset. A model named only in `agents.defaults.model.fallbacks` can
@@ -71,6 +95,18 @@ description: "Change a default/fallback model route, fix a missing /models entry
    That gap is two-layered — the agent's own credential store and the agent's own model
    catalog — and the error text changes shape as each layer closes, so diagnose the new
    error instead of re-reporting the old one.
+
+   **When a catalog model id 404s at inference or the user asks to audit a provider's ids,
+   compare the catalog against the provider's own models endpoint before editing.** Fetch the
+   authoritative list (NVIDIA: `GET https://integrate.api.nvidia.com/v1/models` with the stored
+   `nvidia:default` api_key read from the agent's `auth_profile_store`, kept in-process and never
+   printed; opencode-go: `https://models.opencode.ai/api.json`) and diff it against
+   `openclaw models list --provider <id>`: entries present locally but absent upstream are wrong
+   (verified: `z-ai/glm-5-3-flash` 404d while `z-ai/glm-5.3-flash` is the real id). Repair explicit
+   `models.providers.<provider>.models[].id` entries with `openclaw config set` (dry-run first)
+   and prove the new id live with `openclaw infer model run --model <provider/model> --thinking off
+   --prompt "Reply with exactly: ok" --json`. Finish when the id exists upstream, the catalog shows
+   no duplicate, and the probe returns the exact string.
 
 3. **Only when a route change was requested, set primary and fallbacks through the CLI.**
    `openclaw models set <provider/model>`, then

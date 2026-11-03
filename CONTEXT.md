@@ -430,10 +430,17 @@ agent rather than copying Docker runtime state wholesale:
   2026-10-20: despite the "contributor" label it costs $4/$20 per 1M tokens
   (vs. $0.10/$0.20 for the Muse Spark contributor models) and consumed the
   whole monthly Go allowance in one afternoon.
-- Native credential profiles exist for OpenAI (OAuth), NVIDIA (API key), and
-  OpenCode Go (API key), stored in the agent SQLite auth store rather than an
-  environment file. `kalle-kief` inherits the OpenCode Go key from `shelldon`
-  through `agents.defaults.authInheritance`.
+- OpenAI (OAuth), NVIDIA, OpenCode Zen/Go, and llama.cpp credential profiles
+  have one shared owner in `state/openclaw.sqlite`. All configured agents read
+  through to that store; there are no agent-local credential overrides.
+  `agents.defaults.authInheritance.agentId` is upgrade-only provenance after
+  this shared-state migration, not a live selector for Shelldon's local store.
+  Keep `auth.profiles` modes consistent with stored types (`api_key` for Go);
+  local copies override shared profiles and can reintroduce type conflicts.
+  See the installed `docs/auth-credential-semantics.md` (Agent copy portability)
+  and `docs/concepts/oauth.md` (Storage). Auth changes can be applied through
+  `models.authRefresh` without a gateway restart; verify every affected agent
+  with `models.list` and a real `infer model run` request.
 - OpenCode Go is a separate paid subscription from OpenCode Zen; sharing the
   OpenCode API key does not itself grant Go entitlement. A successful model
   catalog listing is not an entitlement check. See the dedicated [OpenCode Go

@@ -8,7 +8,7 @@
       "model": {
         "primary": "opencode-go/deepseek-v4.1-flash",
         "fallbacks": [
-          "nvidia/nemotron-3-super-120b-a12b"
+          "nvidia/nemotron-3.5-lightning-30b-a3b"
         ]
       },
       "modelPolicy": {
@@ -16,14 +16,16 @@
           "opencode-go/deepseek-v4.1-flash",
           "opencode-go/glm-5.3-flash",
           "opencode-go/mimo-v2.6-flash",
-          "opencode-go/minimax-m3.1-flash-free",
+          "opencode-go/minimax-m3.1-flash",
           "opencode-go/qwen3.8-flash",
           "opencode-go/muse-spark-1.2-contributor",
           "opencode-go/muse-spark-1.3-contributor",
           "google/*",
           "llama-cpp/*",
           "nvidia/*",
-          "openai/*"
+          "openai/*",
+          "opencode-go/beam-free",
+          "opencode-go/iceman-contributor-free"
         ]
       },
       "thinkingDefault": "high",
@@ -32,7 +34,8 @@
       },
       "systemAgent": {
         "agentId": "shelldon"
-      }
+      },
+      "timeoutSeconds": 1800
     },
     "ownership": "explicit",
     "entries": {
@@ -50,19 +53,32 @@
           ]
         },
         "heartbeat": {
-          "every": "30m",
+          "every": "1h",
           "target": "discord",
-          "to": "1489587973715656786",
+          "to": "1514565511223181363",
           "isolatedSession": true,
           "activeHours": {
-            "start": "06:20",
-            "end": "06:45",
+            "start": "06:00",
+            "end": "07:00",
             "timezone": "Europe/Berlin"
           },
-          "prompt": "[Morning Heartbeat] Daily morning digest. Step 1 health: run ONE exec with this exact command: df -h / | tail -1; free -m | head -2; openclaw cron list --all | grep -c error; node /home/shelldon/.openclaw/workspace/lanz_cron/lanz-health.js. Step 2 backlog: read /home/shelldon/.openclaw/workspace/backlog_todos.md and pick exactly ONE open item that is the best next step. Step 3 reply in German with EXACTLY three lines and nothing else: line 1 Morgen, Human! ; line 2 Status: plus one sentence; line 3 Vorschlag: plus that ONE backlog item and a few-word reason. The Lanz line is silent on non-show days; if it reports a problem (FEHLT, 0 Gaeste, or Pruefung fehlgeschlagen), append it to line 2 in a few words, otherwise do not mention it. Never create or modify automation jobs. Do not reply NO_REPLY unless the health check itself completely failed.",
+          "prompt": "[Silent Heartbeat] Background maintenance tick. Optionally run ONE exec for a quick health look (for example: df -h / | tail -1; free -m | head -2) — for your own context only. Never post a status message anywhere. Always reply with exactly NO_REPLY and nothing else. User-facing status is handled exclusively by the morning digest automation.",
           "timeoutSeconds": 360,
           "model": "opencode-go/muse-spark-1.3-contributor"
-        }
+        },
+        "models": {
+          "opencode-go/deepseek-v4-pro": {
+            "agentRuntime": {
+              "id": "openclaw"
+            }
+          },
+          "nvidia/nemotron-3-ultra-550b-a55b": {
+            "agentRuntime": {
+              "id": "openclaw"
+            }
+          }
+        },
+        "model": "opencode-go/deepseek-v4-pro@opencode-go:default"
       },
       "kalle-kief": {
         "name": "Kalle Kief",
@@ -153,7 +169,8 @@
           "writing-fragments",
           "writing-shape",
           "xurl",
-          "immich-operations"
+          "immich-operations",
+          "email-send"
         ],
         "memory": {
           "search": {
@@ -173,17 +190,88 @@
         }
       },
       "lint-eastwood": {
-        "name": "lint-eastwood",
+        "name": "Lint Eastwood – „Go ahead, lint that thing.”",
         "workspace": "/home/shelldon/.openclaw/workspace-lint-eastwood",
         "agentDir": "/home/shelldon/.openclaw/agents/lint-eastwood/agent",
         "identity": {
-          "name": "Lint Eastwood – “Go ahead, make my day… and fix that semicolon.”",
-          "emoji": "🤠🔍",
+          "name": "Lint Eastwood – „Go ahead, lint that thing.”",
+          "emoji": "🤠✍️🔍",
           "theme": "A laconic code sheriff, hunting bugs across the wide-open frontier of the codebase",
           "avatar": "avatars/Lint-Eastwood.png"
         },
+        "model": "opencode-go/deepseek-v4-pro@opencode-go:default",
+        "thinkingDefault": "high",
+        "skills": [
+          "code-review",
+          "diagnosing-bugs",
+          "tdd",
+          "resolving-merge-conflicts",
+          "codebase-design",
+          "domain-modeling",
+          "research",
+          "implement",
+          "to-spec",
+          "to-tickets",
+          "triage",
+          "wayfinder",
+          "grill-with-docs",
+          "improve-codebase-architecture",
+          "github",
+          "gh-issues",
+          "discord",
+          "spike",
+          "skill-creator",
+          "tmux",
+          "node-inspect-debugger",
+          "python-debugpy",
+          "visualize",
+          "diagram-maker",
+          "frontend-design",
+          "web-design-guidelines",
+          "security-audit",
+          "email-send"
+        ],
+        "tools": {
+          "profile": "coding",
+          "alsoAllow": [
+            "message",
+            "discord",
+            "group:messaging"
+          ]
+        },
+        "models": {
+          "opencode-go/deepseek-v4-pro": {
+            "agentRuntime": {
+              "id": "openclaw"
+            }
+          }
+        }
+      },
+      "mail_reader": {
+        "name": "Mail Reader",
+        "workspace": "/home/shelldon/.openclaw/workspace-mail-reader",
         "model": "opencode-go/muse-spark-1.3-contributor",
-        "thinkingDefault": "high"
+        "sandbox": {
+          "mode": "all",
+          "scope": "session",
+          "workspaceAccess": "none"
+        },
+        "tools": {
+          "profile": "minimal",
+          "allow": [
+            "session_status"
+          ],
+          "deny": [
+            "group:fs",
+            "group:runtime",
+            "group:web",
+            "browser",
+            "cron",
+            "gateway",
+            "nodes"
+          ]
+        },
+        "skills": []
       }
     }
   },
@@ -291,6 +379,44 @@
       },
       "vault-access-broker": {
         "enabled": true
+      },
+      "imap": {
+        "enabled": false,
+        "config": {
+          "accounts": {
+            "openclaw-ai": {
+              "host": "mail.sieh.org",
+              "port": 993,
+              "secure": true,
+              "user": "openclaw@ai.sieh.org",
+              "password": {
+                "source": "store",
+                "provider": "default",
+                "id": "IMAP_SMTP_OPENCLAW_AI_SIEH_ORG_PASSWORD"
+              },
+              "mailbox": "INBOX",
+              "watch": {
+                "mode": "auto",
+                "pollSeconds": 60
+              },
+              "allowedSenders": [
+                "henning@sieh.org",
+                "kontakt@henningsieh.de"
+              ],
+              "senderAuth": {
+                "min": "verified",
+                "trustedAuthservIds": [
+                  "mail.sieh.org"
+                ],
+                "acceptTrustedAuthservId": false
+              },
+              "agentId": "mail_reader",
+              "deliver": false,
+              "includeBody": true,
+              "maxBytes": 20000
+            }
+          }
+        }
       }
     }
   },
@@ -304,7 +430,7 @@
         "nextcloud-talk": []
       }
     },
-    "lastTouchedVersion": "2026.10.5"
+    "lastTouchedVersion": "2026.10.8"
   },
   "gateway": {
     "mode": "local",
@@ -326,7 +452,8 @@
       "allowedOrigins": [
         "https://ai.sieh.org"
       ]
-    }
+    },
+    "publicOrigin": "https://ai.sieh.org"
   },
   "tools": {
     "profile": "full",
@@ -355,13 +482,16 @@
       "nvidia:default": {
         "provider": "nvidia",
         "mode": "api_key"
+      },
+      "opencode-go:default": {
+        "provider": "opencode-go",
+        "mode": "token"
       }
     }
   },
   "channels": {
     "telegram": {
-      "enabled": true,
-      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "enabled": false,
       "dmPolicy": "allowlist",
       "allowFrom": [
         "8788775758"
@@ -386,7 +516,7 @@
     "discord": {
       "enabled": true,
       "token": "${DISCORD_BOT_TOKEN}",
-      "allowBots": true,
+      "allowBots": "mentions",
       "groupPolicy": "allowlist",
       "threadBindings": {
         "spawnSessions": true
@@ -401,38 +531,43 @@
             "1489535368859488421": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1489587973715656786": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1514565511223181363": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1524758094079459418": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1552230093500325888": {
               "enabled": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             },
             "1562506964578082890": {
               "enabled": true,
-              "requireMention": true,
               "users": [
-                "400054493640916993"
+                "400054493640916993",
+                "1489545158717477034"
               ]
             }
           }
@@ -525,7 +660,7 @@
             "maxTokens": 16384
           },
           {
-            "id": "z-ai/glm-5-3-flash",
+            "id": "z-ai/glm-5.3-flash",
             "name": "Z-AI GLM-5.3-Flash",
             "reasoning": true,
             "input": [
@@ -573,97 +708,149 @@
           {
             "id": "deepseek-v4.1-flash",
             "name": "DeepSeek V4.1 Flash",
+            "reasoning": true,
             "input": [
               "text",
               "image"
             ],
-            "contextWindow": 1000000,
-            "reasoning": true,
             "cost": {
               "input": 0,
               "output": 0,
               "cacheRead": 0,
               "cacheWrite": 0
             },
-            "maxTokens": 8192
+            "contextWindow": 1000000,
+            "maxTokens": 8192,
+            "compat": {
+              "supportedReasoningEfforts": [
+                "low",
+                "high",
+                "max"
+              ],
+              "supportsReasoningEffort": true
+            }
           },
           {
             "id": "glm-5.3-flash",
             "name": "GLM-5.3-Flash",
+            "reasoning": true,
             "input": [
               "text",
               "image"
             ],
-            "contextWindow": 1000000,
-            "reasoning": true,
             "cost": {
               "input": 0,
               "output": 0,
               "cacheRead": 0,
               "cacheWrite": 0
             },
+            "contextWindow": 1000000,
             "maxTokens": 8192
           },
           {
             "id": "mimo-v2.6-flash",
             "name": "MiMo-V2.6-Flash",
+            "reasoning": true,
             "input": [
               "text",
               "image"
             ],
-            "contextWindow": 1048576,
-            "reasoning": true,
             "cost": {
               "input": 0,
               "output": 0,
               "cacheRead": 0,
               "cacheWrite": 0
             },
+            "contextWindow": 1048576,
             "maxTokens": 8192
           },
           {
-            "id": "minimax-m3.1-flash-free",
-            "name": "MiniMax M3.1 Flash Free",
+            "id": "minimax-m3.1-flash",
+            "name": "MiniMax M3.1 Flash",
+            "reasoning": true,
             "input": [
               "text",
               "image"
             ],
-            "contextWindow": 1000000,
-            "reasoning": true,
             "cost": {
               "input": 0,
               "output": 0,
               "cacheRead": 0,
               "cacheWrite": 0
             },
+            "contextWindow": 1000000,
             "maxTokens": 8192
           },
           {
             "id": "qwen3.8-flash",
             "name": "Qwen3.8 Flash",
+            "reasoning": true,
             "input": [
               "text",
               "image"
             ],
-            "contextWindow": 1000000,
-            "reasoning": true,
             "cost": {
               "input": 0,
               "output": 0,
               "cacheRead": 0,
               "cacheWrite": 0
             },
+            "contextWindow": 1000000,
             "maxTokens": 8192
           },
           {
             "id": "muse-spark-1.2-contributor",
             "name": "Muse Spark 1.2 Contributor",
             "api": "openai-responses",
+            "reasoning": true,
             "input": [
               "text",
               "image"
             ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
             "contextWindow": 1048576,
+            "maxTokens": 8192
+          },
+          {
+            "id": "muse-spark-1.3-contributor",
+            "name": "Muse Spark 1.3 Contributor",
+            "api": "openai-responses",
+            "reasoning": true,
+            "input": [
+              "text",
+              "image"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 1048576,
+            "maxTokens": 8192,
+            "compat": {
+              "supportedReasoningEfforts": [
+                "minimal",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ]
+            }
+          },
+          {
+            "id": "beam-free",
+            "name": "Beam Free",
+            "input": [
+              "text",
+              "image"
+            ],
+            "contextWindow": 1000000,
             "reasoning": true,
             "cost": {
               "input": 0,
@@ -674,9 +861,8 @@
             "maxTokens": 8192
           },
           {
-            "id": "muse-spark-1.3-contributor",
-            "name": "Muse Spark 1.3 Contributor",
-            "api": "openai-responses",
+            "id": "iceman-contributor-free",
+            "name": "Iceman Contributor Free",
             "input": [
               "text",
               "image"
@@ -689,7 +875,8 @@
               "cacheRead": 0,
               "cacheWrite": 0
             },
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "api": "openai-responses"
           }
         ],
         "baseUrl": "https://opencode.ai/zen/go/v1"
@@ -715,7 +902,7 @@
     }
   },
   "logging": {
-    "level": "trace",
+    "level": "info",
     "consoleLevel": "info",
     "file": "/home/shelldon/.openclaw/logs/gateway/openclaw.log",
     "maxFileBytes": 20971520
@@ -756,7 +943,7 @@
         "enabled": false
       },
       "coding-agent": {
-        "enabled": false
+        "enabled": true
       },
       "eightctl": {
         "enabled": false
@@ -826,11 +1013,26 @@
       },
       "xurl": {
         "enabled": false
+      },
+      "apple-notes": {
+        "enabled": false
+      },
+      "apple-reminders": {
+        "enabled": false
+      },
+      "bear-notes": {
+        "enabled": false
+      },
+      "canvas": {
+        "enabled": false
       }
     },
     "load": {
       "allowSymlinkTargets": [
         "/home/shelldon/.openclaw/agents/shelldon/agent/workshop-skills"
+      ],
+      "extraDirs": [
+        "/home/shelldon/.openclaw/workspace/skills"
       ]
     }
   },
@@ -867,7 +1069,6 @@
       "match": {
         "channel": "discord",
         "accountId": "default",
-        "guildId": "1489535366854610994",
         "peer": {
           "kind": "channel",
           "id": "1562506964578082890"
@@ -895,5 +1096,16 @@
   "browser": {
     "executablePath": "/home/shelldon/.local/opt/google-chrome/current/opt/google/chrome/chrome",
     "noSandbox": true
+  },
+  "storage": {
+    "locations": {
+      "backup": {
+        "provider": "filesystem",
+        "encryption": "none",
+        "settings": {
+          "path": "/mnt/openclaw-backup"
+        }
+      }
+    }
   }
 }
