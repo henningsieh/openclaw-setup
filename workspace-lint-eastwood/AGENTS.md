@@ -45,8 +45,22 @@ Use runtime-provided startup context first (`AGENTS.md`, `SOUL.md`, `USER.md`, `
 
 ## Project Notes
 - Greendex monorepo (active): `/home/shelldon/_dev/greendex-calculator` — pnpm workspace + turbo. Apps: `calculator`, `cost-tracker`, `documentation`. Packages: `auth`, `config`, `database`, `email`, `i18n`. GitHub: `https://github.com/henningsieh/greendex-calculator`, branch `main`, verified baseline `d6dc2b61d6d3dbf734b791c6ce87f8dec07fa649` (recheck remote before assuming latest).
-- Retained reference only: investigation worktree `/home/shelldon/_dev/greendex-283-worktrees/cold-nav` on `investigate/286-cold-nav` (untracked files preserved, not active checkout); verification evidence `/home/shelldon/_dev/greendex-verification/pr290`. Other six worktrees + stale registrations removed — do not recreate by default.
+- Worktrees cleaned 2026-10-30 on Django's request: `greendex-283-worktrees/cold-nav` (investigate/286-cold-nav) and `greendex-verification/pr290` trashed via `gio`; registration pruned, only the main checkout remains. Recoverable from `~/.local/share/Trash/files/{cold-nav,pr290}` until emptied — do not recreate by default.
 - Setup: Node `v24.22.0` (repo requires >=22), pnpm pinned `12.11.2` via package.json — use pnpm only, install with `pnpm install --frozen-lockfile`. Next.js catalog-managed; version-matched docs in `node_modules/next/dist/docs`. Local ignored envs in `packages/database/.env` + `apps/{calculator,cost-tracker,documentation}/.env` (no repo-root `.env`). Working dir always the active repo above.
 - Run from active root: `pnpm run dev/build/start`, `pnpm test` (non-browser contract), `pnpm run test:full` (coordinator-owned prod matrix), `pnpm run type-check/format/lint`. `dev` has migration/port hooks — inspect target/listeners, never kill unowned servers.
-- State: PR #290 merged, spec #283 + children closed. Open #291 low-prio non-blocking (assess local tests for `database/config/i18n`; `discovered-empty` is inventory, not coverage — no placeholder tests). Last prod verification 29/29 groups, 2480 assertions + 88 browser passed, zero failures — new changes need own verification.
+- State: PR #290 merged, spec #283 + children closed. `fix/calculator-lint-warnings` merged into `release/v0.1.1` 2026-10-31 per Henning — format/lint/type-check green, unit+integration pass, Next 16.4.3 bump behaves, pure hygiene no behavior changes. Open #291 low-prio non-blocking (assess local tests for `database/config/i18n`; `discovered-empty` is inventory, not coverage — no placeholder tests). Last prod verification 29/29 groups, 2480 assertions + 88 browser passed, zero failures — new changes need own verification.
 - Coolify staging: Calculator `https://greendex.apps.sieh.org` (`/api/rpc/health`), Cost Tracker `https://cost-tracker.apps.sieh.org/` — both healthy on baseline. Rules owned by `docs/agents/instructions/coolify.md`; recheck live, one deployment at a time. Disk last 4.5 GiB free / 88% used — recheck before deploy. 29 volumes + DBs preserved; PR #290 preview retired.
+- Coolify root: `ssh -i ~/.openclaw/workspace/coolify-server-access/ssh_key root@10.0.0.3` (key lives in shelldon workspace, learned via shelldon agent 2026-10-21). Temp static sites: files to `/root/<name>/`, `docker run --network coolify` + Traefik labels (backticks escaped as \`), port 80. Ember mock: container `ember-mini-site` serves `apps/cost-tracker/docs/design/mini-site/index.html` at `https://ember.apps.sieh.org` (sub-paths `/v2/` Pixellect-Landing, `/v3/` Hosting-Review).
+
+## Tools
+
+### Local notes (migrated from TOOLS.md)
+
+# TOOLS.md - Local notes
+
+Skills define how tools work; this file holds environment specifics only.
+
+- Workspace: `/home/shelldon/.openclaw/workspace-lint-eastwood`
+- Repos and paths: greendex monorepo at `/home/shelldon/greendex-calculator` — apps `calculator`, `cost-tracker`, `documentation`; packages `auth`, `config`, `database`, `email`, `i18n`
+- Package manager and key commands: pnpm workspace + turbo. `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm format`, `pnpm test`, `pnpm test:e2e`, `pnpm db:migrate`, `pnpm db:seed`, `pnpm check:agent-instructions`
+- Discord: bound channel `1562506964578082890`; formatting rules are in `AGENTS.md`.
