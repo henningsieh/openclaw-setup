@@ -36,6 +36,7 @@ class FakeCommands:
         self.clients = []
         self.journal = True
         self.channel_error = False
+        self.telegram_error_only = False
         self.missing_hook = False
         self.missing_tool = False
         self.shrink_plugins = False
@@ -67,7 +68,8 @@ class FakeCommands:
                 "degradedPlugins": [],
                 "health": {"ok": True, "plugins": {"loaded": loaded, "errors": [], "unavailable": []},
                            "channels": {c: {"connected": True, "lifecycle": "ready",
-                                            "lastError": "oops" if self.channel_error else None}
+                                            "lastError": "oops" if self.channel_error or
+                                            (self.telegram_error_only and c == "telegram") else None}
                                         for c in ["discord", "telegram"]}}}
 
     def run(self, name, *args, cwd=None, check=True):
@@ -686,6 +688,11 @@ class LifecycleTests(unittest.TestCase):
         self.commands.channel_error = False
         update.gateway_ready(self.host, self.commands, deadline=time.monotonic())
         self.assertFalse(any(n == "sudo" for n, a in self.commands.calls))
+
+    def test_telegram_only_failure_does_not_block(self):
+        self.commands.telegram_error_only = True
+        run = self.successful_run()
+        self.assertEqual(update.load(run / "state.json")["status"], "awaiting-confirmation")
 
     def test_http_redirect_does_not_count_as_readiness_or_verification(self):
         run = self.successful_run()

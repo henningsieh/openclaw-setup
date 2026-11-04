@@ -53,6 +53,15 @@ class UpdateError(Exception):
     pass
 
 
+REQUIRED_CHANNELS = ("discord",)
+"""Channels that must be connected, ready and error-free.
+
+Telegram was removed from this instance; only Discord is required. Disabled
+or absent channels are ignored instead of blocking startup readiness,
+verification and finish.
+"""
+
+
 def now():
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
@@ -643,7 +652,7 @@ def gateway_ready(host, commands, deadline):
                 and {"codex", "vault-access-broker"}.issubset(plugins.get("loaded", []))
                 and all((channels.get(c) or {}).get("connected") is True
                         and (channels.get(c) or {}).get("lifecycle") == "ready"
-                        and not (channels.get(c) or {}).get("lastError") for c in ["discord", "telegram"])):
+                        and not (channels.get(c) or {}).get("lastError") for c in REQUIRED_CHANNELS)):
             return
         if time.monotonic() >= deadline:
             raise UpdateError("Live Gateway/plugins/channels did not become ready in the startup window.")
@@ -697,7 +706,7 @@ def verify(host, commands, run):
     require(not plugins.get("errors") and not plugins.get("unavailable") and not status.get("degradedPlugins"),
             "Gateway has plugin errors/unavailable plugins.")
     require({"codex", "vault-access-broker"}.issubset(plugins.get("loaded", [])), "Required plugins not loaded.")
-    for channel in ["discord", "telegram"]:
+    for channel in REQUIRED_CHANNELS:
         channel_state = health.get("channels", {}).get(channel, {})
         require(channel_state.get("connected") is True and channel_state.get("lifecycle") == "ready"
                 and not channel_state.get("lastError"), f"{channel} not connected/ready/error-free.")

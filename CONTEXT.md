@@ -483,45 +483,54 @@ agent rather than copying Docker runtime state wholesale:
 
 ## Official OpenClaw backups
 
-Official archives are written to the `shelldon`-owned mount:
+Native OpenClaw offsite archives use the configured filesystem storage location
+`backup`, rooted at the `shelldon`-owned mount:
 
 ```text
 /mnt/openclaw-backup
 ```
 
-It is a bind mount of the OpenClaw folder in the Nextcloud files tree:
+It maps directly to the OpenClaw folder in the Nextcloud files tree:
 
 ```text
-/mnt/storagebox-node/nextcloud/data/henning/files/Backup/OpenClaw
+Nextcloud/Backup/OpenClaw
 ```
 
 The StorageBox CIFS mount must use `serverino`, not `noserverino`: the official
 archiver verifies hard-link file identity during atomic publication. This was
-fixed and the mount, manual archive, and scheduled archive were verified.
+fixed and the mount plus the native scheduled archive were verified.
 
-The enabled `🦀 OpenClaw Nightly Backup` automation runs at `00:01` daily in
-`Europe/Berlin`. It invokes the official command with `--verify` and announces a
-concise success status in Discord `#system-status`. Do not substitute a custom
-archive script for the official command.
+The enabled Gateway-owned `openclaw-backup-offsite-scheduled` automation runs
+every 24 hours. It invokes the native command below with `TMPDIR=/tmp` and a
+`1200`-second scheduler timeout; the archive needs roughly 15 minutes. Its
+stable namespace is `ubuntu-8gb-nbg1-1`, so archives live under
+`Nextcloud/Backup/OpenClaw/backups/ubuntu-8gb-nbg1-1/` rather than as loose
+files at the mount root. Native retention keeps the union of **7 daily, 4
+weekly, and 12 monthly** UTC buckets.
+
+On 2026-11-04, a manually triggered production run completed in 915,564 ms,
+uploaded 1,436,065,539 bytes, and passed archive verification. The old
+`🦀 OpenClaw Nightly Backup` wrapper is disabled and must remain retired.
+
+The 162 loose legacy archives (203.25 GiB) were moved on 2026-11-04 to
+`Nextcloud/Backup/OpenClaw/old_backups_archive/`. They are historical data;
+native retention applies only to its managed namespace and must not be expected
+to prune them.
 
 ```bash
-# Preview without writing.
-openclaw backup create --output /mnt/openclaw-backup --dry-run --json
+# Inspect the native schedule and its runs.
+openclaw cron get 7d118072-5212-4ba8-a8e4-71319609a118
+openclaw cron runs 7d118072-5212-4ba8-a8e4-71319609a118
 
-# Create and immediately verify an archive.
-openclaw backup create --output /mnt/openclaw-backup --verify
-
-# Verify an existing archive.
-openclaw backup verify /mnt/openclaw-backup/<timestamp>-openclaw-backup.tar.gz
-
-# Inspect the scheduled job or its runs.
-openclaw cron get acac3466-9a15-45ab-a223-7be425800984
-openclaw cron runs acac3466-9a15-45ab-a223-7be425800984
+# Inspect or verify a managed remote archive.
+openclaw backup list --from backup --namespace ubuntu-8gb-nbg1-1
+openclaw backup verify --from backup --namespace ubuntu-8gb-nbg1-1 latest
 ```
 
 Archives contain sensitive state and credentials. Keep the destination restricted
-to `shelldon`; never add archives to Git. `openclaw backup enable` is for
-versioned Git backups and is not used for these timestamped archives.
+to `shelldon`; never add archives to Git. Do not create new loose root archives
+or replace this with a wrapper script. `openclaw backup enable --to backup`
+owns the managed offsite schedule; Git backup mode is separate.
 
 ## Immich
 
@@ -538,7 +547,7 @@ timezone use the Gateway host's local timezone, which is Europe/Berlin.
 
 | Automation | Schedule | Model | Purpose | Delivery |
 |---|---|---|---|---|
-| `🦀 OpenClaw Nightly Backup` | Daily 00:01 | — command job | Creates and verifies the official archive on the StorageBox/Nextcloud mount. | Concise success status → Discord `#system-status` |
+| `openclaw-backup-offsite-scheduled` | Every 24h | — command job | Native OpenClaw offsite archive to `backup/backups/ubuntu-8gb-nbg1-1/`; 7 daily / 4 weekly / 12 monthly retention; `TMPDIR=/tmp`, 1,200-second timeout. | None |
 | `📧 MailCow Nightly Update` | Daily 02:00 | — command job | Checks MailCow via the native `host-server` SSH alias; applies an available update, then reports container status. The private key is at `~/.ssh/host-server`, outside the workspace and Git. | Discord `#system-status` |
 | `📸 Immich Nightly Update` | Daily 02:30 | — command job | Checks and applies the newest Immich release via `sudo -n /usr/local/bin/immich-update`, after the 02:00 DB backup. | Discord `#system-status` |
 | `🧠 Memory Dreaming Promotion` | Daily 03:00 | `opencode-go/muse-spark-1.3-contributor` (thinking `high`); fallback `opencode-go/muse-spark-1.2-contributor` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. The durable source is `plugins.entries.memory-core.config.dreaming.model`. | None |

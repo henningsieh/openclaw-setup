@@ -114,7 +114,8 @@ Automatic checks produce **`awaiting-confirmation`**, not `complete`:
 - system service active with a different PID, local HTTP success;
 - public `/` is successful HTML with the current
   `data-openclaw-control-ui-build-id`, not JSON `proxy_attribution_required`;
-- Discord and Telegram connected, ready, with no last error;
+- Discord connected, ready, with no last error (Telegram was removed;
+  disabled channels are not required);
 - live Gateway plugin set includes codex and the Vault Access Broker, without
   plugin errors/unavailability, and preserves the previous boot's list when
   that list was readable;
