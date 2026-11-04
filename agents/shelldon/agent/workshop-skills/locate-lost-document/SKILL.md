@@ -1,6 +1,6 @@
 ---
 name: "locate-lost-document"
-description: "Owner names an old or missing doc: find the live copy across disk, git history, backups and chat archives, and prove which version is canonical."
+description: "Owner names an old/missing doc or disputes a file's age: find the live copy across disk, git history, backups or chat; prove canonical version and age."
 ---
 
 # Locate A Lost Document
@@ -45,6 +45,15 @@ description: "Owner names an old or missing doc: find the live copy across disk,
    every entry is `A`, the file was created once and never edited, so the live copy is the original
    commit content — confirm with `git show <first-commit>:<path> | diff - <path>`. Check: the live
    file matches the commit that introduced it.
+
+   A state-directory migration recreates the workspace, so the repo's first commit and the file's
+   birth time date the current install, not the file's origin; when the owner disputes the age, date
+   it from the backup archive instead — `ls -1 /mnt/openclaw-backup/ | sort | head` for the oldest
+   tarball, then `tar -tzf <tarball> | grep -i "<name>"` to find the pre-migration path (Docker-era
+   payloads sit under `payload/posix/home/node/.openclaw/`). Check: the reported age comes from the
+   oldest backup that contains the file, not from `stat`. A file byte-identical to its shipped
+   template under `<openclaw>/docs/reference/templates/` was never customized, so diff it before
+   claiming the agent ever evolved it.
 
 5. **Mine the dream session corpus when the text was only ever pasted in chat.** A document the
    owner pasted into a session was often never written to a file; past turns survive on disk under
