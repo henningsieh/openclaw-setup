@@ -284,9 +284,6 @@
       "duckduckgo": {
         "enabled": false
       },
-      "telegram": {
-        "enabled": true
-      },
       "discord": {
         "enabled": true
       },
@@ -371,6 +368,9 @@
       "perplexity": {
         "enabled": true
       },
+      "vault-access-broker": {
+        "enabled": true
+      },
       "imap": {
         "enabled": false,
         "config": {
@@ -408,9 +408,6 @@
             }
           }
         }
-      },
-      "vault-access-broker": {
-        "enabled": true
       }
     }
   },
@@ -419,7 +416,6 @@
       "modelPolicyAllowlist": true,
       "utilityModelSeparation": true,
       "webhookListeners": {
-        "telegram": [],
         "feishu": [],
         "nextcloud-talk": []
       }
@@ -484,29 +480,6 @@
     }
   },
   "channels": {
-    "telegram": {
-      "enabled": false,
-      "dmPolicy": "allowlist",
-      "allowFrom": [
-        "8788775758"
-      ],
-      "groupPolicy": "allowlist",
-      "groupAllowFrom": [
-        "8788775758"
-      ],
-      "groups": {
-        "*": {
-          "requireMention": true
-        }
-      },
-      "streaming": {
-        "mode": "partial"
-      },
-      "richMessages": true,
-      "execApprovals": {
-        "enabled": "auto"
-      }
-    },
     "discord": {
       "enabled": true,
       "token": "${DISCORD_BOT_TOKEN}",
@@ -966,7 +939,7 @@
   },
   "commands": {
     "ownerAllowFrom": [
-      "telegram:8788775758"
+      "discord:400054493640916993"
     ]
   },
   "approvals": {
@@ -974,10 +947,6 @@
       "enabled": true,
       "mode": "targets",
       "targets": [
-        {
-          "channel": "telegram",
-          "to": "8788775758"
-        },
         {
           "channel": "discord",
           "to": "1489535368859488421"
@@ -1136,13 +1105,6 @@
       "agentId": "shelldon",
       "match": {
         "channel": "discord",
-        "accountId": "*"
-      }
-    },
-    {
-      "agentId": "shelldon",
-      "match": {
-        "channel": "telegram",
         "accountId": "*"
       }
     }
