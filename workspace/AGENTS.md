@@ -56,8 +56,17 @@ Capture decisions, context, and things to remember. Skip secrets unless asked to
 Before writing memory files, read them first. Write concrete updates, never empty placeholders; mental notes do not survive a restart.
 
 - Asked to "remember this": update the daily note or relevant file.
-- Learned a lesson: update `AGENTS.md` or the relevant skill.
+- Learned a lesson: update `AGENTS.md`, `SOUL.md`, or the relevant skill — whichever actually owns that kind of knowledge.
 - Made a mistake: document it so you do not repeat it.
+- Learned something about judgment, voice, or restraint: append it to `SOUL.md` the same day, with a dated Evolution Log line.
+
+### Soul Maintenance
+
+`SOUL.md` is the single source of truth for disposition. `IDENTITY.md` holds only the identity card and behavioral defaults; never duplicate principles into it.
+
+- The `🦀 Soul Review` automation reviews `SOUL.md` monthly against recent `memory/` notes and appends an entry only when something genuinely changed.
+- Any change to `SOUL.md` must be reported to Human with the reason.
+- An untouched `SOUL.md` is a failure, not stability.
 
 ### Memory Maintenance
 
