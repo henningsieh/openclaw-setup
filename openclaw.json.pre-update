@@ -8,7 +8,7 @@
       "model": {
         "primary": "opencode-go/deepseek-v4.1-flash",
         "fallbacks": [
-          "nvidia/nemotron-3-super-120b-a12b"
+          "nvidia/nemotron-3.5-lightning-30b-a3b"
         ]
       },
       "modelPolicy": {
@@ -34,7 +34,8 @@
       },
       "systemAgent": {
         "agentId": "shelldon"
-      }
+      },
+      "timeoutSeconds": 1800
     },
     "ownership": "explicit",
     "entries": {
@@ -61,7 +62,7 @@
             "end": "07:00",
             "timezone": "Europe/Berlin"
           },
-          "prompt": "[Morning Heartbeat] Daily morning digest. Step 1 health: run ONE exec with this exact command: df -h / | tail -1; free -m | head -2; openclaw cron list --all | grep -c error; node /home/shelldon/.openclaw/workspace/lanz_cron/lanz-health.js. Step 2 backlog: read /home/shelldon/.openclaw/workspace/backlog_todos.md and pick exactly ONE open item that is the best next step. Step 3 reply in German with EXACTLY three lines and nothing else: line 1 Morgen, Human! ; line 2 Status: plus one sentence; line 3 Vorschlag: plus that ONE backlog item and a few-word reason. The Lanz line is silent on non-show days; if it reports a problem (FEHLT, 0 Gaeste, or Pruefung fehlgeschlagen), append it to line 2 in a few words, otherwise do not mention it. Never create or modify automation jobs. Do not reply NO_REPLY unless the health check itself completely failed.",
+          "prompt": "[Silent Heartbeat] Background maintenance tick. Optionally run ONE exec for a quick health look (for example: df -h / | tail -1; free -m | head -2) — for your own context only. Never post a status message anywhere. Always reply with exactly NO_REPLY and nothing else. User-facing status is handled exclusively by the morning digest automation.",
           "timeoutSeconds": 360,
           "model": "opencode-go/muse-spark-1.3-contributor"
         }
@@ -155,7 +156,8 @@
           "writing-fragments",
           "writing-shape",
           "xurl",
-          "immich-operations"
+          "immich-operations",
+          "email-send"
         ],
         "memory": {
           "search": {
@@ -172,6 +174,14 @@
           "alsoAllow": [
             "vault_fetch"
           ]
+        },
+        "model": "openai/gpt-6-luna",
+        "models": {
+          "openai/gpt-6-luna": {
+            "agentRuntime": {
+              "id": "codex"
+            }
+          }
         }
       },
       "lint-eastwood": {
@@ -185,7 +195,7 @@
           "avatar": "avatars/Lint-Eastwood.png"
         },
         "model": "opencode-go/muse-spark-1.3-contributor",
-        "thinkingDefault": "high",
+        "thinkingDefault": "xhigh",
         "skills": [
           "code-review",
           "diagnosing-bugs",
@@ -212,7 +222,9 @@
           "visualize",
           "diagram-maker",
           "frontend-design",
-          "web-design-guidelines"
+          "web-design-guidelines",
+          "security-audit",
+          "email-send"
         ],
         "tools": {
           "profile": "coding",
@@ -221,7 +233,39 @@
             "discord",
             "group:messaging"
           ]
+        },
+        "models": {
+          "opencode-go/deepseek-v4-pro": {
+            "agentRuntime": {
+              "id": "openclaw"
+            }
+          }
         }
+      },
+      "mail_reader": {
+        "name": "Mail Reader",
+        "workspace": "/home/shelldon/.openclaw/workspace-mail-reader",
+        "sandbox": {
+          "mode": "all",
+          "scope": "session",
+          "workspaceAccess": "none"
+        },
+        "tools": {
+          "profile": "minimal",
+          "allow": [
+            "session_status"
+          ],
+          "deny": [
+            "group:fs",
+            "group:runtime",
+            "group:web",
+            "browser",
+            "cron",
+            "gateway",
+            "nodes"
+          ]
+        },
+        "skills": []
       }
     }
   },
@@ -329,6 +373,44 @@
       },
       "vault-access-broker": {
         "enabled": true
+      },
+      "imap": {
+        "enabled": false,
+        "config": {
+          "accounts": {
+            "openclaw-ai": {
+              "host": "mail.sieh.org",
+              "port": 993,
+              "secure": true,
+              "user": "openclaw@ai.sieh.org",
+              "password": {
+                "source": "store",
+                "provider": "default",
+                "id": "IMAP_SMTP_OPENCLAW_AI_SIEH_ORG_PASSWORD"
+              },
+              "mailbox": "INBOX",
+              "watch": {
+                "mode": "auto",
+                "pollSeconds": 60
+              },
+              "allowedSenders": [
+                "henning@sieh.org",
+                "kontakt@henningsieh.de"
+              ],
+              "senderAuth": {
+                "min": "verified",
+                "trustedAuthservIds": [
+                  "mail.sieh.org"
+                ],
+                "acceptTrustedAuthservId": false
+              },
+              "agentId": "mail_reader",
+              "deliver": false,
+              "includeBody": true,
+              "maxBytes": 20000
+            }
+          }
+        }
       }
     }
   },
@@ -342,7 +424,7 @@
         "nextcloud-talk": []
       }
     },
-    "lastTouchedVersion": "2026.10.5"
+    "lastTouchedVersion": "2026.10.8"
   },
   "gateway": {
     "mode": "local",
@@ -364,7 +446,8 @@
       "allowedOrigins": [
         "https://ai.sieh.org"
       ]
-    }
+    },
+    "publicOrigin": "https://ai.sieh.org"
   },
   "tools": {
     "profile": "full",
@@ -393,13 +476,16 @@
       "nvidia:default": {
         "provider": "nvidia",
         "mode": "api_key"
+      },
+      "opencode-go:default": {
+        "provider": "opencode-go",
+        "mode": "api_key"
       }
     }
   },
   "channels": {
     "telegram": {
-      "enabled": true,
-      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "enabled": false,
       "dmPolicy": "allowlist",
       "allowFrom": [
         "8788775758"
@@ -565,10 +651,18 @@
               "cacheWrite": 0
             },
             "contextWindow": 1000000,
-            "maxTokens": 16384
+            "maxTokens": 16384,
+            "compat": {
+              "supportsReasoningEffort": true,
+              "supportedReasoningEfforts": [
+                "none",
+                "medium",
+                "high"
+              ]
+            }
           },
           {
-            "id": "z-ai/glm-5-3-flash",
+            "id": "z-ai/glm-5.3-flash",
             "name": "Z-AI GLM-5.3-Flash",
             "reasoning": true,
             "input": [
@@ -582,7 +676,15 @@
               "cacheWrite": 0
             },
             "contextWindow": 1048576,
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "compat": {
+              "supportsReasoningEffort": true,
+              "supportedReasoningEfforts": [
+                "low",
+                "high",
+                "max"
+              ]
+            }
           }
         ]
       },
@@ -628,7 +730,15 @@
               "cacheWrite": 0
             },
             "contextWindow": 1000000,
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "compat": {
+              "supportedReasoningEfforts": [
+                "low",
+                "high",
+                "max"
+              ],
+              "supportsReasoningEffort": true
+            }
           },
           {
             "id": "glm-5.3-flash",
@@ -645,7 +755,15 @@
               "cacheWrite": 0
             },
             "contextWindow": 1000000,
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "compat": {
+              "supportsReasoningEffort": true,
+              "supportedReasoningEfforts": [
+                "low",
+                "high",
+                "max"
+              ]
+            }
           },
           {
             "id": "mimo-v2.6-flash",
@@ -679,7 +797,17 @@
               "cacheWrite": 0
             },
             "contextWindow": 1000000,
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "compat": {
+              "supportsReasoningEffort": true,
+              "supportedReasoningEfforts": [
+                "low",
+                "medium",
+                "high",
+                "xhigh",
+                "max"
+              ]
+            }
           },
           {
             "id": "qwen3.8-flash",
@@ -696,7 +824,15 @@
               "cacheWrite": 0
             },
             "contextWindow": 1000000,
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "compat": {
+              "supportsReasoningEffort": true,
+              "supportedReasoningEfforts": [
+                "low",
+                "medium",
+                "xhigh"
+              ]
+            }
           },
           {
             "id": "muse-spark-1.2-contributor",
@@ -714,7 +850,17 @@
               "cacheWrite": 0
             },
             "contextWindow": 1048576,
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "compat": {
+              "supportsReasoningEffort": true,
+              "supportedReasoningEfforts": [
+                "minimal",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ]
+            }
           },
           {
             "id": "muse-spark-1.3-contributor",
@@ -732,7 +878,17 @@
               "cacheWrite": 0
             },
             "contextWindow": 1048576,
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "compat": {
+              "supportedReasoningEfforts": [
+                "minimal",
+                "low",
+                "medium",
+                "high",
+                "xhigh"
+              ],
+              "supportsReasoningEffort": true
+            }
           },
           {
             "id": "beam-free",
@@ -749,7 +905,17 @@
               "cacheRead": 0,
               "cacheWrite": 0
             },
-            "maxTokens": 8192
+            "maxTokens": 8192,
+            "compat": {
+              "supportsReasoningEffort": true,
+              "supportedReasoningEfforts": [
+                "low",
+                "medium",
+                "high",
+                "xhigh",
+                "max"
+              ]
+            }
           },
           {
             "id": "iceman-contributor-free",
@@ -834,7 +1000,7 @@
         "enabled": false
       },
       "coding-agent": {
-        "enabled": false
+        "enabled": true
       },
       "eightctl": {
         "enabled": false
@@ -903,6 +1069,18 @@
         "enabled": false
       },
       "xurl": {
+        "enabled": false
+      },
+      "apple-notes": {
+        "enabled": false
+      },
+      "apple-reminders": {
+        "enabled": false
+      },
+      "bear-notes": {
+        "enabled": false
+      },
+      "canvas": {
         "enabled": false
       }
     },
@@ -975,5 +1153,16 @@
   "browser": {
     "executablePath": "/home/shelldon/.local/opt/google-chrome/current/opt/google/chrome/chrome",
     "noSandbox": true
+  },
+  "storage": {
+    "locations": {
+      "backup": {
+        "provider": "filesystem",
+        "encryption": "none",
+        "settings": {
+          "path": "/mnt/openclaw-backup"
+        }
+      }
+    }
   }
 }

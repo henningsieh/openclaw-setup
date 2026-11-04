@@ -424,7 +424,7 @@
         "nextcloud-talk": []
       }
     },
-    "lastTouchedVersion": "2026.10.8"
+    "lastTouchedVersion": "2026.10.10"
   },
   "gateway": {
     "mode": "local",
