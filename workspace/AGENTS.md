@@ -62,7 +62,7 @@ Before writing memory files, read them first. Write concrete updates, never empt
 
 ### Soul Maintenance
 
-`SOUL.md` is the single source of truth for disposition. `IDENTITY.md` holds only the identity card and behavioral defaults; never duplicate principles into it.
+`SOUL.md` is the single source of truth for learned lessons, boundaries, and the evolution log. `IDENTITY.md` holds the identity card and core operating principles; never restate the same principle in both files.
 
 - The `🦀 Soul Review` automation reviews `SOUL.md` monthly against recent `memory/` notes and appends an entry only when something genuinely changed.
 - Any change to `SOUL.md` must be reported to Human with the reason.
