@@ -370,44 +370,6 @@
       },
       "vault-access-broker": {
         "enabled": true
-      },
-      "imap": {
-        "enabled": false,
-        "config": {
-          "accounts": {
-            "openclaw-ai": {
-              "host": "mail.sieh.org",
-              "port": 993,
-              "secure": true,
-              "user": "openclaw@ai.sieh.org",
-              "password": {
-                "source": "store",
-                "provider": "default",
-                "id": "IMAP_SMTP_OPENCLAW_AI_SIEH_ORG_PASSWORD"
-              },
-              "mailbox": "INBOX",
-              "watch": {
-                "mode": "auto",
-                "pollSeconds": 60
-              },
-              "allowedSenders": [
-                "henning@sieh.org",
-                "kontakt@henningsieh.de"
-              ],
-              "senderAuth": {
-                "min": "verified",
-                "trustedAuthservIds": [
-                  "mail.sieh.org"
-                ],
-                "acceptTrustedAuthservId": false
-              },
-              "agentId": "mail_reader",
-              "deliver": false,
-              "includeBody": true,
-              "maxBytes": 20000
-            }
-          }
-        }
       }
     }
   },
@@ -417,10 +379,11 @@
       "utilityModelSeparation": true,
       "webhookListeners": {
         "feishu": [],
-        "nextcloud-talk": []
+        "nextcloud-talk": [],
+        "telegram": []
       }
     },
-    "lastTouchedVersion": "2026.10.10"
+    "lastTouchedVersion": "2026.11.3"
   },
   "gateway": {
     "mode": "local",
@@ -462,8 +425,8 @@
     }
   },
   "wizard": {
-    "lastRunAt": "2026-10-12T18:41:58.806Z",
-    "lastRunVersion": "2026.10.2",
+    "lastRunAt": "2026-11-12T11:02:36.349Z",
+    "lastRunVersion": "2026.11.3",
     "lastRunCommand": "doctor",
     "lastRunMode": "local"
   },
