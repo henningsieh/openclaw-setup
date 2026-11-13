@@ -37,6 +37,16 @@ follow `references/model-ping.md` instead.
    Finish when the readback shows `enabled: true` and a `nextRunAtMs` in the
    future — `cron get` is the proof, not the command's own exit code.
 
+   For `no recorded inference account`, inspect each failed job and run
+   `openclaw gateway call models.authStatus --params '{"agentId":"<agentId>"}' --json`
+   to select its actual profile; OAuth profiles need not be named `default`.
+   Preserve the existing model and set its account using
+   `openclaw cron edit <jobId> --agent <agentId> --model '<provider>/<model>@<profileId>'`;
+   specify the effective owner because multi-agent setups can reject an unowned edit.
+   Read the job back and verify with a completed run, accounting for its side effects.
+   Explain that this pins the model as well as the account, so later default-model
+   changes will not propagate automatically. Treat unrelated errors separately.
+
    **For a cost freeze (stop paid-provider burn), audit four layers — a paid
    fallback still fires when the primary fails, and a cron payload overrides the
    global default, so clearing only the primary leaves burn paths open.**
@@ -139,10 +149,24 @@ follow `references/model-ping.md` instead.
 
 3. **A `timeout` in the run record is the trigger evaluation, not the payload.**
    `cron trigger evaluation failed (timeout)` with a duration near the scheduler
-   limit means the gate script did not finish — commonly host CPU starvation from
-   unrelated processes, not a bug in the job. Check load (`uptime`) and top
-   consumers before touching the job. Finish with the timeout attributed to
-   either load or the script itself.
+   limit means the gate script did not finish. Check load (`uptime`) and top
+   consumers first. When the gate calls `exec` and the job's `scheduledToolPolicy.mode`
+   is `account`, the gate can wait on an exec approval until the limit; retrying
+   the same trigger keeps timing out. Replace that gate with a command-payload job
+   that runs the check script every interval and, only when the script finds work,
+   calls `openclaw automations run <agentJobId>`; keep the agent job on a far-future
+   schedule so it runs only on demand. Verify an empty poll leaves the agent job's
+   `state.lastRunAtMs` unchanged, then add one test item and confirm the agent runs,
+   replies, and advances its own watermark.
+
+   **An HTTP 5xx from an external API inside a command job is upstream, not a job
+   fault.** `curl: (22) The requested URL returned error: 504` with exit 22 means one
+   fetch got a gateway timeout. Re-request that URL before concluding anything; when it
+   answers, harden the fetch in the job's script with
+   `--retry 4 --retry-delay 5 --retry-all-errors --max-time 30` so one transient
+   upstream failure stops failing the run. Run the script directly and require exit 0
+   before calling the job healthy; the failed receipt stays in history and cannot be
+   rewritten.
 
 4. **Never build a calendar gate from a localized date string.** This is the
    highest-value trap in this skill and it fails *silently*:
@@ -204,6 +228,22 @@ follow `references/model-ping.md` instead.
    limit=30` and match `tsIso` against the message clock. Delivered text can differ from
    `summary`: a shell-backed job posts its raw `stdout:`/`stderr:` blob, so match on time
    and report the noisy wrapper as cosmetic rather than as a failure.
+
+   **A failed run whose text still appeared in chat is a scheduler repair turn, not
+   delivery.** When a job fails before dispatch, the scheduler sends the main conversation
+   an `Automation repair request from the scheduler` turn; that agent turn can reproduce
+   the reminder or report text, so the owner sees a normal-looking message while the run
+   stays `error` with `deliveryStatus: unknown`. Read the run's `runAtIso` /
+   `deliveryStatus` against the chat timestamp, then state which layer produced the visible
+   message. Never cite that message as evidence the job succeeded, and never describe a
+   delivered reminder as a failed one.
+
+   **Identical delivery text can come from two different jobs — attribute via the Inspect
+   link, not the text.** Two automations (e.g. a nightly backup and an offsite-backup
+   verifier) can post the same ✅ line; the message's `Inspect:` URL embeds the job id,
+   and each job's `runs` history carries its own `tsIso`/`deliveryStatus`. Match message →
+   job id → that job's runs before concluding which job fired or missed; never attribute
+   by text alone.
 
    **Name every enabled job with `delivery: not-requested` as a finding.** Those failures
    never reach any channel, so "I received everything" can be true while such a job has

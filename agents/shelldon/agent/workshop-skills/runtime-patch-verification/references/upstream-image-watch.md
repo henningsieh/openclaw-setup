@@ -55,5 +55,5 @@ patched runtime: verify the bundled version yourself.
    whether that version was directly verified (and when), and upstream release/issue
    state with the source URLs. When nothing changed, say so in one line.
 
-Working example on this host: `~/.openclaw/scripts/npm-node-security-watch.sh` with state
-at `~/.openclaw/workspace/nginx-proxy-manager-node-watch.state.json`.
+Keep the script and its state file in one place each, and delete both — plus the
+automation — once the owner confirms the upstream fix is deployed.

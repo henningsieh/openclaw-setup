@@ -22,7 +22,7 @@ python3 scripts/search_assets.py --since 2026-10-29T00:00:00.000Z --albums --lim
 
 The helper prints `total=N returned=N` plus id, filename, timestamp and albums; an empty result means no new visual evidence, so say that instead of inferring. In the stream, only plant frames are evidence: unrelated personal photos are outside the task, so do not name, describe, or tag them, and do not report their content beyond "N non-plant images skipped".
 
-   If no new plant photo exists, say that in one or two sentences and ask for a top-down photo of the newest tips; never diagnose without a picture.
+   If no new plant photo exists, attribute and use newer user-reported observations without claiming unseen visual signs; ask for a top-down photo only when visual confirmation would change the assessment, because missing photos limit visual rather than verbal evidence.
 
    When a plant photo sits only in the stream, file it into the album with `PUT /api/albums/714933bc-837d-41a9-a655-fe78289ada1f/assets`, body `{"ids":["<asset-id>"]}`, once Henning agrees, then confirm membership with the album metadata search.
 
