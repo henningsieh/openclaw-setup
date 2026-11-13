@@ -476,6 +476,11 @@ agent rather than copying Docker runtime state wholesale:
 - ⚠️ The generated `.conf` was edited directly + `nginx -s reload` because a plain
   container restart does not regenerate it from the DB. Editing host 34 in the NPM
   UI later regenerates from the DB — same value, harmless.
+- NPM runs **2.17.0**; the Node runtime *inside the container* is v26.13.1 (the host's
+  own `node` is separate and stays v24.x). Image pinned in
+  `/var/lib/docker/volumes/portainer_data/_data/compose/1/docker-compose.yml` since
+  2026-11-13. The former daily Node-security watch automation, its script and state
+  file were removed after this release shipped the patched runtime.
 - ⚠️ NPM's peer IP is now static (`172.25.0.20`, pinned 2026-10-10) — dynamic churn (`.3`→`.4`→`.2`) ended with the root-agent static-IP rollout. `trustedProxies` hot-reloads on `config set` (verified 2026-10-10, no restart needed). If the NPM
   container is recreated with a different IP, update `gateway.trustedProxies`
   (`openclaw config set gateway.trustedProxies '["127.0.0.1", "::1", "<new-ip>"]'`)
@@ -501,15 +506,22 @@ archiver verifies hard-link file identity during atomic publication. This was
 fixed and the mount plus the native scheduled archive were verified.
 
 The enabled Gateway-owned `openclaw-backup-offsite-scheduled` automation runs
-every 24 hours. It invokes the native command below with `TMPDIR=/tmp` and a
-`1200`-second scheduler timeout; the archive needs roughly 15 minutes. Its
-stable namespace is `ubuntu-8gb-nbg1-1`, so archives live under
+daily at 00:01 Europe/Berlin. It invokes the native archive command with `TMPDIR=/tmp` and a
+`1200`-second scheduler timeout, then independently runs the native
+`openclaw backup verify --from backup --namespace ubuntu-8gb-nbg1-1 latest`
+check. It announces `✅ OpenClaw backup verified` to Discord `#system-status`
+only if both commands succeed; a failed or timed-out archive never emits a
+success notification. The archive needs roughly 15 minutes. Its stable
+namespace is `ubuntu-8gb-nbg1-1`, so archives live under
 `Nextcloud/Backup/OpenClaw/backups/ubuntu-8gb-nbg1-1/` rather than as loose
 files at the mount root. Native retention keeps the union of **7 daily, 4
 weekly, and 12 monthly** UTC buckets.
 
-On 2026-11-04, a manually triggered production run completed in 915,564 ms,
-uploaded 1,436,065,539 bytes, and passed archive verification. The old
+On 2026-11-04, an initial manually triggered production run completed in
+915,564 ms, uploaded 1,436,065,539 bytes, and passed archive verification.
+The confirmation workflow was then tested end to end: its native archive plus
+explicit native verification completed in 1,026,414 ms and delivered the
+success notice to Discord. The old
 `🦀 OpenClaw Nightly Backup` wrapper is disabled and must remain retired.
 
 The 162 loose legacy archives (203.25 GiB) were moved on 2026-11-04 to
@@ -547,7 +559,7 @@ timezone use the Gateway host's local timezone, which is Europe/Berlin.
 
 | Automation | Schedule | Model | Purpose | Delivery |
 |---|---|---|---|---|
-| `openclaw-backup-offsite-scheduled` | Every 24h | — command job | Native OpenClaw offsite archive to `backup/backups/ubuntu-8gb-nbg1-1/`; 7 daily / 4 weekly / 12 monthly retention; `TMPDIR=/tmp`, 1,200-second timeout. | None |
+| `openclaw-backup-offsite-scheduled` | Daily 00:01 Europe/Berlin | — command job | Native OpenClaw offsite archive to `backup/backups/ubuntu-8gb-nbg1-1/`; explicitly verifies the latest native archive after creation; 7 daily / 4 weekly / 12 monthly retention; `TMPDIR=/tmp`, 1,200-second timeout. | Discord `#system-status` — `✅ OpenClaw backup verified` only after both steps succeed |
 | `📧 MailCow Nightly Update` | Daily 02:00 | — command job | Checks MailCow via the native `host-server` SSH alias; applies an available update, then reports container status. The private key is at `~/.ssh/host-server`, outside the workspace and Git. | Discord `#system-status` |
 | `📸 Immich Nightly Update` | Daily 02:30 | — command job | Checks and applies the newest Immich release via `sudo -n /usr/local/bin/immich-update`, after the 02:00 DB backup. | Discord `#system-status` |
 | `🧠 Memory Dreaming Promotion` | Daily 03:00 | `opencode-go/muse-spark-1.3-contributor` (thinking `high`); fallback `opencode-go/muse-spark-1.2-contributor` | Native `memory-core` managed promotion of high-value short-term recalls into `MEMORY.md`. The durable source is `plugins.entries.memory-core.config.dreaming.model`. | None |
